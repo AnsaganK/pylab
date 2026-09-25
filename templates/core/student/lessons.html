@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block title %}Мои задачи{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Мои задачи</h1>{% if user.group %}<p class="muted">Группа {{ user.group }}</p>{% endif %}</div></div>
+{% if not user.group %}
+<div class="sheet empty">Вас ещё не добавили в группу. Сообщите преподавателю.</div>
+{% endif %}
+{% for lesson, tasks, solved in items %}
+<section class="s-lesson">
+  <h2>{{ lesson.title }}</h2>
+  <div class="progress">{% if lesson.topic %}{{ lesson.topic }}. {% endif %}Решено {{ solved }} из {{ tasks|length }}</div>
+  <div class="s-tasks">
+    {% for t, b, n in tasks %}
+    <a class="s-task {% if b.is_good %}solved{% elif b and b.tone == 'wait' %}{% elif b %}tried{% endif %}" href="{% url 's_task' t.pk %}">
+      <span class="dot {% if b %}{{ b.tone }}{% endif %}"></span>
+      <div class="grow">
+        <div>{{ t.title }}</div>
+        <div class="meta">{% if b %}{{ b.get_status_display }}, попыток: {{ n }}{% else %}не начата{% endif %}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% empty %}
+{% if user.group %}<div class="sheet empty">Пока нет открытых уроков. Преподаватель откроет их на занятии.</div>{% endif %}
+{% endfor %}
+{% endblock %}

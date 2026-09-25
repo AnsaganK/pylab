@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+{% block title %}Группы{% endblock %}
+{% block content %}
+<div class="head"><h1>Группы</h1><div class="actions"><a class="btn" href="{% url 't_students_bulk' %}">Добавить студентов списком</a><a class="btn primary" href="{% url 't_students_roster' %}">Загрузить список из расписания</a></div></div>
+<div class="two">
+  <div class="table-wrap">
+    {% if groups %}
+    <table class="t">
+      <tr><th>Группа</th><th>Описание</th><th>Студентов</th></tr>
+      {% for g in groups %}<tr class="link"><td><a href="{% url 't_group' g.pk %}"><b>{{ g.name }}</b></a></td><td class="muted">{{ g.description }}</td><td class="num">{{ g.n }}</td></tr>{% endfor %}
+    </table>
+    {% else %}<div class="empty">Создайте первую группу, например МИК-241.</div>{% endif %}
+  </div>
+  <form method="post" class="sheet">{% csrf_token %}
+    <h3 style="margin-top:0">Новая группа</h3>
+    {% for f in form %}{% include "core/_field.html" %}{% endfor %}
+    <button class="btn primary" type="submit">Создать группу</button>
+  </form>
+</div>
+{% endblock %}

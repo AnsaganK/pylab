@@ -1,0 +1,5 @@
+Django>=5.0,<6.0
+Markdown>=3.5
+# для онлайна с PostgreSQL и gunicorn:
+# psycopg[binary]>=3.1
+# gunicorn>=22.0

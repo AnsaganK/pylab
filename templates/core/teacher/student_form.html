@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="{% url 't_groups' %}">Группы</a>{% if student.group %} / <a href="{% url 't_group' student.group.pk %}">{{ student.group }}</a>{% endif %}</div>
+<div class="head"><h1>{{ title }}</h1></div>
+<form method="post" class="sheet" style="max-width:560px">{% csrf_token %}
+  {% for f in form %}{% include "core/_field.html" %}{% endfor %}
+  <button class="btn primary" type="submit">Сохранить</button>
+</form>
+{% if student %}
+<form method="post" action="{% url 't_student_delete' student.pk %}" onsubmit="return confirm('Удалить студента вместе со всеми отправками?')" style="margin-top:1rem">{% csrf_token %}
+  <button class="btn danger sm" type="submit">Удалить студента</button>
+</form>
+{% endif %}
+{% endblock %}

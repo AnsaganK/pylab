@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block title %}{% if lesson %}{{ lesson.title }}{% else %}Новый урок{% endif %}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="{% url 't_lessons' %}">Уроки и задачи</a></div>
+<div class="head"><h1>{% if lesson %}{{ lesson.title }}{% else %}Новый урок{% endif %}</h1></div>
+<form method="post" class="sheet" style="max-width:720px">{% csrf_token %}
+  {% include "core/_field.html" with f=form.title %}
+  {% include "core/_field.html" with f=form.topic %}
+  {% include "core/_field.html" with f=form.order %}
+  <div class="field">
+    <label>Открыт для групп</label>
+    <div class="checks">{% for c in form.open_for %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% empty %}<span class="muted small">Групп пока нет.</span>{% endfor %}</div>
+    <div class="help">Студенты видят урок, только если он открыт для их группы.</div>
+  </div>
+  <button class="btn primary" type="submit">Сохранить урок</button>
+</form>
+{% if lesson %}
+<form method="post" action="{% url 't_lesson_delete' lesson.pk %}" onsubmit="return confirm('Удалить урок вместе со всеми задачами и отправками?')" style="margin-top:1rem">{% csrf_token %}
+  <button class="btn danger sm" type="submit">Удалить урок</button>
+</form>
+{% endif %}
+{% endblock %}

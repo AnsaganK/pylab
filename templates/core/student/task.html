@@ -1,0 +1,92 @@
+{% extends "core/base.html" %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block page_class %}wide{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="{% url 's_lessons' %}">Мои задачи</a> / {{ task.lesson.title }}</div>
+{% if siblings|length > 1 %}
+<nav class="siblings" aria-label="Задачи урока">
+  {% for t, b, n in siblings %}
+  <a href="{% url 's_task' t.pk %}"
+     class="{% if t.pk == task.pk %}on{% endif %} {% if b %}{% if b.is_good %}solved{% elif b.tone == 'wait' %}waiting{% else %}failed{% endif %}{% endif %}"
+     title="{{ t.title }}: {% if b %}{{ b.get_status_display }}, попыток {{ n }}{% else %}не решалась{% endif %}">
+    <span class="mark" aria-hidden="true"></span>{{ forloop.counter }}. {{ t.title|truncatechars:22 }}
+  </a>
+  {% endfor %}
+</nav>
+{% endif %}
+<div class="task-layout">
+  <article class="statement">
+    <div class="task-title">
+      <h1>{{ task.title }}</h1>
+      <span id="task-state">{% include "core/student/_state.html" %}</span>
+    </div>
+    <div class="limits">
+      {% if task.is_io %}<span>Время: {{ task.time_limit|floatformat:"-1" }} с</span><span>Память: {{ task.memory_limit }} МБ</span>{% else %}<span>Решение проверяет преподаватель</span>{% endif %}
+      {% if not has_input %}<span>Без ввода: программа ничего не читает</span>{% endif %}
+    </div>
+    <div class="body">
+      {{ statement }}
+      {% if task.input_format %}<h3>Входные данные</h3>{{ input_format }}{% endif %}
+      {% if task.output_format %}<h3>Выходные данные</h3>{{ output_format }}{% endif %}
+      {% if samples %}
+      <h3>Пример{{ samples|length|pluralize:"ы" }}</h3>
+      {% for s in samples %}
+      <div class="sample{% if not s.input_data.strip %} single{% endif %}">
+        {% if s.input_data.strip %}
+        <div><div class="lbl"><span>Ввод</span><button type="button" class="copy" data-to-stdin="{{ forloop.counter0 }}">в поле ввода</button></div><pre class="sample-in">{{ s.input_data }}</pre></div>
+        {% else %}<pre class="sample-in" hidden></pre>{% endif %}
+        <div><div class="lbl"><span>Вывод</span></div><pre>{{ s.output_data }}</pre></div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+    <h3>Мои отправки</h3>
+    <div id="subs" data-url="{% url 's_subs' task.pk %}">{% include "core/student/_subs.html" %}</div>
+    {% if prev_task or next_task %}
+    <div class="task-pager">
+      {% if prev_task %}<a class="btn sm" href="{% url 's_task' prev_task.pk %}">Предыдущая задача</a>{% endif %}
+      {% if next_task %}<a class="btn sm" href="{% url 's_task' next_task.pk %}" style="margin-left:auto">Следующая задача</a>{% endif %}
+    </div>
+    {% endif %}
+  </article>
+
+  <section class="workbench" id="workbench"
+           data-run-url="{% url 's_run' task.pk %}" data-submit-url="{% url 's_submit' task.pk %}"
+           data-task="{{ task.pk }}" data-user="{{ user.pk }}">
+    {% csrf_token %}
+    <textarea id="starter" hidden>{{ task.starter_code }}</textarea>
+    <div class="editor-box">
+      <div class="editor-bar">
+        <button type="button" class="btn sm ghost" id="btn-help" aria-expanded="false">Горячие клавиши</button>
+        <span class="grow"></span>
+        <span class="hint" id="save-state"></span>
+        <button type="button" class="btn sm ghost" id="font-minus" title="Мельче">A−</button>
+        <button type="button" class="btn sm ghost" id="font-plus" title="Крупнее">A+</button>
+        <button type="button" class="btn sm" id="btn-run">Запустить</button>
+        <button type="button" class="btn sm go" id="btn-submit">Отправить на проверку</button>
+      </div>
+      <div class="keys" id="keys" hidden>
+        <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> запустить</span>
+        <span><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> отступ вправо / влево (работает и для выделения)</span>
+        <span><kbd>Backspace</kbd> в начале строки — убирает весь отступ целиком</span>
+        <span><kbd>Ctrl</kbd>+<kbd>/</kbd> закомментировать</span>
+        <span><kbd>Ctrl</kbd>+<kbd>D</kbd> дублировать строку</span>
+        <span><kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> перенести строку</span>
+        <span><kbd>Ctrl</kbd>+<kbd>S</kbd> сохранить черновик</span>
+        <button type="button" class="copy" id="btn-reset">Вернуть начальный код</button>
+      </div>
+      <textarea id="code">{{ code }}</textarea>
+    </div>
+    <div class="io {% if not has_input %}no-input{% endif %}" id="io">
+      <div class="stdin-col">
+        <div class="lbl"><span>Ввод (stdin)</span>{% if not has_input %}<button type="button" class="copy" id="hide-stdin">скрыть</button>{% endif %}</div>
+        <textarea id="stdin" spellcheck="false" placeholder="Данные для input(), каждое значение — с новой строки или как в примере"></textarea>
+      </div>
+      <div>
+        <div class="lbl"><span>Вывод{% if not has_input %} <button type="button" class="copy" id="show-stdin">добавить ввод</button>{% endif %}</span><span class="muted" id="run-meta"></span></div>
+        <div class="out" id="out"><span class="muted">Нажмите «Запустить», чтобы проверить программу{% if has_input %} на своём вводе{% endif %}.</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

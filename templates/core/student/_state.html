@@ -1,0 +1,1 @@
+{% if current %}{% if current.is_good %}<span class="st good">Решено</span>{% elif current.tone == 'wait' %}<span class="st wait">{{ current.get_status_display }}</span>{% else %}<span class="st bad">Есть ошибки: {{ current.get_status_display|lower }}</span>{% endif %}{% else %}<span class="st wait">Не решалась</span>{% endif %}

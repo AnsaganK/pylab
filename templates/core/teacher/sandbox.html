@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+{% block title %}Песочница{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Песочница</h1><p class="muted">Проверка того, что код студентов запускается изолированно. Запускайте после установки и после переезда на сервер.</p></div></div>
+<form method="post" style="margin-bottom:1.25rem">{% csrf_token %}<button class="btn primary" type="submit">Проверить песочницу</button></form>
+{% if report %}
+<div class="sheet">
+  <p><b>Режим:</b> {{ report.mode }}. <b>Запуск от имени:</b> {{ report.run_as }}</p>
+  <ul class="checklist">
+    {% for name, ok, note in report.checks %}
+    <li><span class="st {% if ok %}good{% else %}bad{% endif %}">{% if ok %}да{% else %}нет{% endif %}</span> {{ name }}{% if note and not ok %}<pre class="box err" style="margin-top:.35rem">{{ note }}</pre>{% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% if report.all_ok %}<p style="color:var(--good);margin:0">Всё в порядке — можно пускать студентов.</p>
+  {% elif report.mode == "без изоляции" %}<p style="margin:0">Сейчас изоляция выключена, поэтому пункты про файлы и каталоги не проходят. Так можно только на своём компьютере — для пар и онлайна включите <span class="mono">SANDBOX_USE_BWRAP = True</span> в <span class="mono">constants.py</span>.</p>
+  {% else %}<p style="margin:0">Есть проблемы с изоляцией — студентов пускать рано. Пришлите скриншот этой страницы.</p>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

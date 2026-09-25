@@ -1,0 +1,1 @@
+{% if s.tests_total %}<span class="strip{% if big %} big{% endif %}" title="Пройдено тестов: {{ s.tests_passed }} из {{ s.tests_total }}">{% for c in s.strip_cells %}<i class="{{ c }}{% if s.status == 'running' and forloop.counter == s.tests_passed|add:1 %} now{% endif %}"></i>{% endfor %}</span>{% endif %}

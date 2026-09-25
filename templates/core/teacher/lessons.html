@@ -1,0 +1,45 @@
+{% extends "core/base.html" %}
+{% block title %}Уроки и задачи{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>Уроки и задачи</h1><p class="muted">Нажмите на группу, чтобы открыть или закрыть для неё урок. Жёлтые — открыты.</p></div>
+  <div class="actions"><a class="btn" href="{% url 't_tasks_import' %}">Импорт задач</a><a class="btn primary" href="{% url 't_lesson_new' %}">Новый урок</a></div>
+</div>
+{% for lesson in lessons %}
+<section class="lesson">
+  <div class="lesson-head">
+    <div>
+      <h3><span class="lesson-no">{{ lesson.order }}</span>{{ lesson.title }}</h3>
+      {% if lesson.topic %}<div class="muted small">{{ lesson.topic|truncatechars:160 }}</div>{% endif %}
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+      <div class="gate">
+        {% for g in groups %}
+          <form method="post" action="{% url 't_lesson_toggle' lesson.pk g.pk %}" class="inline">{% csrf_token %}
+            <button type="submit" class="{% if g in lesson.open_for.all %}open{% endif %}" title="{% if g in lesson.open_for.all %}Закрыть{% else %}Открыть{% endif %} для {{ g.name }}">{{ g.name }}</button>
+          </form>
+        {% empty %}<span class="muted small">Нет групп</span>{% endfor %}
+      </div>
+      <a class="btn sm" href="{% url 't_lesson_edit' lesson.pk %}">Изменить</a>
+      <a class="btn sm" href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a>
+      <a class="btn sm" href="{% url 't_tasks_import' %}?lesson={{ lesson.pk }}">Импорт</a>
+    </div>
+  </div>
+  {% for task in lesson.tasks.all %}
+  <div class="task-row {% if not task.is_open %}closed{% endif %}">
+    <span class="lesson-no">{{ forloop.counter }}.</span>
+    <div class="grow"><a class="title" href="{% url 't_task_edit' task.pk %}">{{ task.title }}</a></div>
+    <span class="tag">{% if task.is_io %}тесты{% else %}вручную{% endif %}</span>
+    <a class="small" href="{% url 't_submissions' %}?task={{ task.pk }}">отправки</a>
+    <form method="post" action="{% url 't_task_toggle' task.pk %}" class="inline">{% csrf_token %}
+      <label class="check small" title="Видна ли задача студентам"><input type="checkbox" {% if task.is_open %}checked{% endif %} onchange="this.form.submit()"> открыта</label>
+    </form>
+  </div>
+  {% empty %}
+  <div class="empty small">В уроке нет задач. <a href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a></div>
+  {% endfor %}
+</section>
+{% empty %}
+<div class="sheet empty">Уроков пока нет. Создайте первый урок, затем добавьте в него задачи.</div>
+{% endfor %}
+{% endblock %}

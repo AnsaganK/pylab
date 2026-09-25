@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+{% block title %}Отправки{% endblock %}
+{% block page_class %}wide{% endblock %}
+{% block content %}
+<div class="head">
+  <h1>Отправки</h1>
+  <form method="post" action="{% url 't_requeue' %}" class="inline" title="Если после перезапуска сервера что-то висит «в очереди»">{% csrf_token %}<button class="btn sm" type="submit">Вернуть зависшие в очередь</button></form>
+</div>
+<form method="get" class="sheet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;align-items:end;margin-bottom:1rem">
+  <div><label class="small muted">Группа</label><select name="group" onchange="this.form.submit()"><option value="">Все</option>{% for g in groups %}<option value="{{ g.pk }}" {% if f.group == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}</select></div>
+  <div><label class="small muted">Урок</label><select name="lesson" onchange="this.form.task.value='';this.form.submit()"><option value="">Все</option>{% for l in lessons %}<option value="{{ l.pk }}" {% if f.lesson == l.pk|stringformat:"s" %}selected{% endif %}>{{ l.title }}</option>{% endfor %}</select></div>
+  <div><label class="small muted">Задача</label><select name="task" onchange="this.form.submit()"><option value="">Все</option>{% for t in tasks %}<option value="{{ t.pk }}" {% if f.task == t.pk|stringformat:"s" %}selected{% endif %}>{{ t.title }}</option>{% endfor %}</select></div>
+  <div><label class="small muted">Результат</label><select name="status" onchange="this.form.submit()">
+    <option value="">Все</option>
+    <option value="good" {% if f.status == 'good' %}selected{% endif %}>Только верные</option>
+    <option value="bad" {% if f.status == 'bad' %}selected{% endif %}>Только ошибки</option>
+    {% for code, label in statuses %}<option value="{{ code }}" {% if f.status == code %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select></div>
+  <div><label class="small muted">Студент</label><input type="search" name="student" value="{{ f.student }}" placeholder="ФИО или логин"></div>
+  <div style="display:flex;gap:.5rem"><button class="btn primary" type="submit">Найти</button><a class="btn" href="{% url 't_submissions' %}">Сбросить</a></div>
+</form>
+
+<div class="table-wrap">
+  {% if page.object_list %}
+  <table class="t">
+    <tr><th>#</th><th>Студент</th><th>Группа</th><th>Задача</th><th>Результат</th><th>Тесты</th><th>Время</th><th>Отправлено</th></tr>
+    {% for s in page.object_list %}
+    <tr class="link">
+      <td class="num"><a href="{% url 't_submission' s.pk %}">{{ s.pk }}</a></td>
+      <td><a href="{% url 't_submission' s.pk %}">{{ s.user.display_name }}</a></td>
+      <td class="muted">{{ s.user.group|default:"" }}</td>
+      <td>{{ s.task.title }} <span class="muted small">{{ s.task.lesson.title|truncatechars:24 }}</span></td>
+      <td>{% include "core/_status.html" %}</td>
+      <td>{% include "core/_strip.html" %}</td>
+      <td class="num muted small">{% if s.max_time is not None %}{{ s.max_time|floatformat:2 }} с{% endif %}</td>
+      <td class="num muted small">{{ s.created_at|date:"d.m H:i:s" }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<div class="empty">Отправок с такими условиями нет.</div>{% endif %}
+</div>
+{% if page.has_other_pages %}
+<div style="display:flex;gap:.5rem;align-items:center;margin-top:1rem">
+  {% if page.has_previous %}<a class="btn sm" href="?{{ query }}&page={{ page.previous_page_number }}">Назад</a>{% endif %}
+  <span class="muted small">Страница {{ page.number }} из {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn sm" href="?{{ query }}&page={{ page.next_page_number }}">Дальше</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

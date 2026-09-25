@@ -1,0 +1,106 @@
+{% extends "core/base.html" %}
+{% block title %}{% if task %}{{ task.title }}{% else %}Новая задача{% endif %}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="{% url 't_lessons' %}">Уроки и задачи</a>{% if task %} / {{ task.lesson }}{% endif %}</div>
+<div class="head">
+  <h1>{% if task %}{{ task.title }}{% else %}Новая задача{% endif %}</h1>
+  {% if task %}<div class="actions">
+    <a class="btn" href="{% url 's_task' task.pk %}" target="_blank">Как видит студент</a>
+    <a class="btn" href="{% url 't_submissions' %}?task={{ task.pk }}">Отправки</a>
+  </div>{% endif %}
+</div>
+<form method="post" id="task-form">{% csrf_token %}
+  {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  <div class="sheet">
+    <div class="grid2">
+      {% include "core/_field.html" with f=form.lesson %}
+      {% include "core/_field.html" with f=form.title %}
+    </div>
+    {% include "core/_field.html" with f=form.statement %}
+    <div class="grid2">
+      {% include "core/_field.html" with f=form.input_format %}
+      {% include "core/_field.html" with f=form.output_format %}
+    </div>
+    <div class="grid2">
+      {% include "core/_field.html" with f=form.kind %}
+      {% include "core/_field.html" with f=form.time_limit %}
+      {% include "core/_field.html" with f=form.memory_limit %}
+      {% include "core/_field.html" with f=form.order %}
+    </div>
+    {% include "core/_field.html" with f=form.starter_code %}
+    {% include "core/_field.html" with f=form.is_open %}
+  </div>
+
+  <div class="sheet" id="tests-sheet">
+    <div class="head" style="margin-bottom:.5rem">
+      <div><h3 style="margin:0">Тесты</h3><p class="muted small" style="margin:0">Проверяются по порядку до первой ошибки. Отмеченные «Пример» показываются студентам в условии. Добавьте крайние случаи: ноль, минимум, максимум, пустые строки.</p></div>
+      <button type="button" class="btn" id="add-test">Добавить тест</button>
+    </div>
+    {{ formset.management_form }}
+    {% if formset.non_form_errors %}<ul class="errorlist">{% for e in formset.non_form_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    <div id="tests">
+      {% for tf in formset %}
+      <div class="test-form" style="border-top:1px solid var(--rule-soft);padding-top:.75rem;margin-top:.75rem">
+        {{ tf.id }}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">
+          <b class="test-no">Тест {{ forloop.counter }}</b>
+          <span style="display:flex;gap:1rem">
+            <label class="check small">{{ tf.is_sample }} Пример</label>
+            <label class="check small">{{ tf.DELETE }} Удалить</label>
+          </span>
+        </div>
+        <div class="io">
+          <div><div class="lbl">Ввод</div>{{ tf.input_data }}</div>
+          <div><div class="lbl">Ожидаемый вывод</div>{{ tf.output_data }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <template id="test-template">
+      <div class="test-form" style="border-top:1px solid var(--rule-soft);padding-top:.75rem;margin-top:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">
+          <b class="test-no">Новый тест</b>
+          <span style="display:flex;gap:1rem">
+            <label class="check small">{{ formset.empty_form.is_sample }} Пример</label>
+            <label class="check small">{{ formset.empty_form.DELETE }} Удалить</label>
+          </span>
+        </div>
+        <div class="io">
+          <div><div class="lbl">Ввод</div>{{ formset.empty_form.input_data }}</div>
+          <div><div class="lbl">Ожидаемый вывод</div>{{ formset.empty_form.output_data }}</div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+    <button class="btn primary" type="submit" name="save_stay">Сохранить</button>
+    <button class="btn" type="submit">Сохранить и к урокам</button>
+  </div>
+</form>
+
+{% if task %}
+<div style="display:flex;gap:.5rem;margin-top:2rem;flex-wrap:wrap">
+  <form method="post" action="{% url 't_task_rejudge' task.pk %}" onsubmit="return confirm('Перепроверить все отправки по этой задаче? Используйте после исправления тестов.')">{% csrf_token %}<button class="btn sm" type="submit">Перепроверить все отправки</button></form>
+  <form method="post" action="{% url 't_task_delete' task.pk %}" onsubmit="return confirm('Удалить задачу вместе с отправками?')">{% csrf_token %}<button class="btn danger sm" type="submit">Удалить задачу</button></form>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var total = document.getElementById('id_tests-TOTAL_FORMS');
+  var tpl = document.getElementById('test-template').innerHTML;
+  document.getElementById('add-test').addEventListener('click', function () {
+    var i = parseInt(total.value, 10);
+    var wrap = document.createElement('div');
+    wrap.innerHTML = tpl.replace(/__prefix__/g, i);
+    var node = wrap.firstElementChild;
+    node.querySelector('.test-no').textContent = 'Тест ' + (i + 1);
+    document.getElementById('tests').appendChild(node);
+    total.value = i + 1;
+    node.querySelector('textarea').focus();
+  });
+})();
+</script>
+{% endblock %}

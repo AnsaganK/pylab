@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+{% block title %}Студенты списком{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="{% url 't_groups' %}">Группы</a></div>
+<div class="head"><h1>Добавить студентов списком</h1></div>
+<form method="post" class="sheet" style="max-width:640px">{% csrf_token %}
+  {% for f in form %}{% include "core/_field.html" %}{% endfor %}
+  <p class="small muted">Логин собирается из фамилии и первой буквы имени латиницей: «Сейтқали Ансаған» → <span class="mono">seitqali.a</span>. Совпадения получают цифру в конце.</p>
+  <button class="btn primary" type="submit">Создать аккаунты</button>
+</form>
+{% endblock %}

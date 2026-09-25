@@ -1,0 +1,52 @@
+{% load static %}<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}PyLab{% endblock %} — PyLab</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23FFD43B'/><text x='16' y='22' font-size='16' font-family='monospace' font-weight='700' text-anchor='middle' fill='%231C2433'>py</text></svg>">
+<link rel="stylesheet" href="{% static 'vendor/codemirror/lib/codemirror.css' %}">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+{% block head %}{% endblock %}
+</head>
+<body>
+{% with n=request.resolver_match.url_name %}
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="{% url 'home' %}"><span class="brand-mark">py</span>PyLab</a>
+    {% if user.is_authenticated %}
+    <nav class="nav">
+      {% if user.is_teacher %}
+        <a href="{% url 't_dashboard' %}" class="{% if n == 't_dashboard' %}on{% endif %}">Главная</a>
+        <a href="{% url 't_lessons' %}" class="{% if n == 't_lessons' or n == 't_lesson_new' or n == 't_lesson_edit' or n == 't_task_new' or n == 't_task_edit' or n == 't_tasks_import' %}on{% endif %}">Уроки и задачи</a>
+        <a href="{% url 't_groups' %}" class="{% if n == 't_groups' or n == 't_group' or n == 't_student' or n == 't_student_new' or n == 't_students_bulk' or n == 't_students_roster' %}on{% endif %}">Группы</a>
+        <a href="{% url 't_submissions' %}" class="{% if n == 't_submissions' or n == 't_submission' %}on{% endif %}">Отправки</a>
+        <a href="{% url 't_results' %}" class="{% if n == 't_results' %}on{% endif %}">Сводная</a>
+        <a href="{% url 't_log' %}" class="{% if n == 't_log' %}on{% endif %}">Журнал</a>
+        <a href="{% url 't_sandbox' %}" class="{% if n == 't_sandbox' %}on{% endif %}">Песочница</a>
+      {% else %}
+        <a href="{% url 's_lessons' %}" class="{% if n == 's_lessons' %}on{% endif %}">Мои задачи</a>
+      {% endif %}
+    </nav>
+    <div class="top-user">
+      <span>{{ user.display_name }}{% if user.group %}, {{ user.group }}{% endif %}</span>
+      <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button type="submit">Выйти</button></form>
+    </div>
+    {% endif %}
+  </div>
+</header>
+{% endwith %}
+<main class="page {% block page_class %}{% endblock %}">
+  {% if messages %}<ul class="msgs">{% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{% static 'vendor/codemirror/lib/codemirror.js' %}"></script>
+<script src="{% static 'vendor/codemirror/mode/python/python.js' %}"></script>
+<script src="{% static 'vendor/codemirror/addon/edit/matchbrackets.js' %}"></script>
+<script src="{% static 'vendor/codemirror/addon/edit/closebrackets.js' %}"></script>
+<script src="{% static 'vendor/codemirror/addon/selection/active-line.js' %}"></script>
+<script src="{% static 'vendor/codemirror/addon/comment/comment.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,58 @@
+{% extends "core/base.html" %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block content %}
+<div class="crumbs no-print"><a href="{% url 't_groups' %}">Группы</a></div>
+<div class="head no-print">
+  <div><h1>{{ group.name }}</h1><p class="muted">{{ group.description|default:"" }} {{ students|length }} студ.</p></div>
+  <div class="actions">
+    <a class="btn" href="{% url 't_results' %}?group={{ group.pk }}">Сводная таблица</a>
+    <a class="btn" href="{% url 't_students_roster' %}?group={{ group.pk }}">Список из расписания</a>
+    <a class="btn" href="{% url 't_students_bulk' %}?group={{ group.pk }}">Добавить списком</a>
+    <a class="btn primary" href="{% url 't_student_new' %}?group={{ group.pk }}">Добавить студента</a>
+  </div>
+</div>
+
+{% if credentials %}
+<div class="cred-box">
+  <h3>Логины и пароли — {{ group.name }}</h3>
+  <p class="small no-print">Пароли показываются только сейчас. Распечатайте или перепишите их; позже можно выдать новый пароль кнопкой «Новый пароль».</p>
+  <table class="t" style="background:transparent">
+    <tr><th>ФИО</th><th>Логин</th><th>Пароль</th></tr>
+    {% for name, login, pwd in credentials %}<tr><td>{{ name }}</td><td class="cred">{{ login }}</td><td class="cred">{{ pwd }}</td></tr>{% endfor %}
+  </table>
+  <p class="no-print" style="margin:.75rem 0 0"><button class="btn sm" onclick="window.print()">Распечатать</button></p>
+</div>
+{% endif %}
+
+<div class="table-wrap no-print">
+  {% if students %}
+  <table class="t">
+    <tr><th>ФИО</th><th>ID / логин</th><th>Решено задач</th><th>Последняя активность</th><th>IP</th><th></th></tr>
+    {% for s in students %}
+    <tr>
+      <td><a href="{% url 't_submissions' %}?student={{ s.username|urlencode }}">{{ s.display_name }}</a></td>
+      <td class="mono">{{ s.username }}{% if s.id_login %} <span class="tag" style="font-family:var(--ui)">по ID</span>{% endif %}</td>
+      <td class="num">{{ s.solved }}</td>
+      <td class="muted small">{% if s.last_seen %}{{ s.last_seen.created_at|date:"d.m H:i" }}{% else %}{{ s.last_login|date:"d.m.Y H:i"|default:"не входил" }}{% endif %}</td>
+      <td class="mono small">{% if s.last_seen %}<a href="{% url 't_log' %}?period=week&ip={{ s.last_seen.ip }}">{{ s.last_seen.ip }}</a>{% endif %}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <a class="btn sm" href="{% url 't_student' s.pk %}">Изменить</a>
+        {% if not s.id_login %}<form class="inline" method="post" action="{% url 't_student_password' s.pk %}">{% csrf_token %}<button class="btn sm" type="submit">Новый пароль</button></form>{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<div class="empty">В группе пока нет студентов. Удобнее всего добавить их списком — вставьте ФИО построчно.</div>{% endif %}
+</div>
+
+<details class="sheet no-print" style="margin-top:1.5rem">
+  <summary style="cursor:pointer;font-weight:500">Настройки группы</summary>
+  <form method="post" style="margin-top:1rem">{% csrf_token %}
+    <div class="grid2">{% for f in form %}{% include "core/_field.html" %}{% endfor %}</div>
+    <button class="btn primary" type="submit">Сохранить</button>
+  </form>
+  <form method="post" action="{% url 't_group_delete' group.pk %}" onsubmit="return confirm('Удалить группу {{ group.name }}?')" style="margin-top:1rem">{% csrf_token %}
+    <button class="btn danger sm" type="submit">Удалить группу</button>
+  </form>
+</details>
+{% endblock %}

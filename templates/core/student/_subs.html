@@ -1,0 +1,15 @@
+<div data-busy="{% if busy %}1{% endif %}" data-best="{% if current %}{% if current.is_good %}solved{% elif current.tone == 'wait' %}waiting{% else %}failed{% endif %}{% endif %}">
+<template class="state-tpl">{% include "core/student/_state.html" %}</template>
+{% if subs %}
+<div class="table-wrap"><table class="t">
+  {% for s in subs %}
+  <tr class="link {% if s.status == 'running' %}running{% endif %}">
+    <td class="num muted small"><a href="{% url 's_submission' s.pk %}">{{ s.created_at|date:"H:i:s" }}</a></td>
+    <td>{% include "core/_status.html" %}</td>
+    <td>{% include "core/_strip.html" %}</td>
+    <td style="text-align:right"><a class="small" href="{% url 's_submission' s.pk %}">код</a></td>
+  </tr>
+  {% endfor %}
+</table></div>
+{% else %}<p class="muted small">Вы ещё не отправляли решения.</p>{% endif %}
+</div>
