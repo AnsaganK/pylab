@@ -20,6 +20,15 @@ def _next_url(request):
     return "home"
 
 
+def _remember_session(request, user):
+    """Запоминаем, какая сессия у студента сейчас главная."""
+    if user.is_staff:
+        return
+    if not request.session.session_key:
+        request.session.save()
+    User.objects.filter(pk=user.pk).update(session_key=request.session.session_key)
+
+
 def login_view(request):
     """Студенты входят по ID, преподаватель (и студенты с паролем) — по логину и паролю."""
     if not _teacher_exists():
@@ -46,6 +55,7 @@ def login_view(request):
                 netlog.log(request, AccessLog.LOGIN_FAIL, details=f"ID {value}"[:200])
             else:
                 login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+                _remember_session(request, user)
                 netlog.log(request, AccessLog.LOGIN, user=user, details="по ID")
                 return redirect(_next_url(request))
         else:
@@ -56,6 +66,7 @@ def login_view(request):
                 netlog.log(request, AccessLog.LOGIN_FAIL, details=f"логин {value}"[:200])
             else:
                 login(request, user)
+                _remember_session(request, user)
                 netlog.log(request, AccessLog.LOGIN, user=user, details="по паролю")
                 return redirect(_next_url(request))
 

@@ -8,6 +8,7 @@
   <form method="post" class="sheet">{% csrf_token %}
     <input type="hidden" name="mode" value="{{ mode }}">
     <input type="hidden" name="next" value="{{ next }}">
+    {% for m in messages %}<div class="notice">{{ m }}</div>{% endfor %}
     {% if error %}<ul class="errorlist" style="margin-bottom:1rem"><li>{{ error }}</li></ul>{% endif %}
     {% if mode == "id" %}
       <div class="field">

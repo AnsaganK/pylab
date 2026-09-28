@@ -194,11 +194,21 @@
     });
   });
 
+  // Под этим ID вошли на другом компьютере — показываем причину и уходим на вход
+  function kicked(r) {
+    clearTimeout(pollTimer);
+    alert(r.error || "Вы вышли из аккаунта.");
+    window.location.href = "/login/";
+    return { error: r.error || "Вы вышли из аккаунта." };
+  }
+
   function post(url, data) {
     var body = new FormData();
     Object.keys(data).forEach(function (k) { body.append(k, data[k]); });
-    return fetch(url, { method: "POST", body: body, headers: { "X-CSRFToken": csrf }, credentials: "same-origin" })
+    return fetch(url, { method: "POST", body: body, headers: { "X-CSRFToken": csrf, "X-Requested-With": "fetch" }, credentials: "same-origin" })
       .then(function (r) {
+        if (r.status === 401) return r.json().then(kicked);
+        if (r.redirected && r.url.indexOf("/login") >= 0) { window.location.href = "/login/"; return { error: "Сессия закончилась, войдите снова." }; }
         return r.json().catch(function () { return { error: "Ошибка сервера (" + r.status + ")." }; });
       });
   }
@@ -244,8 +254,14 @@
     }
   }
   function refreshSubs() {
-    fetch(subsBox.dataset.url, { credentials: "same-origin" }).then(function (r) { return r.text(); })
+    fetch(subsBox.dataset.url, { credentials: "same-origin", headers: { "X-Requested-With": "fetch" } })
+      .then(function (r) {
+        if (r.status === 401) return r.json().then(kicked);
+        if (r.redirected && r.url.indexOf("/login") >= 0) { window.location.href = "/login/"; return null; }
+        return r.text();
+      })
       .then(function (html) {
+        if (typeof html !== "string") return;
         subsBox.innerHTML = html;
         applyState();
         clearTimeout(pollTimer);

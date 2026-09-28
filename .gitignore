@@ -1,0 +1,43 @@
+# --- Настройки с секретами ---
+# SECRET_KEY, пароли БД и пути живут в constants.py — в репозиторий не кладём.
+# Шаблон без секретов: constants.example.py (скопируйте в constants.py после клонирования).
+constants.py
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Виртуальные окружения (у Windows и Ubuntu свои) ---
+venv/
+.venv/
+env/
+
+# --- Django ---
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+staticfiles/
+media/
+
+# --- PyLab ---
+# временные файлы запусков кода студентов
+sandbox_tmp/
+
+# --- Логи ---
+*.log
+logs/
+
+# --- Редакторы и ОС ---
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini

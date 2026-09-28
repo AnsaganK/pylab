@@ -82,3 +82,17 @@ def suspicious(since):
     shared_ids.sort(key=lambda x: -len(x["ips"]))
     shared_ips.sort(key=lambda x: -len(x["users"]))
     return shared_ids, shared_ips
+
+
+def kicked(since):
+    """Студенты, которых вытесняли другим входом: [{user, count, last, ips}]."""
+    rows = (AccessLog.objects.filter(created_at__gte=since, action=AccessLog.KICKED, user__isnull=False)
+            .select_related("user", "user__group").order_by("created_at"))
+    by_user = {}
+    for r in rows:
+        item = by_user.setdefault(r.user_id, {"user": r.user, "count": 0, "last": None, "ips": set()})
+        item["count"] += 1
+        item["last"] = r.created_at
+        if r.ip:
+            item["ips"].add(r.ip)
+    return sorted(by_user.values(), key=lambda x: -x["count"])

@@ -12,7 +12,7 @@ from . import importer, netlog, roster
 from .forms import (BulkStudentsForm, GroupForm, ImportTasksForm, LessonForm,
                     ReviewForm, RosterForm, StudentForm, TaskForm, TestCaseFormSet)
 from .judge import queue, sandbox
-from .models import AccessLog, Lesson, StudyGroup, Submission, Task
+from .models import AccessLog, Lesson, SiteSettings, StudyGroup, Submission, Task
 from .translit import make_login, make_password
 from .utils import best_submissions
 
@@ -39,10 +39,11 @@ def dashboard(request):
     )
     recent = Submission.objects.select_related("user", "user__group", "task")[:15]
     groups = StudyGroup.objects.annotate(n=Count("students"))
-    shared_ids, shared_ips = netlog.suspicious(timezone.now() - timezone.timedelta(hours=3))
+    since3h = timezone.now() - timezone.timedelta(hours=3)
+    shared_ids, shared_ips = netlog.suspicious(since3h)
     return render(request, "core/teacher/dashboard.html", {
         "stats": stats, "recent": recent, "groups": groups,
-        "alerts": len(shared_ids) + len(shared_ips),
+        "alerts": len(shared_ids) + len(shared_ips) + len(netlog.kicked(since3h)),
         "review_total": Submission.objects.filter(status=Submission.REVIEW).count(),
     })
 
@@ -445,6 +446,7 @@ def access_log(request):
         period = "3h"
     since = timezone.now() - timezone.timedelta(hours=PERIODS[period][1])
     shared_ids, shared_ips = netlog.suspicious(since)
+    kicked = netlog.kicked(since)
 
     qs = AccessLog.objects.filter(created_at__gte=since).select_related("user", "user__group")
     f = {k: request.GET.get(k, "") for k in ("group", "student", "ip", "action")}
@@ -460,11 +462,26 @@ def access_log(request):
     query = request.GET.copy()
     query.pop("page", None)
     return render(request, "core/teacher/access_log.html", {
-        "shared_ids": shared_ids, "shared_ips": shared_ips,
+        "shared_ids": shared_ids, "shared_ips": shared_ips, "kicked": kicked,
+        "single_session": SiteSettings.get().single_session,
         "page": page, "f": f, "query": query.urlencode(),
         "period": period, "periods": [(k, v[0]) for k, v in PERIODS.items()],
         "groups": StudyGroup.objects.all(), "actions": AccessLog.ACTION_CHOICES,
     })
+
+
+# --- Настройки сайта ---
+
+@teacher_required
+def site_settings(request):
+    obj = SiteSettings.get()
+    if request.method == "POST":
+        obj.single_session = "single_session" in request.POST
+        obj.save()
+        messages.success(request, "Настройки сохранены. "
+                         + ("Один вход на аккаунт — включено." if obj.single_session else "Один вход на аккаунт — выключено."))
+        return redirect(request.POST.get("next") or "t_settings")
+    return render(request, "core/teacher/settings.html", {"s": obj})
 
 
 # --- Песочница -------------------------------------------------------------------

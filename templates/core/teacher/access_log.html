@@ -7,6 +7,34 @@
   <div class="gate">{% for key, label in periods %}<a class="btn sm {% if key == period %}go{% endif %}" href="?period={{ key }}">{{ label }}</a>{% endfor %}</div>
 </div>
 
+<form method="post" action="{% url 't_settings' %}" class="setting-bar">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  {% if single_session %}
+    <span><span class="st good">Включено</span> Один вход на аккаунт: при входе на другом ПК прежний выходит.</span>
+    <button class="btn sm" type="submit">Выключить</button>
+  {% else %}
+    <input type="hidden" name="single_session" value="on">
+    <span><span class="st wait">Выключено</span> Один вход на аккаунт: под одним ID можно сидеть на нескольких ПК сразу.</span>
+    <button class="btn sm" type="submit">Включить</button>
+  {% endif %}
+</form>
+
+{% if kicked %}
+<section class="sheet" style="margin-bottom:1rem">
+  <h3 style="margin-top:0">Вытеснения другим входом</h3>
+  <p class="muted small">Под этим ID вошли в другом месте, и прежний компьютер выкинуло. Одно-два вытеснения — обычно студент пересел. Много подряд — двое сидят под одним ID.</p>
+  <table class="t small">
+    <tr><th>Студент</th><th>ID</th><th>Сколько раз</th><th>Последнее</th><th>IP выкинутых</th></tr>
+    {% for k in kicked %}
+    <tr><td>{{ k.user.display_name }}</td><td class="mono">{{ k.user.username }}</td>
+        <td class="num">{% if k.count > 2 %}<span class="st bad">{{ k.count }}</span>{% else %}{{ k.count }}{% endif %}</td>
+        <td class="num muted">{{ k.last|date:"d.m H:i" }}</td>
+        <td class="mono">{% for ip in k.ips %}{{ ip }}{% if not forloop.last %}, {% endif %}{% endfor %}</td></tr>
+    {% endfor %}
+  </table>
+</section>
+{% endif %}
+
 <div class="pair">
   <section class="sheet">
     <h3 style="margin-top:0">Один ID — несколько компьютеров</h3>
@@ -53,7 +81,7 @@
       <td class="mono small">{{ e.user.username|default:"" }}</td>
       <td class="muted">{{ e.user.group|default:"" }}</td>
       <td class="mono small"><a href="?period={{ period }}&ip={{ e.ip }}">{{ e.ip|default:"" }}</a></td>
-      <td>{% if e.action == 'login_fail' %}<span class="st bad">{{ e.get_action_display }}</span>{% elif e.action == 'login' %}<span class="st wait">{{ e.get_action_display }}</span>{% else %}{{ e.get_action_display }}{% endif %}</td>
+      <td>{% if e.action == 'login_fail' %}<span class="st bad">{{ e.get_action_display }}</span>{% elif e.action == 'kicked' %}<span class="st limit">{{ e.get_action_display }}</span>{% elif e.action == 'login' %}<span class="st wait">{{ e.get_action_display }}</span>{% else %}{{ e.get_action_display }}{% endif %}</td>
       <td class="muted small">{{ e.details }}</td>
     </tr>
     {% endfor %}

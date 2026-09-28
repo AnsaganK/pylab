@@ -103,6 +103,8 @@ def run_code(request, pk):
     stdin = request.POST.get("stdin", "")
     if len(code) > MAX_CODE_SIZE or len(stdin) > MAX_STDIN_SIZE:
         return JsonResponse({"error": "Слишком большой код или ввод."}, status=400)
+    if "\x00" in code or "\x00" in stdin:
+        return JsonResponse({"error": "В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку вручную."}, status=400)
     netlog.log(request, AccessLog.RUN, details=task.title)
     syntax = queue.check_syntax(code)
     if syntax:
@@ -140,6 +142,9 @@ def submit(request, pk):
         return JsonResponse({"error": "Код пустой."}, status=400)
     if len(code) > MAX_CODE_SIZE:
         return JsonResponse({"error": "Слишком большой код."}, status=400)
+    if "\x00" in code:
+        # PostgreSQL не хранит символ NUL в текстовых полях — без проверки была бы ошибка 500
+        return JsonResponse({"error": "В коде есть недопустимый символ (NUL). Перепечатайте строку вручную."}, status=400)
     if Submission.objects.filter(user=request.user, status__in=Submission.IN_PROGRESS).count() >= 3:
         return JsonResponse({"error": "Дождитесь проверки предыдущих отправок."}, status=429)
     status = Submission.PENDING if task.is_io else Submission.REVIEW

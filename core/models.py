@@ -28,6 +28,8 @@ class User(AbstractUser):
     )
     # Студенты из расписания входят только по своему ID (он же username)
     id_login = models.BooleanField("Вход по ID", default=False)
+    # ключ сессии последнего входа — для режима «один вход на аккаунт»
+    session_key = models.CharField(max_length=40, blank=True, default="")
 
     class Meta:
         ordering = ["full_name", "username"]
@@ -206,9 +208,11 @@ class AccessLog(models.Model):
     LOGIN_FAIL = "login_fail"
     RUN = "run"
     SUBMIT = "submit"
+    KICKED = "kicked"
     ACTION_CHOICES = [
         (LOGIN, "Вход"),
         (LOGIN_FAIL, "Неудачный вход"),
+        (KICKED, "Вытеснен другим входом"),
         (RUN, "Запуск"),
         (SUBMIT, "Отправка"),
     ]
@@ -224,3 +228,33 @@ class AccessLog(models.Model):
     class Meta:
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["ip", "created_at"]), models.Index(fields=["user", "created_at"])]
+
+
+class SiteSettings(models.Model):
+    """Настройки, которые преподаватель меняет прямо на сайте. Всегда одна запись (pk=1)."""
+    single_session = models.BooleanField(
+        "Один вход на аккаунт студента", default=True,
+        help_text="При входе под ID на другом компьютере прежний компьютер выходит из аккаунта.",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Настройки сайта"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+        _settings_cache.clear()
+
+    @classmethod
+    def get(cls):
+        import time
+        cached = _settings_cache.get("obj")
+        if cached and time.monotonic() - cached[1] < 5:
+            return cached[0]
+        obj, _ = cls.objects.get_or_create(pk=1)
+        _settings_cache["obj"] = (obj, time.monotonic())
+        return obj
+
+
+_settings_cache = {}

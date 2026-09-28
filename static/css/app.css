@@ -284,3 +284,10 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 .io.no-input.show-input .stdin-col { display: block; }
 .io.no-input.show-input #show-stdin { display: none; }
 .run-hint { margin: .5rem 0 0; padding: .4rem .6rem; border-left: 3px solid var(--marker); background: var(--marker-soft); font-family: var(--ui); font-size: .87rem; color: var(--ink); }
+
+/* ---------- Настройки ---------- */
+.setting { display: flex; gap: .75rem; align-items: flex-start; margin-bottom: 1.25rem; cursor: pointer; }
+.setting input { margin-top: .25rem; flex: none; }
+.setting > span { display: flex; flex-direction: column; gap: .35rem; }
+.setting-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: .6rem 1rem; margin-bottom: 1rem; font-size: .93rem; }
+.notice { background: var(--marker-soft); border-left: 3px solid var(--marker); padding: .6rem .75rem; margin-bottom: 1rem; font-size: .9rem; border-radius: 0 var(--radius) var(--radius) 0; }

@@ -23,6 +23,7 @@
         <a href="{% url 't_submissions' %}" class="{% if n == 't_submissions' or n == 't_submission' %}on{% endif %}">Отправки</a>
         <a href="{% url 't_results' %}" class="{% if n == 't_results' %}on{% endif %}">Сводная</a>
         <a href="{% url 't_log' %}" class="{% if n == 't_log' %}on{% endif %}">Журнал</a>
+        <a href="{% url 't_settings' %}" class="{% if n == 't_settings' %}on{% endif %}">Настройки</a>
         <a href="{% url 't_sandbox' %}" class="{% if n == 't_sandbox' %}on{% endif %}">Песочница</a>
       {% else %}
         <a href="{% url 's_lessons' %}" class="{% if n == 's_lessons' %}on{% endif %}">Мои задачи</a>

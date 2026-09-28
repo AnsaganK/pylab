@@ -48,4 +48,5 @@ urlpatterns = [
     path("t/results/", t.results, name="t_results"),
     path("t/sandbox/", t.sandbox_check, name="t_sandbox"),
     path("t/log/", t.access_log, name="t_log"),
+    path("t/settings/", t.site_settings, name="t_settings"),
 ]
