@@ -86,6 +86,9 @@ if constants.DB_ENGINE == "postgres":
             "PASSWORD": constants.PG_PASSWORD,
             "HOST": constants.PG_HOST,
             "PORT": constants.PG_PORT,
+            # держим соединение с базой открытым, а не открываем на каждый запрос
+            "CONN_MAX_AGE": 60,
+            "CONN_HEALTH_CHECKS": True,
         }
     }
 else:
@@ -136,6 +139,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # для онлайна: collectstatic + nginx
+
+# В именах собранных файлов — хэш содержимого (app.3f9a1c.css).
+# Браузер кэширует статику надолго, а после обновления сразу получает новую версию,
+# без Ctrl+F5. При DEBUG=True используются обычные имена.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"},
+}
 
 AUTH_USER_MODEL = 'core.User'
 LOGIN_URL = 'login'
