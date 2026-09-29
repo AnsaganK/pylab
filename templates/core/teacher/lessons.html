@@ -23,6 +23,7 @@
       <a class="btn sm" href="{% url 't_lesson_edit' lesson.pk %}">Изменить</a>
       <a class="btn sm" href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a>
       <a class="btn sm" href="{% url 't_tasks_import' %}?lesson={{ lesson.pk }}">Импорт</a>
+      {% if lesson.tasks.all %}<a class="btn sm" href="{% url 't_lesson_pdf' lesson.pk %}" title="Все задачи урока одним PDF — на случай, если сайт недоступен">PDF</a>{% endif %}
     </div>
   </div>
   {% for task in lesson.tasks.all %}

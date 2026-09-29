@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>{{ lesson.title }}</title>
+<style>
+@font-face { font-family: "PDF Sans"; font-weight: 400; font-style: normal; src: url("{{ fonts }}/pdf/DejaVuSans.ttf") format("truetype"); }
+@font-face { font-family: "PDF Sans"; font-weight: 700; font-style: normal; src: url("{{ fonts }}/pdf/DejaVuSans-Bold.ttf") format("truetype"); }
+@font-face { font-family: "PDF Sans"; font-weight: 400; font-style: italic; src: url("{{ fonts }}/pdf/DejaVuSans-Oblique.ttf") format("truetype"); }
+@font-face { font-family: "PDF Mono"; font-weight: 400; src: url("{{ fonts }}/pdf/DejaVuSansMono.ttf") format("truetype"); }
+
+@page {
+  size: A4;
+  margin: 16mm 15mm 18mm;
+  @top-left { content: "{{ header_css }}"; font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
+  @bottom-left { content: "{{ site_css }}"; font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
+  @bottom-right { content: "стр. " counter(page) " из " counter(pages); font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
+}
+* { box-sizing: border-box; }
+body { font-family: "PDF Sans", "DejaVu Sans", Arial, sans-serif; font-size: 10pt; line-height: 1.45; color: #1c2433; margin: 0; }
+code, pre, .mono { font-family: "PDF Mono", "DejaVu Sans Mono", Consolas, monospace; font-size: 9pt; font-variant-ligatures: none; }
+.cover { border-bottom: 2px solid #1c2433; padding-bottom: 8pt; margin-bottom: 14pt; }
+.cover .course { font-size: 9pt; color: #6b7280; text-transform: uppercase; letter-spacing: .06em; }
+.cover h1 { font-size: 18pt; margin: 2pt 0 4pt; }
+.cover .topic { color: #374151; }
+.cover .how { margin-top: 8pt; font-size: 9pt; color: #374151; background: #fff3c2; padding: 5pt 8pt; border-left: 3pt solid #ffd43b; }
+.task { margin-bottom: 16pt; }
+.task + .task { border-top: 1px solid #d8dde5; padding-top: 12pt; }
+.task h2 { font-size: 13pt; margin: 0 0 2pt; break-after: avoid; }
+.task h2 .no { color: #6b7280; margin-right: 5pt; }
+.limits { font-size: 8.5pt; color: #6b7280; margin-bottom: 6pt; }
+.task h3 { font-size: 10.5pt; margin: 8pt 0 2pt; break-after: avoid; }
+.task p { margin: 0 0 5pt; }
+.task ul, .task ol { margin: 0 0 5pt; padding-left: 16pt; }
+.task table { border-collapse: collapse; margin: 4pt 0 6pt; font-size: 9.5pt; }
+.task table th, .task table td { border: 1px solid #d8dde5; padding: 2pt 6pt; text-align: left; }
+.task code { background: #f3f5f8; padding: 0 2pt; border-radius: 2pt; }
+.task pre { background: #f3f5f8; padding: 5pt 7pt; border-radius: 3pt; white-space: pre-wrap; margin: 3pt 0 6pt; }
+.task pre code { background: none; padding: 0; }
+.samples { width: 100%; border-collapse: collapse; margin-top: 3pt; break-inside: avoid; }
+.samples th { text-align: left; font-size: 8.5pt; color: #6b7280; font-weight: 400; padding: 2pt 6pt; border: 1px solid #d8dde5; background: #fafbfc; }
+.samples td { vertical-align: top; border: 1px solid #d8dde5; padding: 4pt 6pt; width: 50%; }
+.samples td pre { margin: 0; background: none; padding: 0; }
+.manual { font-size: 9pt; color: #6b7280; }
+.print-bar { font: 14px system-ui, sans-serif; background: #1c2433; color: #fff; padding: 10px 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.print-bar button { font: inherit; background: #ffd43b; border: 0; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+@media print { .print-bar { display: none; } }
+@media screen { .sheet { max-width: 800px; margin: 24px auto; padding: 0 16px; } }
+</style>
+</head>
+<body>
+{% if print_mode %}
+<div class="print-bar">
+  <span>Серверная выгрузка PDF не настроена. Нажмите «Печать» и выберите «Сохранить как PDF».</span>
+  <button type="button" onclick="window.print()">Печать / PDF</button>
+</div>
+{% endif %}
+<div class="sheet">
+  <div class="cover">
+    <div class="course">{{ course }}</div>
+    <h1>{{ lesson.title }}</h1>
+    {% if lesson.topic %}<div class="topic">{{ lesson.topic }}</div>{% endif %}
+    <div class="how">Задач: {{ blocks|length }}. Решения отправляйте на {{ site_url }}, когда сайт станет доступен. Сверяйте свою программу с примерами: вывод должен совпадать точно.</div>
+  </div>
+
+  {% for b in blocks %}
+  <section class="task">
+    <h2><span class="no">{{ b.n }}.</span>{{ b.task.title }}</h2>
+    <div class="limits">
+      {% if b.task.is_io %}Время: {{ b.task.time_limit|floatformat:"-1" }} с · Память: {{ b.task.memory_limit }} МБ{% else %}Решение проверяет преподаватель{% endif %}{% if not b.has_input %} · Без ввода{% endif %}
+    </div>
+    {{ b.statement }}
+    {% if b.task.input_format %}<h3>Входные данные</h3>{{ b.input_format }}{% endif %}
+    {% if b.task.output_format %}<h3>Выходные данные</h3>{{ b.output_format }}{% endif %}
+    {% if b.samples %}
+    <h3>Пример{{ b.samples|length|pluralize:"ы" }}</h3>
+    <table class="samples">
+      <tr>{% if b.has_input %}<th>Ввод</th>{% endif %}<th>Вывод</th></tr>
+      {% for s in b.samples %}
+      <tr>{% if b.has_input %}<td><pre>{{ s.input_data }}</pre></td>{% endif %}<td><pre>{{ s.output_data }}</pre></td></tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+</body>
+</html>

@@ -6,6 +6,7 @@
   <h1>{% if task %}{{ task.title }}{% else %}Новая задача{% endif %}</h1>
   {% if task %}<div class="actions">
     <a class="btn" href="{% url 's_task' task.pk %}" target="_blank">Как видит студент</a>
+    <a class="btn" href="{% url 't_task_pdf' task.pk %}">PDF</a>
     <a class="btn" href="{% url 't_submissions' %}?task={{ task.pk }}">Отправки</a>
   </div>{% endif %}
 </div>

@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .decorators import teacher_required
-from . import importer, netlog, roster
+from . import importer, netlog, pdf, roster
 from .forms import (BulkStudentsForm, GroupForm, ImportTasksForm, LessonForm,
                     ReviewForm, RosterForm, StudentForm, TaskForm, TestCaseFormSet)
 from .judge import queue, sandbox
@@ -226,6 +226,21 @@ def lesson_form(request, pk=None):
         messages.success(request, "Урок сохранён.")
         return redirect("t_lessons")
     return render(request, "core/teacher/lesson_form.html", {"form": form, "lesson": lesson})
+
+
+@teacher_required
+def lesson_pdf(request, pk):
+    lesson = get_object_or_404(Lesson, pk=pk)
+    tasks = lesson.tasks.prefetch_related("tests")
+    if request.GET.get("open_only"):
+        tasks = tasks.filter(is_open=True)
+    return pdf.render_lesson(request, lesson, list(tasks), f"{lesson.title}.pdf")
+
+
+@teacher_required
+def task_pdf(request, pk):
+    task = get_object_or_404(Task.objects.select_related("lesson").prefetch_related("tests"), pk=pk)
+    return pdf.render_lesson(request, task.lesson, [task], f"{task.title}.pdf")
 
 
 @teacher_required
