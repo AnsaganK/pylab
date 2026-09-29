@@ -19,7 +19,7 @@
       {% if user.is_teacher %}
         <a href="{% url 't_dashboard' %}" class="{% if n == 't_dashboard' %}on{% endif %}">Главная</a>
         <a href="{% url 't_lessons' %}" class="{% if n == 't_lessons' or n == 't_lesson_new' or n == 't_lesson_edit' or n == 't_task_new' or n == 't_task_edit' or n == 't_tasks_import' %}on{% endif %}">Уроки и задачи</a>
-        <a href="{% url 't_groups' %}" class="{% if n == 't_groups' or n == 't_group' or n == 't_student' or n == 't_student_new' or n == 't_students_bulk' or n == 't_students_roster' %}on{% endif %}">Группы</a>
+        <a href="{% url 't_groups' %}" class="{% if n == 't_groups' or n == 't_group' or n == 't_section' or n == 't_student' or n == 't_student_new' or n == 't_students_bulk' or n == 't_students_roster' %}on{% endif %}">Группы</a>
         <a href="{% url 't_submissions' %}" class="{% if n == 't_submissions' or n == 't_submission' %}on{% endif %}">Отправки</a>
         <a href="{% url 't_results' %}" class="{% if n == 't_results' %}on{% endif %}">Сводная</a>
         <a href="{% url 't_log' %}" class="{% if n == 't_log' %}on{% endif %}">Журнал</a>

@@ -291,3 +291,7 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 .setting > span { display: flex; flex-direction: column; gap: .35rem; }
 .setting-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: .6rem 1rem; margin-bottom: 1rem; font-size: .93rem; }
 .notice { background: var(--marker-soft); border-left: 3px solid var(--marker); padding: .6rem .75rem; margin-bottom: 1rem; font-size: .9rem; border-radius: 0 var(--radius) var(--radius) 0; }
+
+/* ---------- Занятия и группы на странице уроков ---------- */
+.gates { display: flex; flex-direction: column; gap: .3rem; align-items: flex-end; }
+.gate-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-right: .15rem; }

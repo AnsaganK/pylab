@@ -11,14 +11,14 @@
   <h3>Проверьте перед сохранением: {{ preview|length }} студ.</h3>
   <div class="table-wrap" style="margin-bottom:1rem">
     <table class="t">
-      <tr><th>ID</th><th>ФИО</th><th>Группа</th><th></th></tr>
+      <tr><th>Занятие</th><th>ID</th><th>ФИО</th><th>Группа</th><th></th></tr>
       {% for r in preview %}
-      <tr><td class="mono">{{ r.sid }}</td><td>{{ r.name }}</td><td>{{ r.group|default:"из формы" }}</td>
+      <tr><td class="mono" title="{{ r.section_title }}">{{ r.section|default:"—" }}</td><td class="mono">{{ r.sid }}</td><td>{{ r.name }}</td><td>{{ r.group|default:"из формы" }}</td>
           <td class="small">{% if r.exists %}<span class="tag">обновится</span>{% else %}<span class="st good">новый</span>{% endif %}</td></tr>
       {% endfor %}
     </table>
   </div>
-  {% if skipped %}<p class="small muted">Пропущены строки без ID: {% for l in skipped %}«{{ l|truncatechars:60 }}»{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+  {% if skipped %}<p class="small muted">Не распознаны и пропущены: {% for l in skipped %}«{{ l|truncatechars:60 }}»{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
   <div style="display:flex;gap:.5rem;flex-wrap:wrap">
     <button class="btn go" type="submit" name="confirm" value="1">Сохранить студентов</button>
     <button class="btn" type="submit">Проверить ещё раз</button>

@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block title %}Занятие {{ section.code }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="{% url 't_groups' %}">Группы и занятия</a></div>
+<div class="head">
+  <div><h1><span class="mono">{{ section.code }}</span> {{ section.title }}</h1><p class="muted">Занятие из расписания: {{ students|length }} студ. из разных групп</p></div>
+  <div class="actions">
+    <a class="btn" href="{% url 't_results' %}?who=s{{ section.pk }}">Сводная таблица</a>
+    <a class="btn" href="{% url 't_submissions' %}?section={{ section.pk }}">Отправки</a>
+    <a class="btn primary" href="{% url 't_students_roster' %}">Обновить список</a>
+  </div>
+</div>
+{% include "core/teacher/_students_table.html" with show_group=1 empty_text="На этом занятии пока нет студентов." %}
+<details class="sheet" style="margin-top:1.5rem">
+  <summary style="cursor:pointer;font-weight:500">Настройки занятия</summary>
+  <form method="post" style="margin-top:1rem">{% csrf_token %}
+    <div class="grid2">{% for f in form %}{% include "core/_field.html" %}{% endfor %}</div>
+    <button class="btn primary" type="submit">Сохранить</button>
+  </form>
+  <form method="post" action="{% url 't_section_delete' section.pk %}" onsubmit="return confirm('Удалить занятие {{ section.code }}? Студенты и их отправки останутся, они просто перестанут относиться к этому занятию.')" style="margin-top:1rem">{% csrf_token %}
+    <button class="btn danger sm" type="submit">Удалить занятие</button>
+  </form>
+</details>
+{% endblock %}

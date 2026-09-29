@@ -2,7 +2,7 @@
 {% block title %}Уроки и задачи{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Уроки и задачи</h1><p class="muted">Нажмите на группу, чтобы открыть или закрыть для неё урок. Жёлтые — открыты.</p></div>
+  <div><h1>Уроки и задачи</h1><p class="muted">Нажмите на занятие или группу, чтобы открыть или закрыть урок. Жёлтые — открыты. Студент видит урок, если он открыт для его занятия <b>или</b> его группы.</p></div>
   <div class="actions"><a class="btn" href="{% url 't_tasks_import' %}">Импорт задач</a><a class="btn primary" href="{% url 't_lesson_new' %}">Новый урок</a></div>
 </div>
 {% for lesson in lessons %}
@@ -13,12 +13,23 @@
       {% if lesson.topic %}<div class="muted small">{{ lesson.topic|truncatechars:160 }}</div>{% endif %}
     </div>
     <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-      <div class="gate">
-        {% for g in groups %}
-          <form method="post" action="{% url 't_lesson_toggle' lesson.pk g.pk %}" class="inline">{% csrf_token %}
-            <button type="submit" class="{% if g in lesson.open_for.all %}open{% endif %}" title="{% if g in lesson.open_for.all %}Закрыть{% else %}Открыть{% endif %} для {{ g.name }}">{{ g.name }}</button>
-          </form>
-        {% empty %}<span class="muted small">Нет групп</span>{% endfor %}
+      <div class="gates">
+        {% if sections %}
+        <div class="gate"><span class="gate-label">Занятия</span>
+          {% for sec in sections %}
+            <form method="post" action="{% url 't_lesson_toggle_section' lesson.pk sec.pk %}" class="inline">{% csrf_token %}
+              <button type="submit" class="{% if sec in lesson.open_for_sections.all %}open{% endif %}" title="{{ sec.title }}: {% if sec in lesson.open_for_sections.all %}закрыть{% else %}открыть{% endif %}">{{ sec.code }}</button>
+            </form>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="gate"><span class="gate-label">Группы</span>
+          {% for g in groups %}
+            <form method="post" action="{% url 't_lesson_toggle' lesson.pk g.pk %}" class="inline">{% csrf_token %}
+              <button type="submit" class="{% if g in lesson.open_for.all %}open{% endif %}" title="{% if g in lesson.open_for.all %}Закрыть{% else %}Открыть{% endif %} для {{ g.name }}">{{ g.name }}</button>
+            </form>
+          {% empty %}<span class="muted small">Нет групп</span>{% endfor %}
+        </div>
       </div>
       <a class="btn sm" href="{% url 't_lesson_edit' lesson.pk %}">Изменить</a>
       <a class="btn sm" href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a>

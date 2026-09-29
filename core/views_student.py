@@ -32,17 +32,17 @@ def lessons(request):
     if user.is_teacher:
         return redirect("t_lessons")
     items = []
-    if user.group_id:
-        qs = Lesson.objects.filter(open_for=user.group_id).prefetch_related("tasks")
-        all_tasks = [t for l in qs for t in l.tasks.all() if t.is_open]
-        best, attempts = best_submissions([user.id], [t.id for t in all_tasks])
-        for lesson in qs:
-            tasks = [(t, best.get((user.id, t.id)), attempts.get((user.id, t.id), 0))
-                     for t in lesson.tasks.all() if t.is_open]
-            if tasks:
-                solved = sum(1 for _, b, _ in tasks if b and b.is_good)
-                items.append((lesson, tasks, solved))
-    return render(request, "core/student/lessons.html", {"items": items})
+    qs = Lesson.objects.filter(Lesson.visible_q(user)).distinct().prefetch_related("tasks")
+    all_tasks = [t for l in qs for t in l.tasks.all() if t.is_open]
+    best, attempts = best_submissions([user.id], [t.id for t in all_tasks])
+    for lesson in qs:
+        tasks = [(t, best.get((user.id, t.id)), attempts.get((user.id, t.id), 0))
+                 for t in lesson.tasks.all() if t.is_open]
+        if tasks:
+            solved = sum(1 for _, b, _ in tasks if b and b.is_good)
+            items.append((lesson, tasks, solved))
+    has_place = bool(user.group_id) or user.sections.exists()
+    return render(request, "core/student/lessons.html", {"items": items, "has_place": has_place})
 
 
 @login_required

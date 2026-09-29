@@ -1,25 +1,27 @@
 """Разбор списка студентов из расписания.
 
-Понимает строки вида:
-    1) Аханбай Данира Нышанбайқызы (МИК241) 49562
-    Ахмет Зарина Султанқызы 49533          — без группы: берётся группа из формы
-Строки без ID в конце (например, «43554) Программирование на Python ЛЗ») пропускаются.
+Понимает:
+    74469) Программирование на Python ЛЗ            — заголовок: код занятия и название
+    1) Аханбай Данира Нышанбайқызы (МИК241) 49562   — студент: ФИО, группа, ID
+    Ахмет Зарина 49533                              — без группы: берётся группа из формы
+В одном тексте может быть несколько занятий: студенты относятся к ближайшему заголовку выше.
 """
 import re
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-from .models import StudyGroup
+from .models import ClassSection, StudyGroup
 
 User = get_user_model()
 
-LINE_RE = re.compile(
+STUDENT_RE = re.compile(
     r"^\s*(?:\d+\s*[).]\s*)?"            # номер строки «1)» или «1.»
     r"(?P<name>[^()\d]+?)\s*"             # ФИО
     r"(?:\((?P<group>[^)]+)\)\s*)?"       # (МИК241)
     r"(?P<sid>\d{3,})\s*$"                # ID
 )
+HEADER_RE = re.compile(r"^\s*(?P<code>\d{3,})\s*[).]\s*(?P<title>.*\D)?\s*$")
 
 
 def _norm(name):
@@ -27,21 +29,29 @@ def _norm(name):
 
 
 def parse(text):
-    """-> (записи [{name, group, sid, line}], нераспознанные строки)"""
+    """-> (записи [{name, group, sid, section, section_title, line}], нераспознанные строки)"""
     rows, skipped = [], []
+    section, section_title = "", ""
     for line in text.splitlines():
         if not line.strip():
             continue
-        m = LINE_RE.match(line)
-        if not m:
-            skipped.append(line.strip())
+        m = STUDENT_RE.match(line)
+        if m:
+            rows.append({
+                "name": " ".join(m["name"].split()),
+                "group": (m["group"] or "").strip(),
+                "sid": m["sid"],
+                "section": section,
+                "section_title": section_title,
+                "line": line.strip(),
+            })
             continue
-        rows.append({
-            "name": " ".join(m["name"].split()),
-            "group": (m["group"] or "").strip(),
-            "sid": m["sid"],
-            "line": line.strip(),
-        })
+        h = HEADER_RE.match(line)
+        if h:
+            section = h["code"]
+            section_title = " ".join((h["title"] or "").split())
+            continue
+        skipped.append(line.strip())
     return rows, skipped
 
 
@@ -54,14 +64,24 @@ def find_group(code, cache):
     return cache[key]
 
 
+def find_section(code, title, cache):
+    if code not in cache:
+        section, created = ClassSection.objects.get_or_create(code=code, defaults={"title": title})
+        if not created and title and section.title != title:
+            section.title = title
+            section.save(update_fields=["title"])
+        cache[code] = section
+    return cache[code]
+
+
 @transaction.atomic
 def apply(rows, default_group=None):
-    """Создаёт или обновляет студентов. Возвращает отчёт по строкам."""
-    report = {"created": [], "updated": [], "errors": []}
-    cache = {}
+    """Создаёт или обновляет студентов. Возвращает отчёт."""
+    report = {"created": [], "updated": [], "errors": [], "sections": set()}
+    groups, sections = {}, {}
     for r in rows:
         if r["group"]:
-            group = find_group(r["group"], cache)
+            group = find_group(r["group"], groups)
         elif default_group:
             group = default_group
         else:
@@ -83,4 +103,8 @@ def apply(rows, default_group=None):
             user.set_unusable_password()
             user.save()
             report["created"].append(user)
+        if r["section"]:
+            section = find_section(r["section"], r["section_title"], sections)
+            user.sections.add(section)
+            report["sections"].add(section.pk)
     return report

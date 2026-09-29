@@ -1,0 +1,21 @@
+<div class="table-wrap no-print">
+  {% if students %}
+  <table class="t">
+    <tr><th>ФИО</th><th>ID / логин</th><th>{% if show_group %}Группа{% else %}Занятия{% endif %}</th><th>Решено</th><th>Последняя активность</th><th>IP</th><th></th></tr>
+    {% for s in students %}
+    <tr>
+      <td><a href="{% url 't_submissions' %}?student={{ s.username|urlencode }}">{{ s.display_name }}</a></td>
+      <td class="mono">{{ s.username }}{% if s.id_login %} <span class="tag" style="font-family:var(--ui)">по ID</span>{% endif %}</td>
+      <td class="small">{% if show_group %}{% if s.group %}<a href="{% url 't_group' s.group.pk %}">{{ s.group }}</a>{% endif %}{% else %}{% for sec in s.sections.all %}<a class="mono" href="{% url 't_section' sec.pk %}" title="{{ sec.title }}">{{ sec.code }}</a>{% if not forloop.last %}, {% endif %}{% empty %}<span class="muted">—</span>{% endfor %}{% endif %}</td>
+      <td class="num">{{ s.solved }}</td>
+      <td class="muted small">{% if s.last_seen %}{{ s.last_seen.created_at|date:"d.m H:i" }}{% else %}{{ s.last_login|date:"d.m.Y H:i"|default:"не входил" }}{% endif %}</td>
+      <td class="mono small">{% if s.last_seen %}<a href="{% url 't_log' %}?period=week&ip={{ s.last_seen.ip }}">{{ s.last_seen.ip }}</a>{% endif %}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <a class="btn sm" href="{% url 't_student' s.pk %}">Изменить</a>
+        {% if not s.id_login %}<form class="inline" method="post" action="{% url 't_student_password' s.pk %}">{% csrf_token %}<button class="btn sm" type="submit">Новый пароль</button></form>{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<div class="empty">{{ empty_text }}</div>{% endif %}
+</div>

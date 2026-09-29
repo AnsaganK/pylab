@@ -4,7 +4,14 @@
 <div class="crumbs"><a href="{% url 't_groups' %}">Группы</a>{% if student.group %} / <a href="{% url 't_group' student.group.pk %}">{{ student.group }}</a>{% endif %}</div>
 <div class="head"><h1>{{ title }}</h1></div>
 <form method="post" class="sheet" style="max-width:560px">{% csrf_token %}
-  {% for f in form %}{% include "core/_field.html" %}{% endfor %}
+  {% include "core/_field.html" with f=form.full_name %}
+  {% include "core/_field.html" with f=form.username %}
+  {% include "core/_field.html" with f=form.group %}
+  <div class="field">
+    <label>Занятия</label>
+    <div class="checks">{% for c in form.sections %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% empty %}<span class="muted small">Занятий пока нет.</span>{% endfor %}</div>
+  </div>
+  {% include "core/_field.html" with f=form.password %}
   <button class="btn primary" type="submit">Сохранить</button>
 </form>
 {% if student %}

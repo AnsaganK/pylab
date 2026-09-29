@@ -19,12 +19,31 @@ class StudyGroup(models.Model):
         return self.name
 
 
+class ClassSection(models.Model):
+    """Занятие (пара) из расписания: «43554) Программирование на Python ЛЗ».
+    Студенты разных групп (МИК, ФИК) могут сидеть на одном занятии."""
+    code = models.CharField("Код занятия", max_length=20, unique=True)
+    title = models.CharField("Название", max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["code"]
+        verbose_name = "Занятие"
+        verbose_name_plural = "Занятия"
+
+    def __str__(self):
+        return f"{self.code} {self.title}".strip()
+
+
 class User(AbstractUser):
     """Преподаватель — is_staff=True. Студент — обычный пользователь с группой."""
     full_name = models.CharField("ФИО", max_length=150, blank=True)
     group = models.ForeignKey(
         StudyGroup, verbose_name="Группа", null=True, blank=True,
         on_delete=models.SET_NULL, related_name="students",
+    )
+    sections = models.ManyToManyField(
+        ClassSection, verbose_name="Занятия", blank=True, related_name="students",
     )
     # Студенты из расписания входят только по своему ID (он же username)
     id_login = models.BooleanField("Вход по ID", default=False)
@@ -52,6 +71,9 @@ class Lesson(models.Model):
     open_for = models.ManyToManyField(
         StudyGroup, verbose_name="Открыт для групп", blank=True, related_name="open_lessons",
     )
+    open_for_sections = models.ManyToManyField(
+        ClassSection, verbose_name="Открыт для занятий", blank=True, related_name="open_lessons",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -59,6 +81,14 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
+
+    @staticmethod
+    def visible_q(user):
+        """Условие «урок открыт студенту»: для его группы или для одного из его занятий."""
+        q = models.Q(open_for_sections__students=user)
+        if user.group_id:
+            q |= models.Q(open_for=user.group_id)
+        return q
 
 
 class Task(models.Model):
@@ -95,11 +125,7 @@ class Task(models.Model):
     def is_visible_to(self, user):
         if user.is_teacher:
             return True
-        return (
-            self.is_open
-            and user.group_id is not None
-            and self.lesson.open_for.filter(pk=user.group_id).exists()
-        )
+        return self.is_open and Lesson.objects.filter(Lesson.visible_q(user), pk=self.lesson_id).exists()
 
 
 class TestCase(models.Model):

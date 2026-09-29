@@ -8,6 +8,7 @@
 </div>
 <form method="get" class="sheet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;align-items:end;margin-bottom:1rem">
   <div><label class="small muted">Группа</label><select name="group" onchange="this.form.submit()"><option value="">Все</option>{% for g in groups %}<option value="{{ g.pk }}" {% if f.group == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}</select></div>
+  <div><label class="small muted">Занятие</label><select name="section" onchange="this.form.submit()"><option value="">Все</option>{% for x in sections %}<option value="{{ x.pk }}" {% if f.section == x.pk|stringformat:"s" %}selected{% endif %}>{{ x.code }}</option>{% endfor %}</select></div>
   <div><label class="small muted">Урок</label><select name="lesson" onchange="this.form.task.value='';this.form.submit()"><option value="">Все</option>{% for l in lessons %}<option value="{{ l.pk }}" {% if f.lesson == l.pk|stringformat:"s" %}selected{% endif %}>{{ l.title }}</option>{% endfor %}</select></div>
   <div><label class="small muted">Задача</label><select name="task" onchange="this.form.submit()"><option value="">Все</option>{% for t in tasks %}<option value="{{ t.pk }}" {% if f.task == t.pk|stringformat:"s" %}selected{% endif %}>{{ t.title }}</option>{% endfor %}</select></div>
   <div><label class="small muted">Результат</label><select name="status" onchange="this.form.submit()">

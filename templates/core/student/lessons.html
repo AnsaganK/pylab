@@ -2,8 +2,8 @@
 {% block title %}Мои задачи{% endblock %}
 {% block content %}
 <div class="head"><div><h1>Мои задачи</h1>{% if user.group %}<p class="muted">Группа {{ user.group }}</p>{% endif %}</div></div>
-{% if not user.group %}
-<div class="sheet empty">Вас ещё не добавили в группу. Сообщите преподавателю.</div>
+{% if not has_place %}
+<div class="sheet empty">Вас ещё не добавили в группу или занятие. Сообщите преподавателю.</div>
 {% endif %}
 {% for lesson, tasks, solved in items %}
 <section class="s-lesson">
@@ -22,6 +22,6 @@
   </div>
 </section>
 {% empty %}
-{% if user.group %}<div class="sheet empty">Пока нет открытых уроков. Преподаватель откроет их на занятии.</div>{% endif %}
+{% if has_place %}<div class="sheet empty">Пока нет открытых уроков. Преподаватель откроет их на занятии.</div>{% endif %}
 {% endfor %}
 {% endblock %}

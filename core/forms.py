@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.forms import inlineformset_factory
 
-from .models import Lesson, StudyGroup, Task, TestCase
+from .models import ClassSection, Lesson, StudyGroup, Task, TestCase
 
 User = get_user_model()
 
@@ -33,9 +33,10 @@ class StudentForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["full_name", "username", "group"]
-        labels = {"username": "Логин"}
+        fields = ["full_name", "username", "group", "sections"]
+        labels = {"username": "Логин / ID"}
         help_texts = {"username": ""}
+        widgets = {"sections": forms.CheckboxSelectMultiple}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,9 +56,10 @@ class BulkStudentsForm(forms.Form):
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ["title", "topic", "order", "open_for"]
+        fields = ["title", "topic", "order", "open_for_sections", "open_for"]
         widgets = {
             "open_for": forms.CheckboxSelectMultiple,
+            "open_for_sections": forms.CheckboxSelectMultiple,
             "topic": forms.Textarea(attrs={"rows": 3}),
         }
 
@@ -128,3 +130,9 @@ class RosterForm(forms.Form):
         StudyGroup.objects.all(), label="Группа для строк без группы", required=False,
         help_text="Если в строке указана группа (МИК241), она найдётся среди ваших групп (МИК-241) или создастся.",
     )
+
+
+class SectionForm(forms.ModelForm):
+    class Meta:
+        model = ClassSection
+        fields = ["code", "title"]

@@ -10,9 +10,10 @@ from django.views.decorators.http import require_POST
 from .decorators import teacher_required
 from . import importer, netlog, pdf, roster
 from .forms import (BulkStudentsForm, GroupForm, ImportTasksForm, LessonForm,
-                    ReviewForm, RosterForm, StudentForm, TaskForm, TestCaseFormSet)
+                    ReviewForm, RosterForm, SectionForm, StudentForm, TaskForm,
+                    TestCaseFormSet)
 from .judge import queue, sandbox
-from .models import AccessLog, Lesson, SiteSettings, StudyGroup, Submission, Task
+from .models import AccessLog, ClassSection, Lesson, SiteSettings, StudyGroup, Submission, Task
 from .translit import make_login, make_password
 from .utils import best_submissions
 
@@ -58,7 +59,8 @@ def groups(request):
         messages.success(request, f"Группа {g.name} создана.")
         return redirect("t_group", g.pk)
     items = StudyGroup.objects.annotate(n=Count("students"))
-    return render(request, "core/teacher/groups.html", {"form": form, "groups": items})
+    sections = ClassSection.objects.annotate(n=Count("students"))
+    return render(request, "core/teacher/groups.html", {"form": form, "groups": items, "sections": sections})
 
 
 @teacher_required
@@ -69,20 +71,49 @@ def group_detail(request, pk):
         form.save()
         messages.success(request, "Группа сохранена.")
         return redirect("t_group", pk)
-    students = list(group.students.annotate(
+    students = _students_with_stats(group.students.all())
+    return render(request, "core/teacher/group_detail.html", {
+        "group": group, "form": form, "students": students,
+        "credentials": request.session.pop("credentials", None),
+    })
+
+
+def _students_with_stats(qs):
+    """Студенты с числом решённых задач и последней активностью (IP)."""
+    students = list(qs.select_related("group").prefetch_related("sections").annotate(
         solved=Count("submissions__task", filter=Q(submissions__status__in=Submission.GOOD), distinct=True),
     ))
     last = {}
-    for row in (AccessLog.objects.filter(user__group=group, ip__isnull=False)
+    for row in (AccessLog.objects.filter(user__in=[s.id for s in students], ip__isnull=False)
                 .exclude(action=AccessLog.LOGIN_FAIL).order_by("user_id", "-created_at")
                 .values("user_id", "ip", "created_at")):
         last.setdefault(row["user_id"], row)
     for st in students:
         st.last_seen = last.get(st.id)
-    return render(request, "core/teacher/group_detail.html", {
-        "group": group, "form": form, "students": students,
-        "credentials": request.session.pop("credentials", None),
+    return students
+
+
+@teacher_required
+def section_detail(request, pk):
+    section = get_object_or_404(ClassSection, pk=pk)
+    form = SectionForm(request.POST or None, instance=section)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Занятие сохранено.")
+        return redirect("t_section", pk)
+    return render(request, "core/teacher/section_detail.html", {
+        "section": section, "form": form,
+        "students": _students_with_stats(section.students.all()),
     })
+
+
+@teacher_required
+@require_POST
+def section_delete(request, pk):
+    section = get_object_or_404(ClassSection, pk=pk)
+    section.delete()
+    messages.success(request, f"Занятие {section.code} удалено. Студенты остались в своих группах.")
+    return redirect("t_groups")
 
 
 @teacher_required
@@ -106,6 +137,7 @@ def student_create(request):
         password = form.cleaned_data["password"] or make_password()
         student.set_password(password)
         student.save()
+        form.save_m2m()
         request.session["credentials"] = [(student.full_name, student.username, password)]
         messages.success(request, f"Студент {student.full_name} добавлен.")
         return redirect("t_group", student.group_id)
@@ -124,6 +156,7 @@ def student_edit(request, pk):
             student.set_password(form.cleaned_data["password"])
             request.session["credentials"] = [(student.full_name, student.username, form.cleaned_data["password"])]
         student.save()
+        form.save_m2m()
         messages.success(request, "Данные студента сохранены.")
         return redirect("t_group", student.group_id)
     return render(request, "core/teacher/student_form.html", {
@@ -188,8 +221,10 @@ def students_roster(request):
             report = roster.apply(rows, form.cleaned_data["group"])
             messages.success(request, f"Создано: {len(report['created'])}, обновлено: {len(report['updated'])}.")
             if not report["errors"]:
+                if len(report["sections"]) == 1:
+                    return redirect("t_section", next(iter(report["sections"])))
                 groups_touched = {u.group_id for u in report["created"] + report["updated"]}
-                if len(groups_touched) == 1:
+                if len(groups_touched) == 1 and not report["sections"]:
                     return redirect("t_group", groups_touched.pop())
                 return redirect("t_groups")
         else:
@@ -206,11 +241,11 @@ def students_roster(request):
 
 @teacher_required
 def lessons(request):
-    items = Lesson.objects.prefetch_related("open_for", "tasks").annotate(
+    items = Lesson.objects.prefetch_related("open_for", "open_for_sections", "tasks").annotate(
         subs=Count("tasks__submissions"),
     )
     return render(request, "core/teacher/lessons.html", {
-        "lessons": items, "groups": StudyGroup.objects.all(),
+        "lessons": items, "groups": StudyGroup.objects.all(), "sections": ClassSection.objects.all(),
     })
 
 
@@ -261,6 +296,18 @@ def lesson_toggle_group(request, pk, group_id):
         lesson.open_for.remove(group)
     else:
         lesson.open_for.add(group)
+    return redirect(request.POST.get("next") or "t_lessons")
+
+
+@teacher_required
+@require_POST
+def lesson_toggle_section(request, pk, section_id):
+    lesson = get_object_or_404(Lesson, pk=pk)
+    section = get_object_or_404(ClassSection, pk=section_id)
+    if lesson.open_for_sections.filter(pk=section.pk).exists():
+        lesson.open_for_sections.remove(section)
+    else:
+        lesson.open_for_sections.add(section)
     return redirect(request.POST.get("next") or "t_lessons")
 
 
@@ -356,9 +403,11 @@ def tasks_import(request):
 @teacher_required
 def submissions(request):
     qs = Submission.objects.select_related("user", "user__group", "task", "task__lesson")
-    f = {k: request.GET.get(k, "") for k in ("group", "lesson", "task", "student", "status")}
+    f = {k: request.GET.get(k, "") for k in ("group", "section", "lesson", "task", "student", "status")}
     if f["group"]:
         qs = qs.filter(user__group_id=f["group"])
+    if f["section"]:
+        qs = qs.filter(user__sections=f["section"])
     if f["lesson"]:
         qs = qs.filter(task__lesson_id=f["lesson"])
     if f["task"]:
@@ -377,6 +426,7 @@ def submissions(request):
     return render(request, "core/teacher/submissions.html", {
         "page": page, "f": f, "query": query.urlencode(),
         "groups": StudyGroup.objects.all(),
+        "sections": ClassSection.objects.all(),
         "lessons": Lesson.objects.all(),
         "tasks": Task.objects.filter(lesson_id=f["lesson"]) if f["lesson"] else Task.objects.select_related("lesson"),
         "statuses": Submission.STATUS_CHOICES,
@@ -429,22 +479,40 @@ def requeue_stale(request):
 @teacher_required
 def results(request):
     groups_qs = StudyGroup.objects.all()
+    sections_qs = ClassSection.objects.all()
     lessons_qs = Lesson.objects.all()
-    group = groups_qs.filter(pk=request.GET.get("group") or None).first() or groups_qs.first()
+    # Кого показывать: «s12» — занятие, «g3» — группа. Старые ссылки ?group=3 тоже работают.
+    who = request.GET.get("who") or (f"g{request.GET['group']}" if request.GET.get("group") else "")
+    target, students_qs, by_section = None, None, False
+    if who.startswith("s") and who[1:].isdigit():
+        target = sections_qs.filter(pk=who[1:]).first()
+        by_section = True
+    elif who.startswith("g") and who[1:].isdigit():
+        target = groups_qs.filter(pk=who[1:]).first()
+    if target is None:
+        target = sections_qs.first() or groups_qs.first()
+        by_section = isinstance(target, ClassSection)
+    if target is not None:
+        who = f"{'s' if by_section else 'g'}{target.pk}"
+        students_qs = target.students.select_related("group")
+
     lesson_id = request.GET.get("lesson", "")
     tasks = Task.objects.select_related("lesson")
     if lesson_id:
         tasks = tasks.filter(lesson_id=lesson_id)
     tasks = list(tasks)
     rows = []
-    if group:
-        students = list(group.students.all())
+    if students_qs is not None:
+        students = list(students_qs.order_by("group__name", "full_name") if by_section else students_qs)
         best, attempts = best_submissions([s.id for s in students], [t.id for t in tasks])
         for s in students:
             cells = [(t, best.get((s.id, t.id)), attempts.get((s.id, t.id), 0)) for t in tasks]
             rows.append((s, cells, sum(1 for _, b, _ in cells if b and b.is_good)))
     return render(request, "core/teacher/results.html", {
-        "groups": groups_qs, "lessons": lessons_qs, "group": group,
+        "lessons": lessons_qs,
+        "section_opts": [(f"s{x.pk}", str(x)) for x in sections_qs],
+        "group_opts": [(f"g{x.pk}", x.name) for x in groups_qs],
+        "target": target, "who": who, "by_section": by_section,
         "lesson_id": lesson_id, "tasks": tasks, "rows": rows,
     })
 
