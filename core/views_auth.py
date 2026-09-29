@@ -13,11 +13,14 @@ def _teacher_exists():
     return User.objects.filter(is_staff=True).exists()
 
 
-def _next_url(request):
+def _next_url(request, user=None):
     nxt = request.POST.get("next") or request.GET.get("next") or ""
-    if url_has_allowed_host_and_scheme(nxt, allowed_hosts={request.get_host()}):
-        return nxt
-    return "home"
+    if not url_has_allowed_host_and_scheme(nxt, allowed_hosts={request.get_host()}):
+        return "home"
+    # студент, пришедший по ссылке из кабинета преподавателя, попадает к своим задачам
+    if user is not None and not user.is_staff and nxt.startswith(("/t/", "/admin/")):
+        return "home"
+    return nxt or "home"
 
 
 def _remember_session(request, user):
@@ -57,7 +60,7 @@ def login_view(request):
                 login(request, user, backend="django.contrib.auth.backends.ModelBackend")
                 _remember_session(request, user)
                 netlog.log(request, AccessLog.LOGIN, user=user, details="по ID")
-                return redirect(_next_url(request))
+                return redirect(_next_url(request, user))
         else:
             value = request.POST.get("username", "").strip()
             user = authenticate(request, username=value, password=request.POST.get("password", ""))
@@ -68,7 +71,7 @@ def login_view(request):
                 login(request, user)
                 _remember_session(request, user)
                 netlog.log(request, AccessLog.LOGIN, user=user, details="по паролю")
-                return redirect(_next_url(request))
+                return redirect(_next_url(request, user))
 
     return render(request, "core/login.html", {
         "mode": mode, "error": error, "value": value,
