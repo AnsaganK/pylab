@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -346,7 +347,7 @@ def task_form(request, pk=None):
         messages.success(request, "Задача сохранена.")
         if "save_stay" in request.POST:
             return redirect("t_task_edit", task.pk)
-        return redirect("t_lessons")
+        return redirect(reverse("t_lessons") + f"#lesson-{task.lesson_id}")
     return render(request, "core/teacher/task_form.html", {
         "form": form, "formset": formset, "task": task,
     })
@@ -394,7 +395,7 @@ def tasks_import(request):
                 created = importer.create_tasks(lesson, tasks, form.cleaned_data["is_open"])
                 n_tests = sum(t.tests.count() for t in created)
                 messages.success(request, f"Добавлено задач: {len(created)}, тестов: {n_tests}.")
-                return redirect("t_lessons")
+                return redirect(reverse("t_lessons") + f"#lesson-{lesson.pk}")
     return render(request, "core/teacher/tasks_import.html", {"form": form, "warnings": warnings})
 
 

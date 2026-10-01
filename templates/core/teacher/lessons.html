@@ -5,13 +5,24 @@
   <div><h1>Уроки и задачи</h1><p class="muted">Нажмите на занятие или группу, чтобы открыть или закрыть урок. Жёлтые — открыты. Студент видит урок, если он открыт для его занятия <b>или</b> его группы.</p></div>
   <div class="actions"><a class="btn" href="{% url 't_tasks_import' %}">Импорт задач</a><a class="btn primary" href="{% url 't_lesson_new' %}">Новый урок</a></div>
 </div>
+{% if lessons|length > 1 %}
+<div class="lesson-tools">
+  <button type="button" class="copy" data-lessons="open">Развернуть все</button>
+  <button type="button" class="copy" data-lessons="close">Свернуть все</button>
+</div>
+{% endif %}
 {% for lesson in lessons %}
-<section class="lesson">
+<section class="lesson" id="lesson-{{ lesson.pk }}" data-lesson="{{ lesson.pk }}">
   <div class="lesson-head">
-    <div>
-      <h3><span class="lesson-no">{{ lesson.order }}</span>{{ lesson.title }}</h3>
-      {% if lesson.topic %}<div class="muted small">{{ lesson.topic|truncatechars:160 }}</div>{% endif %}
-    </div>
+    <button type="button" class="lesson-toggle" aria-expanded="false" aria-controls="lesson-body-{{ lesson.pk }}">
+      <span class="chev" aria-hidden="true"></span>
+      <span>
+        <span class="lesson-title"><span class="lesson-no">{{ lesson.order }}</span>{{ lesson.title }}</span>
+        <span class="lesson-meta muted small">
+          Задач: {{ lesson.tasks.all|length }}{% if lesson.topic %}. {{ lesson.topic|truncatechars:80 }}{% endif %}
+        </span>
+      </span>
+    </button>
     <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
       <div class="gates">
         {% if sections %}
@@ -37,6 +48,7 @@
       {% if lesson.tasks.all %}<a class="btn sm" href="{% url 't_lesson_pdf' lesson.pk %}" title="Все задачи урока одним PDF — на случай, если сайт недоступен">PDF</a>{% endif %}
     </div>
   </div>
+  <div class="lesson-body" id="lesson-body-{{ lesson.pk }}">
   {% for task in lesson.tasks.all %}
   <div class="task-row {% if not task.is_open %}closed{% endif %}">
     <span class="lesson-no">{{ forloop.counter }}.</span>
@@ -50,8 +62,45 @@
   {% empty %}
   <div class="empty small">В уроке нет задач. <a href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a></div>
   {% endfor %}
+  </div>
 </section>
 {% empty %}
 <div class="sheet empty">Уроков пока нет. Создайте первый урок, затем добавьте в него задачи.</div>
 {% endfor %}
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  // Свёрнутые/развёрнутые уроки запоминаются в браузере преподавателя
+  var KEY = "pylab:t:open-lessons";
+  var lessons = document.querySelectorAll(".lesson[data-lesson]");
+  var saved = [];
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) {}
+  function setOpen(el, on) {
+    el.classList.toggle("open", on);
+    el.querySelector(".lesson-toggle").setAttribute("aria-expanded", String(on));
+  }
+  function persist() {
+    var ids = [];
+    lessons.forEach(function (el) { if (el.classList.contains("open")) ids.push(el.dataset.lesson); });
+    try { localStorage.setItem(KEY, JSON.stringify(ids)); } catch (e) {}
+  }
+  var fromHash = (location.hash || "").replace("#lesson-", "");
+  lessons.forEach(function (el) {
+    var on = saved.indexOf(el.dataset.lesson) >= 0 || el.dataset.lesson === fromHash || lessons.length === 1;
+    setOpen(el, on);
+    el.querySelector(".lesson-toggle").addEventListener("click", function () {
+      setOpen(el, !el.classList.contains("open"));
+      persist();
+    });
+  });
+  if (fromHash) persist();
+  document.querySelectorAll("[data-lessons]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      lessons.forEach(function (el) { setOpen(el, b.dataset.lessons === "open"); });
+      persist();
+    });
+  });
+})();
+</script>
 {% endblock %}

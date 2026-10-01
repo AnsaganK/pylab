@@ -200,7 +200,7 @@ table.t tr.link:hover td { background: #FAFBFC; }
 .io .lbl { font-size: .85rem; font-weight: 500; margin-bottom: .25rem; display: flex; justify-content: space-between; gap: .5rem; }
 
 /* ---------- CodeMirror ---------- */
-.CodeMirror { font-family: var(--mono); font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; font-size: 14px; line-height: 1.55; height: 440px; color: var(--ink); }
+.CodeMirror { font-family: var(--mono); font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; font-size: 14px; line-height: 1.55; height: 380px; color: var(--ink); }
 .CodeMirror.view { height: auto; }
 .CodeMirror.view .CodeMirror-scroll { max-height: 70vh; }
 .CodeMirror-gutters { background: #FAFBFC; border-right: 1px solid var(--rule-soft); }
@@ -295,3 +295,37 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 /* ---------- Занятия и группы на странице уроков ---------- */
 .gates { display: flex; flex-direction: column; gap: .3rem; align-items: flex-end; }
 .gate-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-right: .15rem; }
+
+/* ---------- Консоль ---------- */
+.io.console-io { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+.io.console-io.no-input { grid-template-columns: 1fr; }
+.io.console-io.no-input.show-input { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+@media (max-width: 640px) { .io.console-io, .io.console-io.no-input.show-input { grid-template-columns: 1fr; } }
+.console-tools { display: inline-flex; gap: .6rem; align-items: center; }
+.out.console { min-height: 160px; max-height: 360px; cursor: text; }
+.out.console pre { margin: 0; }
+.out.console .transcript { white-space: pre-wrap; word-break: break-word; }
+.io.waiting .out.console { border-color: #E6BC1F; box-shadow: 0 0 0 3px var(--marker-soft); }
+.echo.typed { color: var(--ink); font-weight: 600; }
+.echo.prefilled { color: #2D5B8C; background: #EAF1FA; border-radius: 2px; padding: 0 .15em; }
+.console-in { font: inherit; color: var(--ink); font-weight: 600; background: transparent; border: 0; border-bottom: 2px solid var(--marker); outline: none; padding: 0 .1em; min-width: 6ch; width: 20ch; max-width: 100%; }
+.console-in:disabled { border-bottom-color: var(--rule); color: var(--muted); }
+
+/* Поле «Ввод заранее» и консоль — одной высоты; тянутся за уголок, вторая подстраивается */
+.io.console-io textarea#stdin,
+.io.console-io .out.console { height: 140px; min-height: 90px; max-height: 600px; box-sizing: border-box; resize: vertical; }
+.io.console-io textarea#stdin { display: block; }
+.io.console-io .out.console { overflow: auto; }
+
+/* ---------- Уроки: сворачиваются ---------- */
+.lesson-tools { display: flex; gap: 1rem; justify-content: flex-end; margin: -.5rem 0 .6rem; }
+.lesson-toggle { display: flex; align-items: flex-start; gap: .6rem; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; flex: 1; min-width: 0; }
+.lesson-toggle:hover .lesson-title { text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.lesson-toggle .chev { width: 9px; height: 9px; margin-top: .45rem; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; flex: none; }
+.lesson.open .lesson-toggle .chev { transform: rotate(45deg); }
+.lesson-title { display: block; font-weight: 600; font-size: 1.1rem; }
+.lesson-meta { display: block; margin-top: .1rem; }
+.lesson .lesson-body { display: none; }
+.lesson.open .lesson-body { display: block; }
+.lesson:not(.open) .lesson-head { border-bottom: 0; }
+@media (prefers-reduced-motion: reduce) { .lesson-toggle .chev { transition: none; } }

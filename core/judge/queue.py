@@ -145,11 +145,11 @@ def judge(submission_id: int):
     sub.save()
 
 
-def run_once(code: str, stdin_text: str, time_limit: float, memory_mb: int):
+def run_once(code: str, stdin_text: str, time_limit: float, memory_mb: int, console_prefilled=None):
     """Кнопка «Запустить»: один прогон с вводом студента. None — сервер занят."""
     if not _run_slots.acquire(timeout=constants.RUN_WAIT_SECONDS):
         return None
     try:
-        return sandbox.run_program(code, stdin_text, time_limit, memory_mb)
+        return sandbox.run_program(code, stdin_text, time_limit, memory_mb, console_prefilled)
     finally:
         _run_slots.release()

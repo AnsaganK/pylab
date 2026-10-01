@@ -67,6 +67,7 @@
       </div>
       <div class="keys" id="keys" hidden>
         <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> запустить</span>
+        <span><kbd>Enter</kbd> в консоли — отправить строку, <kbd>Esc</kbd> — остановить программу</span>
         <span><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> отступ вправо / влево (работает и для выделения)</span>
         <span><kbd>Backspace</kbd> в начале строки — убирает весь отступ целиком</span>
         <span><kbd>Ctrl</kbd>+<kbd>/</kbd> закомментировать</span>
@@ -77,14 +78,17 @@
       </div>
       <textarea id="code">{{ code }}</textarea>
     </div>
-    <div class="io {% if not has_input %}no-input{% endif %}" id="io">
+    <div class="io console-io {% if not has_input %}no-input{% endif %}" id="io">
       <div class="stdin-col">
-        <div class="lbl"><span>Ввод (stdin)</span>{% if not has_input %}<button type="button" class="copy" id="hide-stdin">скрыть</button>{% endif %}</div>
-        <textarea id="stdin" spellcheck="false" placeholder="Данные для input(), каждое значение — с новой строки или как в примере"></textarea>
+        <div class="lbl"><span>Ввод заранее <span class="muted">(необязательно)</span></span>{% if not has_input %}<button type="button" class="copy" id="hide-stdin">скрыть</button>{% endif %}</div>
+        <textarea id="stdin" spellcheck="false" placeholder="Можно оставить пустым — программа сама спросит ввод в консоли. Или впишите данные заранее, по строке на каждый input()."></textarea>
       </div>
-      <div>
-        <div class="lbl"><span>Вывод{% if not has_input %} <button type="button" class="copy" id="show-stdin">добавить ввод</button>{% endif %}</span><span class="muted" id="run-meta"></span></div>
-        <div class="out" id="out"><span class="muted">Нажмите «Запустить», чтобы проверить программу{% if has_input %} на своём вводе{% endif %}.</span></div>
+      <div class="console-col">
+        <div class="lbl">
+          <span>Консоль{% if not has_input %} <button type="button" class="copy" id="show-stdin">ввод заранее</button>{% endif %}</span>
+          <span class="console-tools"><span class="muted" id="run-meta"></span><button type="button" class="copy" id="btn-stop" hidden>остановить</button></span>
+        </div>
+        <div class="out console" id="out" tabindex="-1"><span class="muted">Нажмите «Запустить». Если программа вызывает input(), здесь появится строка для ввода — впишите значение и нажмите Enter.</span></div>
       </div>
     </div>
   </section>

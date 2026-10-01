@@ -213,6 +213,32 @@
       });
   }
 
+  // ---------- Консоль ----------
+  // «Запустить» выполняет программу; если она просит input(), а ввод кончился,
+  // показываем строку ввода. После Enter программа запускается заново с начала
+  // уже со всеми введёнными строками — для студента это выглядит как обычная консоль.
+  var btnStop = document.getElementById("btn-stop");
+  var session = null;   // {typed: [], waiting: bool}
+
+  function appendText(parent, text, cls) {
+    if (!text) return;
+    var el = document.createElement("span");
+    if (cls) el.className = cls;
+    el.textContent = text;
+    parent.appendChild(el);
+  }
+
+  // stdout с эхо ввода: \x01<p|t>значение\x02
+  function renderStdout(pre, text) {
+    var re = /\x01([pt])([\s\S]*?)\x02/g, last = 0, m;
+    while ((m = re.exec(text))) {
+      appendText(pre, text.slice(last, m.index));
+      appendText(pre, m[2], m[1] === "p" ? "echo prefilled" : "echo typed");
+      last = re.lastIndex;
+    }
+    appendText(pre, text.slice(last));
+  }
+
   function show(parts) {
     out.innerHTML = "";
     parts.forEach(function (p) {
@@ -226,18 +252,129 @@
     if (!out.childNodes.length) out.innerHTML = '<span class="muted">Программа ничего не вывела.</span>';
   }
 
-  function run() {
-    if (btnRun.disabled) return;
+  function renderRun(r) {
+    out.innerHTML = "";
+    var pre = document.createElement("pre");
+    pre.className = "transcript";
+    renderStdout(pre, r.stdout || "");
+    out.appendChild(pre);
+    if (r.status === "input") {
+      var field = document.createElement("input");
+      field.type = "text";
+      field.className = "console-in";
+      field.setAttribute("aria-label", "Ввод для программы");
+      field.setAttribute("autocomplete", "off");
+      field.spellcheck = false;
+      pre.appendChild(field);
+      field.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          session.typed.push(field.value);
+          field.disabled = true;
+          send(true);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          stop("Программа остановлена.");
+        }
+      });
+      field.focus({ preventScroll: true });
+    }
+    if (r.stderr) appendTextBlock(r.stderr, "err");
+    if (r.hint) {
+      var h = document.createElement("p");
+      h.className = "run-hint";
+      h.textContent = r.hint;
+      out.appendChild(h);
+    }
+    if (!pre.childNodes.length && r.status !== "input" && !r.stderr) {
+      pre.innerHTML = '<span class="muted">Программа ничего не вывела.</span>';
+    }
+    out.scrollTop = out.scrollHeight;
+  }
+
+  function appendTextBlock(text, cls) {
+    var el = document.createElement("pre");
+    el.className = cls;
+    el.textContent = text;
+    out.appendChild(el);
+  }
+
+  function setWaiting(on) {
+    if (session) session.waiting = on;
+    btnStop.hidden = !on;
+    io.classList.toggle("waiting", on);
+  }
+
+  function stop(message) {
+    if (!session) return;
+    var field = out.querySelector(".console-in");
+    if (field) field.remove();
+    session = null;
+    setWaiting(false);
+    meta.textContent = message || "";
+  }
+
+  function send(isContinue) {
     btnRun.disabled = true;
     meta.textContent = "выполняется…";
-    post(bench.dataset.runUrl, { code: editor.getValue(), stdin: stdin.value }).then(function (r) {
-      if (r.error) { show([{ text: r.error, err: true }]); meta.textContent = ""; return; }
-      show([{ text: r.stdout }, { text: r.stderr, err: true }, { text: r.hint, hint: true }]);
-      meta.textContent = r.label + (r.time ? ", " + r.time.toFixed(2) + " с" : "");
+    post(bench.dataset.runUrl, {
+      code: editor.getValue(), stdin: stdin.value,
+      typed: JSON.stringify(session.typed), "continue": isContinue ? "1" : "",
+    }).then(function (r) {
+      if (!session) return;            // остановили, пока ждали ответ
+      if (r.error) { show([{ text: r.error, err: true }]); meta.textContent = ""; stop(); return; }
+      renderRun(r);
+      if (r.status === "input") {
+        setWaiting(true);
+        meta.textContent = "ждёт ввод…";
+      } else {
+        meta.textContent = r.label + (r.time ? ", " + r.time.toFixed(2) + " с" : "");
+        session = null;
+        setWaiting(false);
+      }
     }).catch(function () {
-      show([{ text: "Нет связи с сервером.", err: true }]); meta.textContent = "";
+      show([{ text: "Нет связи с сервером.", err: true }]); meta.textContent = ""; stop();
     }).finally(function () { btnRun.disabled = false; });
   }
+
+  function run() {
+    if (btnRun.disabled) return;
+    session = { typed: [], waiting: false };
+    send(false);
+  }
+
+  btnStop.addEventListener("click", function () { stop("Программа остановлена."); });
+
+  // Высота поля ввода и консоли: тянешь одно — второе подстраивается, размер запоминается
+  (function syncHeights() {
+    var KEY = "pylab:io-height";
+    var saved = parseInt(load(KEY), 10);
+    if (saved >= 90 && saved <= 600) { stdin.style.height = out.style.height = saved + "px"; }
+    if (!window.ResizeObserver) return;
+    var busy = false;
+    function follow(src, dst) {
+      return function () {
+        if (busy || !src.offsetParent) return;
+        var h = Math.round(src.getBoundingClientRect().height);
+        if (Math.abs(h - dst.getBoundingClientRect().height) < 1) return;
+        busy = true;
+        dst.style.height = h + "px";
+        store(KEY, h);
+        requestAnimationFrame(function () { busy = false; });
+      };
+    }
+    new ResizeObserver(follow(stdin, out)).observe(stdin);
+    new ResizeObserver(follow(out, stdin)).observe(out);
+  })();
+  // Код поменяли, пока программа ждала ввод, — продолжать старый запуск нельзя
+  editor.on("change", function () {
+    if (session && session.waiting) stop("Код изменён — нажмите «Запустить» заново.");
+  });
+  // Клик по консоли возвращает фокус в строку ввода
+  out.addEventListener("click", function () {
+    var field = out.querySelector(".console-in");
+    if (field && !field.disabled && !window.getSelection().toString()) field.focus();
+  });
 
   // Отправки и статус задачи обновляются без перезагрузки
   var subsBox = document.getElementById("subs");

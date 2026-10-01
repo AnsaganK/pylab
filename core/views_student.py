@@ -1,3 +1,5 @@
+import json
+
 import markdown
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -7,7 +9,7 @@ from django.views.decorators.http import require_POST
 
 from . import netlog
 from .judge import queue
-from .judge.sandbox import MLE, OK, OLE, RE, SE, TLE
+from .judge.sandbox import INPUT, MLE, OK, OLE, RE, SE, TLE
 from .models import AccessLog, Lesson, Submission, Task
 from .utils import best_submissions
 
@@ -86,6 +88,7 @@ def submissions_fragment(request, pk):
 
 
 RUN_LABELS = {
+    INPUT: "Ждёт ввод",
     OK: "Программа завершилась",
     TLE: "Превышено время",
     MLE: "Превышена память",
@@ -98,14 +101,29 @@ RUN_LABELS = {
 @login_required
 @require_POST
 def run_code(request, pk):
+    """Кнопка «Запустить» в режиме консоли.
+
+    Программа получает строки из поля «Ввод заранее», затем строки, набранные
+    в консоли (typed). Если ввод кончился, а программа просит ещё, ответ —
+    status=input: страница показывает строку ввода, и после Enter программа
+    запускается заново с начала уже с новой строкой.
+    """
     task = _visible_task_or_404(request, pk)
     code = request.POST.get("code", "")
-    stdin = request.POST.get("stdin", "")
-    if len(code) > MAX_CODE_SIZE or len(stdin) > MAX_STDIN_SIZE:
+    stdin = request.POST.get("stdin", "").replace("\r\n", "\n")
+    try:
+        typed = json.loads(request.POST.get("typed") or "[]")
+        if not isinstance(typed, list) or not all(isinstance(x, str) for x in typed) or len(typed) > 500:
+            raise ValueError
+    except ValueError:
+        return JsonResponse({"error": "Неверный формат ввода."}, status=400)
+    typed_text = "".join(line.replace("\n", " ") + "\n" for line in typed)
+    if len(code) > MAX_CODE_SIZE or len(stdin) + len(typed_text) > MAX_STDIN_SIZE:
         return JsonResponse({"error": "Слишком большой код или ввод."}, status=400)
-    if "\x00" in code or "\x00" in stdin:
+    if "\x00" in code or "\x00" in stdin or "\x00" in typed_text:
         return JsonResponse({"error": "В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку вручную."}, status=400)
-    netlog.log(request, AccessLog.RUN, details=task.title)
+    if not request.POST.get("continue"):
+        netlog.log(request, AccessLog.RUN, details=task.title)  # повторы ради консоли в журнал не пишем
     syntax = queue.check_syntax(code)
     if syntax:
         hint = ("Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа."
@@ -114,16 +132,18 @@ def run_code(request, pk):
                      "либо забыто двоеточие после if/for/while/def.")
         return JsonResponse({"status": "ce", "label": "Синтаксическая ошибка", "stdout": "", "stderr": syntax,
                              "hint": hint, "time": 0})
-    res = queue.run_once(code, stdin, task.time_limit, task.memory_limit)
+
+    if stdin and not stdin.endswith("\n"):
+        stdin += "\n"
+    prefilled = stdin.count("\n")
+    res = queue.run_once(code, stdin + typed_text, task.time_limit, task.memory_limit, console_prefilled=prefilled)
     if res is None:
         return JsonResponse({"error": "Сервер сейчас занят — попробуйте через несколько секунд."}, status=503)
     stderr = res.stderr or "\n".join(res.notes)
     hint = ""
     if "EOFError" in stderr:
-        hint = ("Программа вызвала input(), но ввод закончился. "
-                + ("Поле «Ввод» пустое — впишите туда данные." if not stdin.strip()
-                   else "Строк во вводе меньше, чем вызовов input()."))
-    elif "NameError" in stderr and "input" not in stderr and "name '" in stderr:
+        hint = "Программа читает ввод через sys.stdin, а он закончился. Впишите данные в поле «Ввод заранее»."
+    elif "NameError" in stderr and "name '" in stderr:
         hint = "Опечатка в имени переменной или функции, либо переменная используется раньше, чем создана."
     elif "IndentationError" in stderr or "TabError" in stderr:
         hint = "Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа."

@@ -28,6 +28,48 @@ OLE = "ole"
 SE = "se"
 
 
+INPUT = "input"          # программа ждёт ввод (режим консоли)
+
+WAIT_MARKER = "__PYLAB_WAITING_FOR_INPUT__"
+WAIT_EXIT_CODE = 97
+# Эхо введённых строк в выводе консоли: \x01<p|t>значение\x02 (p — из поля заранее, t — набрано)
+ECHO_START, ECHO_END = "\x01", "\x02"
+
+RUNNER_CODE = r'''
+import builtins, os, sys, traceback
+_prefilled = int(sys.argv[2])
+_count = 0
+_orig_input = builtins.input
+
+def _console_input(prompt=""):
+    global _count
+    try:
+        value = _orig_input(prompt)
+    except EOFError:
+        sys.stdout.flush()
+        sys.stderr.write("\n__PYLAB_WAITING_FOR_INPUT__\n")
+        sys.stderr.flush()
+        os._exit(97)
+    kind = "p" if _count < _prefilled else "t"
+    _count += 1
+    sys.stdout.write("\x01" + kind + value + "\x02\n")
+    return value
+
+builtins.input = _console_input
+with open(sys.argv[1], encoding="utf-8") as f:
+    _src = f.read()
+_globals = {"__name__": "__main__", "__file__": "main.py", "__builtins__": builtins}
+try:
+    exec(compile(_src, "main.py", "exec"), _globals)
+except SystemExit:
+    raise
+except BaseException as e:
+    sys.stdout.flush()
+    traceback.print_exception(type(e), e, e.__traceback__.tb_next)
+    sys.exit(1)
+'''
+
+
 @dataclass
 class RunResult:
     status: str
@@ -45,7 +87,7 @@ def _read_limited(path, limit):
     return data[:limit].decode("utf-8", errors="replace"), truncated
 
 
-def _build_command(workdir, time_limit, memory_mb):
+def _build_command(workdir, time_limit, memory_mb, console_prefilled=None):
     out_limit = constants.OUTPUT_LIMIT_KB * 1024
     cpu = math.ceil(time_limit) + 1
     python = constants.SANDBOX_PYTHON
@@ -90,16 +132,27 @@ def _build_command(workdir, time_limit, memory_mb):
             "--setenv", "HOME", "/tmp",
             "--setenv", "LANG", "C.UTF-8",
         ]
-        cmd += limits + [python, "-I", "-X", "utf8", "/sandbox/main.py"]
+        if console_prefilled is None:
+            cmd += limits + [python, "-I", "-X", "utf8", "/sandbox/main.py"]
+        else:
+            cmd += limits + [python, "-I", "-X", "utf8", "/sandbox/runner.py", "/sandbox/main.py", str(console_prefilled)]
         if constants.SANDBOX_RUN_AS:
             cmd = ["sudo", "-n", "-u", constants.SANDBOX_RUN_AS] + cmd
         return cmd, None
 
     # Режим без изоляции
-    return limits + [python, "-I", "-X", "utf8", os.path.join(workdir, "main.py")], workdir
+    if console_prefilled is None:
+        return limits + [python, "-I", "-X", "utf8", os.path.join(workdir, "main.py")], workdir
+    return limits + [python, "-I", "-X", "utf8", os.path.join(workdir, "runner.py"),
+                     os.path.join(workdir, "main.py"), str(console_prefilled)], workdir
 
 
-def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int) -> RunResult:
+def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int,
+                console_prefilled=None) -> RunResult:
+    """console_prefilled=None — обычный запуск (проверка решений).
+    Число — режим консоли для кнопки «Запустить»: столько первых строк ввода
+    пришли из поля «Ввод заранее»; когда ввод кончается, программа не падает
+    с EOFError, а возвращает статус INPUT («жду ввод»)."""
     os.makedirs(constants.SANDBOX_TMP_DIR, exist_ok=True)
     workdir = tempfile.mkdtemp(prefix="run_", dir=constants.SANDBOX_TMP_DIR)
     try:
@@ -108,6 +161,11 @@ def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int) -
         with open(main_py, "w", encoding="utf-8") as f:
             f.write(code)
         os.chmod(main_py, 0o644)
+        if console_prefilled is not None:
+            runner_py = os.path.join(workdir, "runner.py")
+            with open(runner_py, "w", encoding="utf-8") as f:
+                f.write(RUNNER_CODE)
+            os.chmod(runner_py, 0o644)
         # Ввод/вывод — файлы, открытые сервером: программа их только наследует
         io_dir = tempfile.mkdtemp(prefix="io_", dir=constants.SANDBOX_TMP_DIR)
         in_path = os.path.join(io_dir, "in.txt")
@@ -116,7 +174,7 @@ def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int) -
         with open(in_path, "w", encoding="utf-8", newline="\n") as f:
             f.write(stdin_text.replace("\r\n", "\n"))
 
-        cmd, cwd = _build_command(workdir, time_limit, memory_mb)
+        cmd, cwd = _build_command(workdir, time_limit, memory_mb, console_prefilled)
         wall_limit = time_limit + 0.5
         env = {"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8", "HOME": workdir}
         if not IS_POSIX:
@@ -161,6 +219,11 @@ def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int) -
             sig = rc - 128  # bwrap отдаёт 128+номер сигнала
 
         res = RunResult(OK, stdout=stdout, stderr=stderr, time=round(elapsed, 3), exit_code=rc)
+
+        if console_prefilled is not None and rc == WAIT_EXIT_CODE and WAIT_MARKER in stderr:
+            res.status = INPUT
+            res.stderr = stderr.replace(WAIT_MARKER, "").strip("\n")
+            return res
 
         if constants.SANDBOX_USE_BWRAP and rc == 1 and stderr.startswith("bwrap:"):
             res.status = SE
