@@ -1,74 +1,148 @@
 {% extends "core/base.html" %}
-{% block title %}Уроки и задачи{% endblock %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% translate "Уроки и задачи" %}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Уроки и задачи</h1><p class="muted">Нажмите на занятие или группу, чтобы открыть или закрыть урок. Жёлтые — открыты. Студент видит урок, если он открыт для его занятия <b>или</b> его группы.</p></div>
-  <div class="actions"><a class="btn" href="{% url 't_tasks_import' %}">Импорт задач</a><a class="btn primary" href="{% url 't_lesson_new' %}">Новый урок</a></div>
+  <div><h1>{% translate "Уроки и задачи" %}</h1><p class="muted">{% translate "Нажмите на занятие или группу, чтобы открыть или закрыть урок. Жёлтые — открыты. Студент видит урок, если он открыт для его занятия или его группы. Новые уроки — сверху. Уроки и задачи можно перетаскивать за значок ⠿ слева." %}</p></div>
+  <div class="actions"><a class="btn" href="{% url 't_tasks_import' %}">{% translate "Импорт задач" %}</a><a class="btn primary" href="{% url 't_lesson_new' %}">{% translate "Новый урок" %}</a></div>
 </div>
 {% if lessons|length > 1 %}
 <div class="lesson-tools">
-  <button type="button" class="copy" data-lessons="open">Развернуть все</button>
-  <button type="button" class="copy" data-lessons="close">Свернуть все</button>
+  <button type="button" class="copy" data-lessons="open">{% translate "Развернуть все" %}</button>
+  <button type="button" class="copy" data-lessons="close">{% translate "Свернуть все" %}</button>
 </div>
 {% endif %}
+<div id="lesson-list" data-url="{% url 't_lessons_reorder' %}">
 {% for lesson in lessons %}
-<section class="lesson" id="lesson-{{ lesson.pk }}" data-lesson="{{ lesson.pk }}">
+<section class="lesson" id="lesson-{{ lesson.pk }}" data-lesson="{{ lesson.pk }}" data-id="{{ lesson.pk }}">
   <div class="lesson-head">
+    <span class="grip lesson-grip" title="{% translate "Перетащите, чтобы поменять порядок уроков" %}" aria-hidden="true"></span>
     <button type="button" class="lesson-toggle" aria-expanded="false" aria-controls="lesson-body-{{ lesson.pk }}">
       <span class="chev" aria-hidden="true"></span>
       <span>
-        <span class="lesson-title"><span class="lesson-no">{{ lesson.order }}</span>{{ lesson.title }}</span>
+        <span class="lesson-title"><span class="lesson-no">{{ lesson.number }}</span>{{ lesson.title }}</span>
         <span class="lesson-meta muted small">
-          Задач: {{ lesson.tasks.all|length }}{% if lesson.topic %}. {{ lesson.topic|truncatechars:80 }}{% endif %}
+          {% translate "Задач:" %} <span class="task-count">{{ lesson.tasks.all|length }}</span>{% if lesson.topic %}. {{ lesson.topic|truncatechars:80 }}{% endif %}
         </span>
       </span>
     </button>
     <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
       <div class="gates">
         {% if sections %}
-        <div class="gate"><span class="gate-label">Занятия</span>
+        <div class="gate"><span class="gate-label">{% translate "Занятия" %}</span>
           {% for sec in sections %}
             <form method="post" action="{% url 't_lesson_toggle_section' lesson.pk sec.pk %}" class="inline">{% csrf_token %}
-              <button type="submit" class="{% if sec in lesson.open_for_sections.all %}open{% endif %}" title="{{ sec.title }}: {% if sec in lesson.open_for_sections.all %}закрыть{% else %}открыть{% endif %}">{{ sec.code }}</button>
+              <button type="submit" class="{% if sec in lesson.open_for_sections.all %}open{% endif %}" title="{{ sec.title }}: {% if sec in lesson.open_for_sections.all %}{% translate "закрыть" %}{% else %}{% translate "открыть" %}{% endif %}">{{ sec.code }}</button>
             </form>
           {% endfor %}
         </div>
         {% endif %}
-        <div class="gate"><span class="gate-label">Группы</span>
+        <div class="gate"><span class="gate-label">{% translate "Группы" %}</span>
           {% for g in groups %}
             <form method="post" action="{% url 't_lesson_toggle' lesson.pk g.pk %}" class="inline">{% csrf_token %}
-              <button type="submit" class="{% if g in lesson.open_for.all %}open{% endif %}" title="{% if g in lesson.open_for.all %}Закрыть{% else %}Открыть{% endif %} для {{ g.name }}">{{ g.name }}</button>
+              <button type="submit" class="{% if g in lesson.open_for.all %}open{% endif %}" title="{% if g in lesson.open_for.all %}{% blocktranslate with name=g.name %}Закрыть для {{ name }}{% endblocktranslate %}{% else %}{% blocktranslate with name=g.name %}Открыть для {{ name }}{% endblocktranslate %}{% endif %}">{{ g.name }}</button>
             </form>
-          {% empty %}<span class="muted small">Нет групп</span>{% endfor %}
+          {% empty %}<span class="muted small">{% translate "Нет групп" %}</span>{% endfor %}
         </div>
       </div>
-      <a class="btn sm" href="{% url 't_lesson_edit' lesson.pk %}">Изменить</a>
-      <a class="btn sm" href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a>
-      <a class="btn sm" href="{% url 't_tasks_import' %}?lesson={{ lesson.pk }}">Импорт</a>
-      {% if lesson.tasks.all %}<a class="btn sm" href="{% url 't_lesson_pdf' lesson.pk %}" title="Все задачи урока одним PDF — на случай, если сайт недоступен">PDF</a>{% endif %}
+      <a class="btn sm" href="{% url 't_lesson_edit' lesson.pk %}">{% translate "Изменить" %}</a>
+      <a class="btn sm" href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">{% translate "Добавить задачу" %}</a>
+      <a class="btn sm" href="{% url 't_tasks_import' %}?lesson={{ lesson.pk }}">{% translate "Импорт" %}</a>
+      {% if lesson.tasks.all %}<a class="btn sm" href="{% url 't_lesson_pdf' lesson.pk %}" title="{% translate "Все задачи урока одним PDF — на случай, если сайт недоступен" %}">PDF</a>{% endif %}
     </div>
   </div>
   <div class="lesson-body" id="lesson-body-{{ lesson.pk }}">
+  <div class="task-list {% if not lesson.tasks.all %}is-empty{% endif %}" data-url="{% url 't_tasks_reorder' lesson.pk %}">
   {% for task in lesson.tasks.all %}
-  <div class="task-row {% if not task.is_open %}closed{% endif %}">
-    <span class="lesson-no">{{ forloop.counter }}.</span>
+  <div class="task-row {% if not task.is_open %}closed{% endif %}" data-id="{{ task.pk }}">
+    <span class="grip task-grip" title="{% translate "Перетащите, чтобы поменять порядок задач" %}" aria-hidden="true"></span>
+    <span class="lesson-no task-no">{{ forloop.counter }}.</span>
     <div class="grow"><a class="title" href="{% url 't_task_edit' task.pk %}">{{ task.title }}</a></div>
-    <span class="tag">{% if task.is_io %}тесты{% else %}вручную{% endif %}</span>
-    <a class="small" href="{% url 't_submissions' %}?task={{ task.pk }}">отправки</a>
+    <span class="lang-badges" title="{% translate 'Языки условия' %}">{% for code, on in task.lang_badges %}<span class="{% if on %}on{% endif %}">{{ code }}</span>{% endfor %}</span>
+    <span class="tag">{% if task.is_io %}{% translate "тесты" %}{% else %}{% translate "вручную" %}{% endif %}</span>
+    <a class="small" href="{% url 't_submissions' %}?task={{ task.pk }}">{% translate "отправки" %}</a>
     <form method="post" action="{% url 't_task_toggle' task.pk %}" class="inline">{% csrf_token %}
-      <label class="check small" title="Видна ли задача студентам"><input type="checkbox" {% if task.is_open %}checked{% endif %} onchange="this.form.submit()"> открыта</label>
+      <label class="check small" title="{% translate "Видна ли задача студентам" %}"><input type="checkbox" {% if task.is_open %}checked{% endif %} onchange="this.form.submit()"> {% translate "открыта" %}</label>
     </form>
   </div>
-  {% empty %}
-  <div class="empty small">В уроке нет задач. <a href="{% url 't_task_new' %}?lesson={{ lesson.pk }}">Добавить задачу</a></div>
   {% endfor %}
+  </div>
   </div>
 </section>
 {% empty %}
-<div class="sheet empty">Уроков пока нет. Создайте первый урок, затем добавьте в него задачи.</div>
+<div class="sheet empty">{% translate "Уроков пока нет. Создайте первый урок, затем добавьте в него задачи." %}</div>
 {% endfor %}
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 {% endblock %}
 {% block scripts %}
+<script src="{% static 'vendor/sortable/Sortable.min.js' %}"></script>
+<script>
+(function () {
+  // Перетаскивание уроков и задач; порядок сохраняется сразу
+  var csrfEl = document.querySelector("input[name=csrfmiddlewaretoken]");
+  var csrf = csrfEl ? csrfEl.value : "";
+  var toast = document.getElementById("toast");
+  var I18N = {};
+  try { I18N = JSON.parse(document.getElementById("pylab-i18n").textContent); } catch (e) {}
+  function say(text, bad) {
+    toast.textContent = text;
+    toast.classList.toggle("bad", !!bad);
+    toast.classList.add("show");
+    clearTimeout(say.t);
+    say.t = setTimeout(function () { toast.classList.remove("show"); }, 1800);
+  }
+  function save(url, list) {
+    var ids = Array.prototype.map.call(list.children, function (el) { return el.dataset.id; })
+      .filter(function (x) { return x; });
+    return fetch(url, {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrf },
+      body: JSON.stringify({ ids: ids }),
+    }).then(function (r) {
+      if (!r.ok) throw new Error();
+      say(I18N.order_saved || "Порядок сохранён");
+    }).catch(function () {
+      say(I18N.order_failed || "Не удалось сохранить порядок — обновите страницу", true);
+    });
+  }
+  function renumber() {
+    var all = document.querySelectorAll("#lesson-list > .lesson");
+    all.forEach(function (lesson, i) {
+      var no = lesson.querySelector(".lesson-title .lesson-no");
+      if (no) no.textContent = all.length - i;   // новые сверху: верхний урок — с самым большим номером
+      var rows = lesson.querySelectorAll(".task-list > .task-row");
+      rows.forEach(function (row, j) { row.querySelector(".task-no").textContent = (j + 1) + "."; });
+      lesson.querySelector(".task-count").textContent = rows.length;
+      lesson.querySelector(".task-list").classList.toggle("is-empty", rows.length === 0);
+    });
+  }
+  var lessonList = document.getElementById("lesson-list");
+  if (!lessonList || !window.Sortable) return;
+  Sortable.create(lessonList, {
+    handle: ".lesson-grip", draggable: ".lesson", animation: 150,
+    ghostClass: "drag-ghost", chosenClass: "drag-chosen",
+    onEnd: function (e) {
+      if (e.oldIndex === e.newIndex) return;
+      renumber();
+      save(lessonList.dataset.url, lessonList);
+    },
+  });
+  document.querySelectorAll(".task-list").forEach(function (list) {
+    Sortable.create(list, {
+      group: "tasks", handle: ".task-grip", draggable: ".task-row", animation: 150,
+      ghostClass: "drag-ghost", chosenClass: "drag-chosen", emptyInsertThreshold: 24,
+      onEnd: function (e) {
+        if (e.from === e.to && e.oldIndex === e.newIndex) return;
+        renumber();
+        save(e.to.dataset.url, e.to);
+        if (e.from !== e.to) save(e.from.dataset.url, e.from);
+      },
+    });
+  });
+})();
+</script>
 <script>
 (function () {
   // Свёрнутые/развёрнутые уроки запоминаются в браузере преподавателя

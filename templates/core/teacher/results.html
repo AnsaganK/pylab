@@ -1,23 +1,34 @@
 {% extends "core/base.html" %}
-{% block title %}Сводная таблица{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Сводная таблица" %}{% endblock %}
 {% block page_class %}wide{% endblock %}
 {% block content %}
-<div class="head"><h1>Сводная таблица</h1></div>
+<div class="head"><h1>{% translate "Сводная таблица" %}</h1></div>
 <form method="get" class="sheet no-print" style="display:flex;gap:.75rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
-  <div style="min-width:240px"><label class="small muted">Кого показать</label><select name="who" onchange="this.form.submit()">
-    {% if section_opts %}<optgroup label="Занятия">{% for v, label in section_opts %}<option value="{{ v }}" {% if v == who %}selected{% endif %}>{{ label }}</option>{% endfor %}</optgroup>{% endif %}
-    {% if group_opts %}<optgroup label="Группы">{% for v, label in group_opts %}<option value="{{ v }}" {% if v == who %}selected{% endif %}>{{ label }}</option>{% endfor %}</optgroup>{% endif %}
+  <div style="min-width:240px"><label class="small muted">{% translate "Кого показать" %}</label><select name="who" onchange="this.form.lesson.disabled = true; this.form.submit()">
+    {% if section_opts %}<optgroup label="{% translate "Занятия" %}">{% for v, label in section_opts %}<option value="{{ v }}" {% if v == who %}selected{% endif %}>{{ label }}</option>{% endfor %}</optgroup>{% endif %}
+    {% if group_opts %}<optgroup label="{% translate "Группы" %}">{% for v, label in group_opts %}<option value="{{ v }}" {% if v == who %}selected{% endif %}>{{ label }}</option>{% endfor %}</optgroup>{% endif %}
   </select></div>
-  <div style="min-width:240px"><label class="small muted">Урок</label><select name="lesson" onchange="this.form.submit()"><option value="">Все уроки</option>{% for l in lessons %}<option value="{{ l.pk }}" {% if lesson_id == l.pk|stringformat:"s" %}selected{% endif %}>{{ l.title }}</option>{% endfor %}</select></div>
-  <button class="btn" type="button" onclick="window.print()">Распечатать</button>
+  <div style="min-width:280px"><label class="small muted">{% translate "Урок" %}</label><select name="lesson" onchange="this.form.submit()">
+    <option value="all" {% if lesson_id == "all" %}selected{% endif %}>{% translate "Все уроки" %}</option>
+    {% for l in lessons %}<option value="{{ l.pk }}" {% if lesson_id == l.pk|stringformat:"s" %}selected{% endif %}>{% if l.is_open_here %}● {% endif %}{{ l.title }}</option>{% endfor %}
+  </select></div>
+  {% if current %}
+  <div class="lesson-steps">
+    {% if older %}<a class="btn" href="?who={{ who }}&lesson={{ older.pk }}" title="{{ older.title }}">← {% translate "Предыдущий" %}</a>{% endif %}
+    {% if newer %}<a class="btn" href="?who={{ who }}&lesson={{ newer.pk }}" title="{{ newer.title }}">{% translate "Следующий" %} →</a>{% endif %}
+  </div>
+  {% endif %}
+  <button class="btn" type="button" onclick="window.print()">{% translate "Распечатать" %}</button>
 </form>
-{% if not target %}<div class="sheet empty">Сначала загрузите список студентов.</div>
-{% elif not tasks %}<div class="sheet empty">Задач нет.</div>
+{% if not target %}<div class="sheet empty">{% translate "Сначала загрузите список студентов." %}</div>
+{% elif not tasks %}<div class="sheet empty">{% translate "Задач нет." %}</div>
 {% else %}
-<p class="muted small">В ячейке — число попыток. Зелёная — зачтено, красная — есть попытки, но решение не принято.</p>
+{% if current %}<h2 style="margin:0 0 .35rem">{{ current.title }}</h2>{% endif %}
+<p class="muted small">{% translate "В ячейке — число попыток. Зелёная — зачтено, красная — есть попытки, но решение не принято." %} {% translate "По умолчанию показывается последний урок, открытый для выбранного занятия или группы (● в списке)." %}</p>
 <div class="table-wrap">
 <table class="t matrix">
-  <tr><th>Студент</th>{% if by_section %}<th>Группа</th>{% endif %}{% for t in tasks %}<th class="c" title="{{ t.lesson.title }}: {{ t.title }}">{{ forloop.counter }}. {{ t.title|truncatechars:14 }}</th>{% endfor %}<th class="c">Решено</th></tr>
+  <tr><th>{% translate "Студент" %}</th>{% if by_section %}<th>{% translate "Группа" %}</th>{% endif %}{% for t in tasks %}<th class="c" title="{{ t.lesson.title }}: {{ t.title }}">{{ forloop.counter }}. {{ t.title|truncatechars:14 }}</th>{% endfor %}<th class="c">{% translate "Решено" %}</th></tr>
   {% for student, cells, solved in rows %}
   <tr>
     <td style="white-space:nowrap">{{ student.display_name }}</td>{% if by_section %}<td class="muted small">{{ student.group|default:"" }}</td>{% endif %}
@@ -26,7 +37,7 @@
     {% endfor %}
     <td class="c num"><b>{{ solved }}</b></td>
   </tr>
-  {% empty %}<tr><td colspan="99" class="empty">Здесь пока нет студентов.</td></tr>{% endfor %}
+  {% empty %}<tr><td colspan="99" class="empty">{% translate "Здесь пока нет студентов." %}</td></tr>{% endfor %}
 </table>
 </div>
 {% endif %}

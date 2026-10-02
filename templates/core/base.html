@@ -1,5 +1,5 @@
-{% load static %}<!doctype html>
-<html lang="ru">
+{% load static i18n %}{% get_current_language as LANG %}<!doctype html>
+<html lang="{{ LANG }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,23 +17,26 @@
     {% if user.is_authenticated %}
     <nav class="nav">
       {% if user.is_teacher %}
-        <a href="{% url 't_dashboard' %}" class="{% if n == 't_dashboard' %}on{% endif %}">Главная</a>
-        <a href="{% url 't_lessons' %}" class="{% if n == 't_lessons' or n == 't_lesson_new' or n == 't_lesson_edit' or n == 't_task_new' or n == 't_task_edit' or n == 't_tasks_import' %}on{% endif %}">Уроки и задачи</a>
-        <a href="{% url 't_groups' %}" class="{% if n == 't_groups' or n == 't_group' or n == 't_section' or n == 't_student' or n == 't_student_new' or n == 't_students_bulk' or n == 't_students_roster' %}on{% endif %}">Группы</a>
-        <a href="{% url 't_submissions' %}" class="{% if n == 't_submissions' or n == 't_submission' %}on{% endif %}">Отправки</a>
-        <a href="{% url 't_results' %}" class="{% if n == 't_results' %}on{% endif %}">Сводная</a>
-        <a href="{% url 't_log' %}" class="{% if n == 't_log' %}on{% endif %}">Журнал</a>
-        <a href="{% url 't_settings' %}" class="{% if n == 't_settings' %}on{% endif %}">Настройки</a>
-        <a href="{% url 't_sandbox' %}" class="{% if n == 't_sandbox' %}on{% endif %}">Песочница</a>
+        <a href="{% url 't_dashboard' %}" class="{% if n == 't_dashboard' %}on{% endif %}">{% translate "Главная" %}</a>
+        <a href="{% url 't_lessons' %}" class="{% if n == 't_lessons' or n == 't_lesson_new' or n == 't_lesson_edit' or n == 't_task_new' or n == 't_task_edit' or n == 't_tasks_import' %}on{% endif %}">{% translate "Уроки и задачи" %}</a>
+        <a href="{% url 't_groups' %}" class="{% if n == 't_groups' or n == 't_group' or n == 't_section' or n == 't_student' or n == 't_student_new' or n == 't_students_bulk' or n == 't_students_roster' %}on{% endif %}">{% translate "Группы" %}</a>
+        <a href="{% url 't_submissions' %}" class="{% if n == 't_submissions' or n == 't_submission' %}on{% endif %}">{% translate "Отправки" %}</a>
+        <a href="{% url 't_results' %}" class="{% if n == 't_results' %}on{% endif %}">{% translate "Сводная" %}</a>
+        <a href="{% url 't_log' %}" class="{% if n == 't_log' %}on{% endif %}">{% translate "Журнал" %}</a>
+        <a href="{% url 't_settings' %}" class="{% if n == 't_settings' %}on{% endif %}">{% translate "Настройки" %}</a>
+        <a href="{% url 't_sandbox' %}" class="{% if n == 't_sandbox' %}on{% endif %}">{% translate "Песочница" %}</a>
       {% else %}
-        <a href="{% url 's_lessons' %}" class="{% if n == 's_lessons' %}on{% endif %}">Мои задачи</a>
+        <a href="{% url 's_lessons' %}" class="{% if n == 's_lessons' %}on{% endif %}">{% translate "Мои задачи" %}</a>
       {% endif %}
     </nav>
-    <div class="top-user">
-      <span>{{ user.display_name }}{% if user.group %}, {{ user.group }}{% endif %}</span>
-      <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button type="submit">Выйти</button></form>
-    </div>
     {% endif %}
+    <div class="top-user">
+      {% include "core/_lang.html" %}
+      {% if user.is_authenticated %}
+      <span>{{ user.display_name }}{% if user.group %}, {{ user.group }}{% endif %}</span>
+      <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button type="submit">{% translate "Выйти" %}</button></form>
+      {% endif %}
+    </div>
   </div>
 </header>
 {% endwith %}
@@ -47,6 +50,7 @@
 <script src="{% static 'vendor/codemirror/addon/edit/closebrackets.js' %}"></script>
 <script src="{% static 'vendor/codemirror/addon/selection/active-line.js' %}"></script>
 <script src="{% static 'vendor/codemirror/addon/comment/comment.js' %}"></script>
+{% include "core/_js_i18n.html" %}
 <script src="{% static 'js/app.js' %}"></script>
 {% block scripts %}{% endblock %}
 </body>

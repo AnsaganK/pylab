@@ -1,39 +1,40 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 {% block title %}{{ group.name }}{% endblock %}
 {% block content %}
-<div class="crumbs no-print"><a href="{% url 't_groups' %}">Группы</a></div>
+<div class="crumbs no-print"><a href="{% url 't_groups' %}">{% translate "Группы" %}</a></div>
 <div class="head no-print">
-  <div><h1>{{ group.name }}</h1><p class="muted">{{ group.description|default:"" }} {{ students|length }} студ.</p></div>
+  <div><h1>{{ group.name }}</h1><p class="muted">{{ group.description|default:"" }} {% blocktranslate with n=students|length %}{{ n }} студ.{% endblocktranslate %}</p></div>
   <div class="actions">
-    <a class="btn" href="{% url 't_results' %}?who=g{{ group.pk }}">Сводная таблица</a>
-    <a class="btn" href="{% url 't_students_roster' %}?group={{ group.pk }}">Список из расписания</a>
-    <a class="btn" href="{% url 't_students_bulk' %}?group={{ group.pk }}">Добавить списком</a>
-    <a class="btn primary" href="{% url 't_student_new' %}?group={{ group.pk }}">Добавить студента</a>
+    <a class="btn" href="{% url 't_results' %}?who=g{{ group.pk }}">{% translate "Сводная таблица" %}</a>
+    <a class="btn" href="{% url 't_students_roster' %}?group={{ group.pk }}">{% translate "Список из расписания" %}</a>
+    <a class="btn" href="{% url 't_students_bulk' %}?group={{ group.pk }}">{% translate "Добавить списком" %}</a>
+    <a class="btn primary" href="{% url 't_student_new' %}?group={{ group.pk }}">{% translate "Добавить студента" %}</a>
   </div>
 </div>
 
 {% if credentials %}
 <div class="cred-box">
-  <h3>Логины и пароли — {{ group.name }}</h3>
-  <p class="small no-print">Пароли показываются только сейчас. Распечатайте или перепишите их; позже можно выдать новый пароль кнопкой «Новый пароль».</p>
+  <h3>{% translate "Логины и пароли —" %} {{ group.name }}</h3>
+  <p class="small no-print">{% translate "Пароли показываются только сейчас. Распечатайте или перепишите их; позже можно выдать новый пароль кнопкой «Новый пароль»." %}</p>
   <table class="t" style="background:transparent">
-    <tr><th>ФИО</th><th>Логин</th><th>Пароль</th></tr>
+    <tr><th>{% translate "ФИО" %}</th><th>{% translate "Логин" %}</th><th>{% translate "Пароль" %}</th></tr>
     {% for name, login, pwd in credentials %}<tr><td>{{ name }}</td><td class="cred">{{ login }}</td><td class="cred">{{ pwd }}</td></tr>{% endfor %}
   </table>
-  <p class="no-print" style="margin:.75rem 0 0"><button class="btn sm" onclick="window.print()">Распечатать</button></p>
+  <p class="no-print" style="margin:.75rem 0 0"><button class="btn sm" onclick="window.print()">{% translate "Распечатать" %}</button></p>
 </div>
 {% endif %}
 
-{% include "core/teacher/_students_table.html" with empty_text="В группе пока нет студентов. Загрузите список из расписания или добавьте ФИО построчно." %}
+{% translate "В группе пока нет студентов. Загрузите список из расписания или добавьте ФИО построчно." as empty_text %}{% include "core/teacher/_students_table.html" with empty_text=empty_text %}
 
 <details class="sheet no-print" style="margin-top:1.5rem">
-  <summary style="cursor:pointer;font-weight:500">Настройки группы</summary>
+  <summary style="cursor:pointer;font-weight:500">{% translate "Настройки группы" %}</summary>
   <form method="post" style="margin-top:1rem">{% csrf_token %}
     <div class="grid2">{% for f in form %}{% include "core/_field.html" %}{% endfor %}</div>
-    <button class="btn primary" type="submit">Сохранить</button>
+    <button class="btn primary" type="submit">{% translate "Сохранить" %}</button>
   </form>
-  <form method="post" action="{% url 't_group_delete' group.pk %}" onsubmit="return confirm('Удалить группу {{ group.name }}?')" style="margin-top:1rem">{% csrf_token %}
-    <button class="btn danger sm" type="submit">Удалить группу</button>
+  <form method="post" action="{% url 't_group_delete' group.pk %}" {% blocktranslate with name=group.name asvar confirm_msg %}Удалить группу {{ name }}?{% endblocktranslate %}onsubmit="return confirm('{{ confirm_msg|escapejs }}')" style="margin-top:1rem">{% csrf_token %}
+    <button class="btn danger sm" type="submit">{% translate "Удалить группу" %}</button>
   </form>
 </details>
 {% endblock %}

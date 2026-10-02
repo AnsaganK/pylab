@@ -1,30 +1,31 @@
 {% extends "core/base.html" %}
-{% block title %}Журнал входов{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Журнал входов" %}{% endblock %}
 {% block page_class %}wide{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Журнал входов</h1><p class="muted">Входы, запуски и отправки студентов с IP-адресами компьютеров.</p></div>
+  <div><h1>{% translate "Журнал входов" %}</h1><p class="muted">{% translate "Входы, запуски и отправки студентов с IP-адресами компьютеров." %}</p></div>
   <div class="gate">{% for key, label in periods %}<a class="btn sm {% if key == period %}go{% endif %}" href="?period={{ key }}">{{ label }}</a>{% endfor %}</div>
 </div>
 
 <form method="post" action="{% url 't_settings' %}" class="setting-bar">{% csrf_token %}
   <input type="hidden" name="next" value="{{ request.get_full_path }}">
   {% if single_session %}
-    <span><span class="st good">Включено</span> Один вход на аккаунт: при входе на другом ПК прежний выходит.</span>
-    <button class="btn sm" type="submit">Выключить</button>
+    <span><span class="st good">{% translate "Включено" %}</span> {% translate "Один вход на аккаунт: при входе на другом ПК прежний выходит." %}</span>
+    <button class="btn sm" type="submit">{% translate "Выключить" %}</button>
   {% else %}
     <input type="hidden" name="single_session" value="on">
-    <span><span class="st wait">Выключено</span> Один вход на аккаунт: под одним ID можно сидеть на нескольких ПК сразу.</span>
-    <button class="btn sm" type="submit">Включить</button>
+    <span><span class="st wait">{% translate "Выключено" %}</span> {% translate "Один вход на аккаунт: под одним ID можно сидеть на нескольких ПК сразу." %}</span>
+    <button class="btn sm" type="submit">{% translate "Включить" %}</button>
   {% endif %}
 </form>
 
 {% if kicked %}
 <section class="sheet" style="margin-bottom:1rem">
-  <h3 style="margin-top:0">Вытеснения другим входом</h3>
-  <p class="muted small">Под этим ID вошли в другом месте, и прежний компьютер выкинуло. Одно-два вытеснения — обычно студент пересел. Много подряд — двое сидят под одним ID.</p>
+  <h3 style="margin-top:0">{% translate "Вытеснения другим входом" %}</h3>
+  <p class="muted small">{% translate "Под этим ID вошли в другом месте, и прежний компьютер выкинуло. Одно-два вытеснения — обычно студент пересел. Много подряд — двое сидят под одним ID." %}</p>
   <table class="t small">
-    <tr><th>Студент</th><th>ID</th><th>Сколько раз</th><th>Последнее</th><th>IP выкинутых</th></tr>
+    <tr><th>{% translate "Студент" %}</th><th>ID</th><th>{% translate "Сколько раз" %}</th><th>{% translate "Последнее" %}</th><th>{% translate "IP выкинутых" %}</th></tr>
     {% for k in kicked %}
     <tr><td>{{ k.user.display_name }}</td><td class="mono">{{ k.user.username }}</td>
         <td class="num">{% if k.count > 2 %}<span class="st bad">{{ k.count }}</span>{% else %}{{ k.count }}{% endif %}</td>
@@ -37,43 +38,43 @@
 
 <div class="pair">
   <section class="sheet">
-    <h3 style="margin-top:0">Один ID — несколько компьютеров</h3>
+    <h3 style="margin-top:0">{% translate "Один ID — несколько компьютеров" %}</h3>
     {% for a in shared_ids %}
       <div style="padding:.5rem 0;border-top:1px solid var(--rule-soft)">
         <b>{{ a.user.display_name }}</b> <span class="muted small">ID {{ a.user.username }}{% if a.user.group %}, {{ a.user.group }}{% endif %}</span>
         <table class="t small" style="margin-top:.25rem">{% for x in a.ips %}
-          <tr><td class="mono"><a href="?period={{ period }}&ip={{ x.ip }}">{{ x.ip }}</a></td><td class="num muted">{{ x.first|date:"H:i" }}–{{ x.last|date:"H:i" }}</td><td class="num muted">{{ x.count }} действ.</td></tr>
+          <tr><td class="mono"><a href="?period={{ period }}&ip={{ x.ip }}">{{ x.ip }}</a></td><td class="num muted">{{ x.first|date:"H:i" }}–{{ x.last|date:"H:i" }}</td><td class="num muted">{{ x.count }} {% translate "действ." %}</td></tr>
         {% endfor %}</table>
       </div>
-    {% empty %}<p class="muted small" style="margin:0">Совпадений нет.</p>{% endfor %}
+    {% empty %}<p class="muted small" style="margin:0">{% translate "Совпадений нет." %}</p>{% endfor %}
   </section>
   <section class="sheet">
-    <h3 style="margin-top:0">Один компьютер — несколько студентов</h3>
+    <h3 style="margin-top:0">{% translate "Один компьютер — несколько студентов" %}</h3>
     {% for a in shared_ips %}
       <div style="padding:.5rem 0;border-top:1px solid var(--rule-soft)">
         <b class="mono"><a href="?period={{ period }}&ip={{ a.ip }}">{{ a.ip }}</a></b>
         <table class="t small" style="margin-top:.25rem">{% for x in a.users %}
-          <tr><td>{{ x.user.display_name }} <span class="muted">ID {{ x.user.username }}</span></td><td class="num muted">{{ x.first|date:"H:i" }}–{{ x.last|date:"H:i" }}</td><td class="num muted">{{ x.count }} действ.</td></tr>
+          <tr><td>{{ x.user.display_name }} <span class="muted">ID {{ x.user.username }}</span></td><td class="num muted">{{ x.first|date:"H:i" }}–{{ x.last|date:"H:i" }}</td><td class="num muted">{{ x.count }} {% translate "действ." %}</td></tr>
         {% endfor %}</table>
       </div>
-    {% empty %}<p class="muted small" style="margin:0">Совпадений нет.</p>{% endfor %}
+    {% empty %}<p class="muted small" style="margin:0">{% translate "Совпадений нет." %}</p>{% endfor %}
   </section>
 </div>
-<p class="muted small">Совпадение — не всегда нарушение: студент мог пересесть за другой компьютер, а после пары за тот же компьютер садится следующая группа. Смотрите на время.</p>
+<p class="muted small">{% translate "Совпадение — не всегда нарушение: студент мог пересесть за другой компьютер, а после пары за тот же компьютер садится следующая группа. Смотрите на время." %}</p>
 
 <form method="get" class="sheet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;align-items:end;margin:1rem 0">
   <input type="hidden" name="period" value="{{ period }}">
-  <div><label class="small muted">Группа</label><select name="group"><option value="">Все</option>{% for g in groups %}<option value="{{ g.pk }}" {% if f.group == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}</select></div>
-  <div><label class="small muted">Студент</label><input type="search" name="student" value="{{ f.student }}" placeholder="ФИО или ID"></div>
+  <div><label class="small muted">{% translate "Группа" %}</label><select name="group"><option value="">{% translate "Все" %}</option>{% for g in groups %}<option value="{{ g.pk }}" {% if f.group == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}</select></div>
+  <div><label class="small muted">{% translate "Студент" %}</label><input type="search" name="student" value="{{ f.student }}" placeholder="ФИО или ID"></div>
   <div><label class="small muted">IP</label><input type="search" name="ip" value="{{ f.ip }}"></div>
-  <div><label class="small muted">Действие</label><select name="action"><option value="">Все</option>{% for code, label in actions %}<option value="{{ code }}" {% if f.action == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
-  <div style="display:flex;gap:.5rem"><button class="btn primary" type="submit">Найти</button><a class="btn" href="?period={{ period }}">Сбросить</a></div>
+  <div><label class="small muted">{% translate "Действие" %}</label><select name="action"><option value="">{% translate "Все" %}</option>{% for code, label in actions %}<option value="{{ code }}" {% if f.action == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+  <div style="display:flex;gap:.5rem"><button class="btn primary" type="submit">{% translate "Найти" %}</button><a class="btn" href="?period={{ period }}">{% translate "Сбросить" %}</a></div>
 </form>
 
 <div class="table-wrap">
   {% if page.object_list %}
   <table class="t">
-    <tr><th>Время</th><th>Студент</th><th>ID</th><th>Группа</th><th>IP</th><th>Действие</th><th>Подробности</th></tr>
+    <tr><th>{% translate "Время" %}</th><th>{% translate "Студент" %}</th><th>ID</th><th>{% translate "Группа" %}</th><th>IP</th><th>{% translate "Действие" %}</th><th>{% translate "Подробности" %}</th></tr>
     {% for e in page.object_list %}
     <tr>
       <td class="num muted small">{{ e.created_at|date:"d.m H:i:s" }}</td>
@@ -86,13 +87,13 @@
     </tr>
     {% endfor %}
   </table>
-  {% else %}<div class="empty">За этот период записей нет.</div>{% endif %}
+  {% else %}<div class="empty">{% translate "За этот период записей нет." %}</div>{% endif %}
 </div>
 {% if page.has_other_pages %}
 <div style="display:flex;gap:.5rem;align-items:center;margin-top:1rem">
-  {% if page.has_previous %}<a class="btn sm" href="?{{ query }}&page={{ page.previous_page_number }}">Назад</a>{% endif %}
-  <span class="muted small">Страница {{ page.number }} из {{ page.paginator.num_pages }}</span>
-  {% if page.has_next %}<a class="btn sm" href="?{{ query }}&page={{ page.next_page_number }}">Дальше</a>{% endif %}
+  {% if page.has_previous %}<a class="btn sm" href="?{{ query }}&page={{ page.previous_page_number }}">{% translate "Назад" %}</a>{% endif %}
+  <span class="muted small">{% blocktranslate with n=page.number total=page.paginator.num_pages %}Страница {{ n }} из {{ total }}{% endblocktranslate %}</span>
+  {% if page.has_next %}<a class="btn sm" href="?{{ query }}&page={{ page.next_page_number }}">{% translate "Дальше" %}</a>{% endif %}
 </div>
 {% endif %}
 {% endblock %}

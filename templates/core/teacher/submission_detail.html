@@ -1,52 +1,53 @@
 {% extends "core/base.html" %}
-{% block title %}Отправка #{{ sub.pk }}{% endblock %}
+{% load i18n %}
+{% block title %}{% blocktranslate with n=sub.pk %}Отправка #{{ n }}{% endblocktranslate %}{% endblock %}
 {% block content %}
-<div class="crumbs"><a href="{% url 't_submissions' %}">Отправки</a> / <a href="{% url 't_submissions' %}?task={{ sub.task.pk }}">{{ sub.task.title }}</a></div>
+<div class="crumbs"><a href="{% url 't_submissions' %}">{% translate "Отправки" %}</a> / <a href="{% url 't_submissions' %}?task={{ sub.task.pk }}">{{ sub.task.title }}</a></div>
 <div class="head">
   <div>
     <h1>{{ sub.user.display_name }}</h1>
-    <p class="muted">{{ sub.user.group|default:"" }}{% if sub.user.group %}, {% endif %}{{ sub.task.lesson.title }}: {{ sub.task.title }}. Отправлено {{ sub.created_at|date:"d.m.Y H:i:s" }}{% if sub.ip %} с <a class="mono" href="{% url 't_log' %}?period=week&ip={{ sub.ip }}">{{ sub.ip }}</a>{% endif %}. ID {{ sub.user.username }}</p>
+    <p class="muted">{{ sub.user.group|default:"" }}{% if sub.user.group %}, {% endif %}{{ sub.task.lesson.title }}: {{ sub.task.title }}. {% blocktranslate with when=sub.created_at|date:"d.m.Y H:i:s" %}Отправлено {{ when }}{% endblocktranslate %}{% if sub.ip %}, IP <a class="mono" href="{% url 't_log' %}?period=week&ip={{ sub.ip }}">{{ sub.ip }}</a>{% endif %}. ID {{ sub.user.username }}</p>
   </div>
   <div class="actions">
-    <a class="btn" href="{% url 't_task_edit' sub.task.pk %}">Задача</a>
-    {% if sub.task.is_io %}<form class="inline" method="post" action="{% url 't_submission_rejudge' sub.pk %}">{% csrf_token %}<button class="btn" type="submit">Перепроверить</button></form>{% endif %}
+    <a class="btn" href="{% url 't_task_edit' sub.task.pk %}">{% translate "Задача" %}</a>
+    {% if sub.task.is_io %}<form class="inline" method="post" action="{% url 't_submission_rejudge' sub.pk %}">{% csrf_token %}<button class="btn" type="submit">{% translate "Перепроверить" %}</button></form>{% endif %}
   </div>
 </div>
 
 <div class="verdict">
   {% include "core/_status.html" with s=sub %}
   {% include "core/_strip.html" with s=sub big=1 %}
-  {% if sub.tests_total %}<span class="muted num">пройдено {{ sub.tests_passed }} из {{ sub.tests_total }}</span>{% endif %}
-  {% if sub.max_time is not None %}<span class="muted num">макс. время {{ sub.max_time|floatformat:3 }} с</span>{% endif %}
+  {% if sub.tests_total %}<span class="muted num">{% blocktranslate with passed=sub.tests_passed total=sub.tests_total %}пройдено {{ passed }} из {{ total }}{% endblocktranslate %}</span>{% endif %}
+  {% if sub.max_time is not None %}<span class="muted num">{% blocktranslate with t=sub.max_time|floatformat:3 %}макс. время {{ t }} с{% endblocktranslate %}</span>{% endif %}
 </div>
 
 <div class="code-box"><textarea class="code-view">{{ sub.code }}</textarea></div>
 
 {% if sub.failed_test %}
-<h2>Тест {{ sub.failed_test }}{% if sub.failed_is_sample %} (пример из условия){% endif %}</h2>
+<h2>{% translate "Тест" %} {{ sub.failed_test }}{% if sub.failed_is_sample %} {% translate "(пример из условия)" %}{% endif %}</h2>
 <div class="fail-io">
-  <div><div class="small muted">Ввод</div><pre>{{ sub.failed_input }}</pre></div>
-  <div><div class="small muted">Ожидалось</div><pre>{{ sub.failed_expected }}</pre></div>
-  <div><div class="small muted">Вывод программы</div><pre>{{ sub.failed_output }}</pre></div>
+  <div><div class="small muted">{% translate "Ввод" %}</div><pre>{{ sub.failed_input }}</pre></div>
+  <div><div class="small muted">{% translate "Ожидалось" %}</div><pre>{{ sub.failed_expected }}</pre></div>
+  <div><div class="small muted">{% translate "Вывод программы" %}</div><pre>{{ sub.failed_output }}</pre></div>
 </div>
 {% endif %}
-{% if sub.details %}<h2>Сообщение об ошибке</h2><pre class="box err">{{ sub.details }}</pre>{% endif %}
+{% if sub.details %}<h2>{% translate "Сообщение об ошибке" %}</h2><pre class="box err">{{ sub.details }}</pre>{% endif %}
 
 <form method="post" class="sheet" style="margin-top:1.5rem">{% csrf_token %}
-  <h3 style="margin-top:0">Оценка преподавателя</h3>
+  <h3 style="margin-top:0">{% translate "Оценка преподавателя" %}</h3>
   {% include "core/_field.html" with f=form.comment %}
   <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <button class="btn go" name="action" value="accept">Зачесть</button>
-    <button class="btn danger" name="action" value="reject">Не зачесть</button>
-    <button class="btn" name="action" value="comment">Только сохранить комментарий</button>
-    {% if sub.status == 'review' %}<label class="check small" style="margin-left:auto"><input type="checkbox" name="next_review" checked> затем открыть следующее непроверенное</label>{% endif %}
+    <button class="btn go" name="action" value="accept">{% translate "Зачесть" %}</button>
+    <button class="btn danger" name="action" value="reject">{% translate "Не зачесть" %}</button>
+    <button class="btn" name="action" value="comment">{% translate "Только сохранить комментарий" %}</button>
+    {% if sub.status == 'review' %}<label class="check small" style="margin-left:auto"><input type="checkbox" name="next_review" checked> {% translate "затем открыть следующее непроверенное" %}</label>{% endif %}
   </div>
 </form>
 
 {% if others|length > 1 %}
-<h2>Все попытки по задаче</h2>
+<h2>{% translate "Все попытки по задаче" %}</h2>
 <div class="table-wrap"><table class="t">
-  {% for o in others %}<tr class="link"><td class="num"><a href="{% url 't_submission' o.pk %}">#{{ o.pk }}</a>{% if o.pk == sub.pk %} <span class="muted">(эта)</span>{% endif %}</td><td>{% include "core/_status.html" with s=o %}</td><td class="muted small num">{{ o.created_at|date:"d.m H:i:s" }}</td></tr>{% endfor %}
+  {% for o in others %}<tr class="link"><td class="num"><a href="{% url 't_submission' o.pk %}">#{{ o.pk }}</a>{% if o.pk == sub.pk %} <span class="muted">{% translate "(эта)" %}</span>{% endif %}</td><td>{% include "core/_status.html" with s=o %}</td><td class="muted small num">{{ o.created_at|date:"d.m H:i:s" }}</td></tr>{% endfor %}
 </table></div>
 {% endif %}
 {% endblock %}

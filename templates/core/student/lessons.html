@@ -1,27 +1,28 @@
 {% extends "core/base.html" %}
-{% block title %}Мои задачи{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Мои задачи" %}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Мои задачи</h1>{% if user.group %}<p class="muted">Группа {{ user.group }}</p>{% endif %}</div></div>
+<div class="head"><div><h1>{% translate "Мои задачи" %}</h1>{% if user.group %}<p class="muted">{% blocktranslate with group=user.group %}Группа {{ group }}{% endblocktranslate %}</p>{% endif %}</div></div>
 {% if not has_place %}
-<div class="sheet empty">Вас ещё не добавили в группу или занятие. Сообщите преподавателю.</div>
+<div class="sheet empty">{% translate "Вас ещё не добавили в группу или занятие. Сообщите преподавателю." %}</div>
 {% endif %}
 {% for lesson, tasks, solved in items %}
 <section class="s-lesson">
   <h2>{{ lesson.title }}</h2>
-  <div class="progress">{% if lesson.topic %}{{ lesson.topic }}. {% endif %}Решено {{ solved }} из {{ tasks|length }}</div>
+  <div class="progress">{% if lesson.topic %}{{ lesson.topic }}. {% endif %}{% blocktranslate with total=tasks|length %}Решено {{ solved }} из {{ total }}{% endblocktranslate %}</div>
   <div class="s-tasks">
     {% for t, b, n in tasks %}
     <a class="s-task {% if b.is_good %}solved{% elif b and b.tone == 'wait' %}{% elif b %}tried{% endif %}" href="{% url 's_task' t.pk %}">
       <span class="dot {% if b %}{{ b.tone }}{% endif %}"></span>
       <div class="grow">
         <div>{{ t.title }}</div>
-        <div class="meta">{% if b %}{{ b.get_status_display }}, попыток: {{ n }}{% else %}не начата{% endif %}</div>
+        <div class="meta">{% if b %}{% blocktranslate with status=b.get_status_display %}{{ status }}, попыток: {{ n }}{% endblocktranslate %}{% else %}{% translate "не начата" %}{% endif %}</div>
       </div>
     </a>
     {% endfor %}
   </div>
 </section>
 {% empty %}
-{% if has_place %}<div class="sheet empty">Пока нет открытых уроков. Преподаватель откроет их на занятии.</div>{% endif %}
+{% if has_place %}<div class="sheet empty">{% translate "Пока нет открытых уроков. Преподаватель откроет их на занятии." %}</div>{% endif %}
 {% endfor %}
 {% endblock %}

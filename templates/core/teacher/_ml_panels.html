@@ -1,0 +1,15 @@
+{% load i18n %}<div class="ml" data-ml>
+  <div class="ml-tabs" role="tablist">
+    {% for code, label, fields, filled in panels %}
+    <button type="button" role="tab" class="ml-tab{% if code == active %} on{% endif %}" data-tab="{{ code }}" aria-selected="{% if code == active %}true{% else %}false{% endif %}">
+      <span class="ml-dot{% if filled %} filled{% endif %}" aria-hidden="true"></span>{{ label }}
+    </button>
+    {% endfor %}
+    <span class="ml-hint muted small">{% translate "Заполните хотя бы один язык — студенты увидят его, если перевода на их язык нет." %}</span>
+  </div>
+  {% for code, label, fields, filled in panels %}
+  <div class="ml-panel" data-panel="{{ code }}" {% if code != active %}hidden{% endif %}>
+    {% for f in fields %}{% include "core/_field.html" %}{% endfor %}
+  </div>
+  {% endfor %}
+</div>

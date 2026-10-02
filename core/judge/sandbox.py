@@ -16,6 +16,7 @@ import time
 from dataclasses import dataclass, field
 
 import constants
+from django.utils.translation import gettext as _
 
 IS_POSIX = os.name == "posix"
 
@@ -189,7 +190,7 @@ def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int,
                     start_new_session=IS_POSIX,
                 )
             except FileNotFoundError as e:
-                return RunResult(SE, stderr=f"Не найден исполняемый файл: {e.filename}. Проверьте constants.py.")
+                return RunResult(SE, stderr=_("Не найден исполняемый файл: %(f)s. Проверьте constants.py.") % {"f": e.filename})
             try:
                 proc.wait(timeout=wall_limit)
             except subprocess.TimeoutExpired:
@@ -227,7 +228,7 @@ def run_program(code: str, stdin_text: str, time_limit: float, memory_mb: int,
 
         if constants.SANDBOX_USE_BWRAP and rc == 1 and stderr.startswith("bwrap:"):
             res.status = SE
-            res.notes.append("bubblewrap не смог создать песочницу — см. раздел «Песочница» в README.")
+            res.notes.append(_("bubblewrap не смог создать песочницу — см. раздел «Песочница» в README."))
         elif timed_out or elapsed > time_limit or sig in (getattr(signal, "SIGXCPU", -1),) or \
                 (sig == getattr(signal, "SIGKILL", -1)):
             res.status = TLE
@@ -273,19 +274,19 @@ def selftest():
     r = run_program(SELFTEST_CODE, "21\n", 5, constants.DEFAULT_MEMORY_LIMIT)
     out = r.stdout
     checks = [
-        ("Программа запускается и читает ввод", r.status == OK and out.strip().endswith("42"),
+        (_("Программа запускается и читает ввод"), r.status == OK and out.strip().endswith("42"),
          (r.stderr or "; ".join(r.notes) or out)[:500]),
-        ("Нет доступа в сеть", "NETWORK: BLOCKED" in out, ""),
-        ("Нельзя писать в файлы сервера", "HOMEWRITE: BLOCKED" in out and "ROOTWRITE: BLOCKED" in out, ""),
-        ("Каталоги пользователей скрыты", "HOME_DIRS: HIDDEN" in out, ""),
+        (_("Нет доступа в сеть"), "NETWORK: BLOCKED" in out, ""),
+        (_("Нельзя писать в файлы сервера"), "HOMEWRITE: BLOCKED" in out and "ROOTWRITE: BLOCKED" in out, ""),
+        (_("Каталоги пользователей скрыты"), "HOME_DIRS: HIDDEN" in out, ""),
     ]
     t = run_program("while True: pass", "", 1, constants.DEFAULT_MEMORY_LIMIT)
-    checks.append(("Бесконечный цикл останавливается по времени", t.status == TLE, f"{t.time} с"))
+    checks.append((_("Бесконечный цикл останавливается по времени"), t.status == TLE, f"{t.time} " + _("с")))
     m = run_program("a = [0] * (10**9)", "", 2, 64)
-    checks.append(("Лимит памяти работает", m.status == MLE, m.status))
+    checks.append((_("Лимит памяти работает"), m.status == MLE, m.status))
     return {
-        "mode": "bubblewrap" if constants.SANDBOX_USE_BWRAP else "без изоляции",
-        "run_as": constants.SANDBOX_RUN_AS or "пользователь сервера",
+        "mode": "bubblewrap" if constants.SANDBOX_USE_BWRAP else "none",
+        "run_as": constants.SANDBOX_RUN_AS or _("пользователь сервера"),
         "checks": checks,
         "all_ok": all(c[1] for c in checks),
     }

@@ -1,12 +1,35 @@
 (function () {
   "use strict";
 
+  // Переведённые строки приходят со страницы (core/_js_i18n.html)
+  var I18N = {};
+  try { I18N = JSON.parse(document.getElementById("pylab-i18n").textContent); } catch (e) {}
+  function t(key, fallback) { return I18N[key] || fallback; }
+
   // Код только для чтения (отправки)
   document.querySelectorAll("textarea.code-view").forEach(function (ta) {
     var cm = CodeMirror.fromTextArea(ta, {
       mode: "python", readOnly: true, lineNumbers: true, viewportMargin: Infinity,
     });
     cm.getWrapperElement().classList.add("view");
+  });
+
+  // Вкладки языков в формах преподавателя
+  document.querySelectorAll("[data-ml]").forEach(function (box) {
+    var tabs = box.querySelectorAll(".ml-tab");
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        tabs.forEach(function (t2) { t2.classList.toggle("on", t2 === tab); t2.setAttribute("aria-selected", String(t2 === tab)); });
+        box.querySelectorAll(".ml-panel").forEach(function (p) { p.hidden = p.dataset.panel !== tab.dataset.tab; });
+      });
+    });
+    // зелёная точка у вкладки, как только в ней что-то написали
+    box.querySelectorAll(".ml-panel").forEach(function (panel) {
+      panel.addEventListener("input", function () {
+        var filled = Array.prototype.some.call(panel.querySelectorAll("input, textarea"), function (el) { return el.value.trim(); });
+        box.querySelector('.ml-tab[data-tab="' + panel.dataset.panel + '"] .ml-dot').classList.toggle("filled", filled);
+      });
+    });
   });
 
   var bench = document.getElementById("workbench");
@@ -129,8 +152,8 @@
       "Ctrl-D": duplicateLine, "Cmd-D": duplicateLine,
       "Alt-Up": function (cm) { moveLine(cm, -1); },
       "Alt-Down": function (cm) { moveLine(cm, 1); },
-      "Ctrl-S": function () { store(draftKey, editor.getValue()); flash("Черновик сохранён"); },
-      "Cmd-S": function () { store(draftKey, editor.getValue()); flash("Черновик сохранён"); },
+      "Ctrl-S": function () { store(draftKey, editor.getValue()); flash(t("draft_saved", "Черновик сохранён")); },
+      "Cmd-S": function () { store(draftKey, editor.getValue()); flash(t("draft_saved", "Черновик сохранён")); },
       "Ctrl-Enter": function () { run(); }, "Cmd-Enter": function () { run(); },
     },
   });
@@ -164,7 +187,7 @@
   });
 
   document.getElementById("btn-reset").addEventListener("click", function () {
-    if (!confirm("Заменить код в редакторе начальным? Текущий черновик пропадёт.")) return;
+    if (!confirm(t("reset_confirm", "Заменить код в редакторе начальным? Текущий черновик пропадёт."))) return;
     editor.setValue(document.getElementById("starter").value);
     editor.focus();
   });
@@ -197,9 +220,9 @@
   // Под этим ID вошли на другом компьютере — показываем причину и уходим на вход
   function kicked(r) {
     clearTimeout(pollTimer);
-    alert(r.error || "Вы вышли из аккаунта.");
+    alert(r.error || t("logged_out", "Вы вышли из аккаунта."));
     window.location.href = "/login/";
-    return { error: r.error || "Вы вышли из аккаунта." };
+    return { error: r.error || t("logged_out", "Вы вышли из аккаунта.") };
   }
 
   function post(url, data) {
@@ -208,8 +231,8 @@
     return fetch(url, { method: "POST", body: body, headers: { "X-CSRFToken": csrf, "X-Requested-With": "fetch" }, credentials: "same-origin" })
       .then(function (r) {
         if (r.status === 401) return r.json().then(kicked);
-        if (r.redirected && r.url.indexOf("/login") >= 0) { window.location.href = "/login/"; return { error: "Сессия закончилась, войдите снова." }; }
-        return r.json().catch(function () { return { error: "Ошибка сервера (" + r.status + ")." }; });
+        if (r.redirected && r.url.indexOf("/login") >= 0) { window.location.href = "/login/"; return { error: t("session_ended", "Сессия закончилась, войдите снова.") }; }
+        return r.json().catch(function () { return { error: t("server_error", "Ошибка сервера") + " (" + r.status + ")." }; });
       });
   }
 
@@ -249,7 +272,7 @@
       el.textContent = p.text;
       out.appendChild(el);
     });
-    if (!out.childNodes.length) out.innerHTML = '<span class="muted">Программа ничего не вывела.</span>';
+    if (!out.childNodes.length) out.innerHTML = '<span class="muted">' + t("nothing_printed", "Программа ничего не вывела.") + '</span>';
   }
 
   function renderRun(r) {
@@ -262,7 +285,7 @@
       var field = document.createElement("input");
       field.type = "text";
       field.className = "console-in";
-      field.setAttribute("aria-label", "Ввод для программы");
+      field.setAttribute("aria-label", t("input_aria", "Ввод для программы"));
       field.setAttribute("autocomplete", "off");
       field.spellcheck = false;
       pre.appendChild(field);
@@ -274,7 +297,7 @@
           send(true);
         } else if (e.key === "Escape") {
           e.preventDefault();
-          stop("Программа остановлена.");
+          stop(t("stopped", "Программа остановлена."));
         }
       });
       field.focus({ preventScroll: true });
@@ -287,7 +310,7 @@
       out.appendChild(h);
     }
     if (!pre.childNodes.length && r.status !== "input" && !r.stderr) {
-      pre.innerHTML = '<span class="muted">Программа ничего не вывела.</span>';
+      pre.innerHTML = '<span class="muted">' + t("nothing_printed", "Программа ничего не вывела.") + '</span>';
     }
     out.scrollTop = out.scrollHeight;
   }
@@ -316,7 +339,7 @@
 
   function send(isContinue) {
     btnRun.disabled = true;
-    meta.textContent = "выполняется…";
+    meta.textContent = t("running", "выполняется…");
     post(bench.dataset.runUrl, {
       code: editor.getValue(), stdin: stdin.value,
       typed: JSON.stringify(session.typed), "continue": isContinue ? "1" : "",
@@ -326,14 +349,14 @@
       renderRun(r);
       if (r.status === "input") {
         setWaiting(true);
-        meta.textContent = "ждёт ввод…";
+        meta.textContent = t("waiting", "ждёт ввод…");
       } else {
-        meta.textContent = r.label + (r.time ? ", " + r.time.toFixed(2) + " с" : "");
+        meta.textContent = r.label + (r.time ? ", " + r.time.toFixed(2) + " " + t("sec", "с") : "");
         session = null;
         setWaiting(false);
       }
     }).catch(function () {
-      show([{ text: "Нет связи с сервером.", err: true }]); meta.textContent = ""; stop();
+      show([{ text: t("no_connection", "Нет связи с сервером."), err: true }]); meta.textContent = ""; stop();
     }).finally(function () { btnRun.disabled = false; });
   }
 
@@ -343,7 +366,7 @@
     send(false);
   }
 
-  btnStop.addEventListener("click", function () { stop("Программа остановлена."); });
+  btnStop.addEventListener("click", function () { stop(t("stopped", "Программа остановлена.")); });
 
   // Высота поля ввода и консоли: тянешь одно — второе подстраивается, размер запоминается
   (function syncHeights() {
@@ -368,7 +391,7 @@
   })();
   // Код поменяли, пока программа ждала ввод, — продолжать старый запуск нельзя
   editor.on("change", function () {
-    if (session && session.waiting) stop("Код изменён — нажмите «Запустить» заново.");
+    if (session && session.waiting) stop(t("code_changed", "Код изменён — нажмите «Запустить» заново."));
   });
   // Клик по консоли возвращает фокус в строку ввода
   out.addEventListener("click", function () {
@@ -412,11 +435,11 @@
     btnSubmit.disabled = true;
     post(bench.dataset.submitUrl, { code: editor.getValue() }).then(function (r) {
       if (r.error) { show([{ text: r.error, err: true }]); return; }
-      flash("Отправлено");
+      flash(t("sent", "Отправлено"));
       refreshSubs();
       subsBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }).catch(function () {
-      show([{ text: "Нет связи с сервером.", err: true }]);
+      show([{ text: t("no_connection", "Нет связи с сервером."), err: true }]);
     }).finally(function () { setTimeout(function () { btnSubmit.disabled = false; }, 1500); });
   });
   btnRun.addEventListener("click", run);

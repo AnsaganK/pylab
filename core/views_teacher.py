@@ -1,11 +1,15 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _, gettext_lazy
 from django.views.decorators.http import require_POST
 
 from .decorators import teacher_required
@@ -40,7 +44,7 @@ def dashboard(request):
         review=Count("id", filter=Q(status=Submission.REVIEW)),
     )
     recent = Submission.objects.select_related("user", "user__group", "task")[:15]
-    groups = StudyGroup.objects.annotate(n=Count("students"))
+    groups = StudyGroup.objects.annotate(n=Count("students")).order_by("name")
     since3h = timezone.now() - timezone.timedelta(hours=3)
     shared_ids, shared_ips = netlog.suspicious(since3h)
     return render(request, "core/teacher/dashboard.html", {
@@ -57,10 +61,10 @@ def groups(request):
     form = GroupForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         g = form.save()
-        messages.success(request, f"Группа {g.name} создана.")
+        messages.success(request, _("Группа %(name)s создана.") % {"name": g.name})
         return redirect("t_group", g.pk)
-    items = StudyGroup.objects.annotate(n=Count("students"))
-    sections = ClassSection.objects.annotate(n=Count("students"))
+    items = StudyGroup.objects.annotate(n=Count("students")).order_by("name")
+    sections = ClassSection.objects.annotate(n=Count("students")).order_by("code")
     return render(request, "core/teacher/groups.html", {"form": form, "groups": items, "sections": sections})
 
 
@@ -70,7 +74,7 @@ def group_detail(request, pk):
     form = GroupForm(request.POST or None, instance=group)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Группа сохранена.")
+        messages.success(request, _("Группа сохранена."))
         return redirect("t_group", pk)
     students = _students_with_stats(group.students.all())
     return render(request, "core/teacher/group_detail.html", {
@@ -83,7 +87,7 @@ def _students_with_stats(qs):
     """Студенты с числом решённых задач и последней активностью (IP)."""
     students = list(qs.select_related("group").prefetch_related("sections").annotate(
         solved=Count("submissions__task", filter=Q(submissions__status__in=Submission.GOOD), distinct=True),
-    ))
+    ).order_by("full_name", "username"))
     last = {}
     for row in (AccessLog.objects.filter(user__in=[s.id for s in students], ip__isnull=False)
                 .exclude(action=AccessLog.LOGIN_FAIL).order_by("user_id", "-created_at")
@@ -100,7 +104,7 @@ def section_detail(request, pk):
     form = SectionForm(request.POST or None, instance=section)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Занятие сохранено.")
+        messages.success(request, _("Занятие сохранено."))
         return redirect("t_section", pk)
     return render(request, "core/teacher/section_detail.html", {
         "section": section, "form": form,
@@ -113,7 +117,7 @@ def section_detail(request, pk):
 def section_delete(request, pk):
     section = get_object_or_404(ClassSection, pk=pk)
     section.delete()
-    messages.success(request, f"Занятие {section.code} удалено. Студенты остались в своих группах.")
+    messages.success(request, _("Занятие %(code)s удалено. Студенты остались в своих группах.") % {"code": section.code})
     return redirect("t_groups")
 
 
@@ -122,10 +126,10 @@ def section_delete(request, pk):
 def group_delete(request, pk):
     group = get_object_or_404(StudyGroup, pk=pk)
     if group.students.exists():
-        messages.error(request, "В группе есть студенты — сначала удалите или переведите их.")
+        messages.error(request, _("В группе есть студенты — сначала удалите или переведите их."))
         return redirect("t_group", pk)
     group.delete()
-    messages.success(request, "Группа удалена.")
+    messages.success(request, _("Группа удалена."))
     return redirect("t_groups")
 
 
@@ -140,11 +144,11 @@ def student_create(request):
         student.save()
         form.save_m2m()
         request.session["credentials"] = [(student.full_name, student.username, password)]
-        messages.success(request, f"Студент {student.full_name} добавлен.")
+        messages.success(request, _("Студент %(name)s добавлен.") % {"name": student.full_name})
         return redirect("t_group", student.group_id)
     if not form.is_bound and request.GET.get("name"):
         form.initial["full_name"] = request.GET["name"]
-    return render(request, "core/teacher/student_form.html", {"form": form, "title": "Новый студент"})
+    return render(request, "core/teacher/student_form.html", {"form": form, "title": _("Новый студент")})
 
 
 @teacher_required
@@ -158,7 +162,7 @@ def student_edit(request, pk):
             request.session["credentials"] = [(student.full_name, student.username, form.cleaned_data["password"])]
         student.save()
         form.save_m2m()
-        messages.success(request, "Данные студента сохранены.")
+        messages.success(request, _("Данные студента сохранены."))
         return redirect("t_group", student.group_id)
     return render(request, "core/teacher/student_form.html", {
         "form": form, "title": student.display_name(), "student": student,
@@ -183,7 +187,7 @@ def students_bulk(request):
                 u.save()
                 created.append((name, login, password))
         request.session["credentials"] = created
-        messages.success(request, f"Добавлено студентов: {len(created)}.")
+        messages.success(request, _("Добавлено студентов: %(n)s.") % {"n": len(created)})
         return redirect("t_group", group.pk)
     return render(request, "core/teacher/students_bulk.html", {"form": form})
 
@@ -196,7 +200,7 @@ def student_reset_password(request, pk):
     student.set_password(password)
     student.save()
     request.session["credentials"] = [(student.full_name, student.username, password)]
-    messages.success(request, f"Новый пароль для {student.display_name()} ниже.")
+    messages.success(request, _("Новый пароль для %(name)s ниже.") % {"name": student.display_name()})
     return redirect("t_group", student.group_id)
 
 
@@ -206,7 +210,7 @@ def student_delete(request, pk):
     student = get_object_or_404(User, pk=pk, is_staff=False)
     gid = student.group_id
     student.delete()
-    messages.success(request, "Студент удалён вместе с отправками.")
+    messages.success(request, _("Студент удалён вместе с отправками."))
     return redirect("t_group", gid) if gid else redirect("t_groups")
 
 
@@ -217,10 +221,10 @@ def students_roster(request):
     if request.method == "POST" and form.is_valid():
         rows, skipped = roster.parse(form.cleaned_data["text"])
         if not rows:
-            form.add_error("text", "Не нашёл ни одной строки вида «1) ФИО (группа) ID».")
+            form.add_error("text", _("Не нашёл ни одной строки вида «1) ФИО (группа) ID»."))
         elif "confirm" in request.POST:
             report = roster.apply(rows, form.cleaned_data["group"])
-            messages.success(request, f"Создано: {len(report['created'])}, обновлено: {len(report['updated'])}.")
+            messages.success(request, _("Создано: %(created)s, обновлено: %(updated)s.") % {"created": len(report["created"]), "updated": len(report["updated"])})
             if not report["errors"]:
                 if len(report["sections"]) == 1:
                     return redirect("t_section", next(iter(report["sections"])))
@@ -242,12 +246,79 @@ def students_roster(request):
 
 @teacher_required
 def lessons(request):
-    items = Lesson.objects.prefetch_related("open_for", "open_for_sections", "tasks").annotate(
+    # Новые уроки сверху. С annotate() Django не применяет сортировку из Meta — задаём её явно
+    items = list(Lesson.objects.prefetch_related("open_for", "open_for_sections", "tasks").annotate(
         subs=Count("tasks__submissions"),
-    )
+    ).order_by("-order", "-id"))
+    for i, lesson in enumerate(items):
+        lesson.number = len(items) - i   # номер по порядку: старый урок — 1
     return render(request, "core/teacher/lessons.html", {
         "lessons": items, "groups": StudyGroup.objects.all(), "sections": ClassSection.objects.all(),
     })
+
+
+ML_LABELS = (("ru", "РУС"), ("kk", "ҚАЗ"), ("en", "ENG"))
+
+
+def _lang_panels(form, fields):
+    """Вкладки языков для формы: (код, подпись, поля, заполнено ли)."""
+    panels = []
+    for code, label in ML_LABELS:
+        bound = [form[f"{name}_{code}"] for name in fields]
+        filled = any((f.value() or "").strip() for f in bound if isinstance(f.value(), str))
+        panels.append((code, label, bound, filled))
+    from django.utils.translation import get_language
+    ui = (get_language() or "ru")[:2]
+    filled_codes = [p[0] for p in panels if p[3]]
+    active = ui if (ui in filled_codes or not filled_codes) else filled_codes[0]
+    return panels, active
+
+
+def _ids_from_body(request):
+    try:
+        ids = json.loads(request.body or b"{}").get("ids", [])
+        return [int(x) for x in ids]
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
+@teacher_required
+@require_POST
+def lessons_reorder(request):
+    """Перетаскивание уроков. На странице новые сверху, поэтому
+    первый в списке получает самый большой порядок, последний — 1."""
+    ids = _ids_from_body(request)
+    if ids is None:
+        return JsonResponse({"error": _("Неверные данные")}, status=400)
+    lessons_by_id = Lesson.objects.in_bulk(ids)
+    total = len(ids)
+    with transaction.atomic():
+        for index, lesson_id in enumerate(ids):
+            position = total - index
+            lesson = lessons_by_id.get(lesson_id)
+            if lesson and lesson.order != position:
+                lesson.order = position
+                lesson.save(update_fields=["order"])
+    return JsonResponse({"ok": True})
+
+
+@teacher_required
+@require_POST
+def tasks_reorder(request, pk):
+    """Перетаскивание задач внутри урока (и между уроками)."""
+    lesson = get_object_or_404(Lesson, pk=pk)
+    ids = _ids_from_body(request)
+    if ids is None:
+        return JsonResponse({"error": _("Неверные данные")}, status=400)
+    tasks_by_id = Task.objects.in_bulk(ids)
+    with transaction.atomic():
+        for position, task_id in enumerate(ids, start=1):
+            task = tasks_by_id.get(task_id)
+            if task and (task.order != position or task.lesson_id != lesson.pk):
+                task.order = position
+                task.lesson = lesson
+                task.save(update_fields=["order", "lesson"])
+    return JsonResponse({"ok": True})
 
 
 @teacher_required
@@ -259,9 +330,10 @@ def lesson_form(request, pk=None):
     form = LessonForm(request.POST or None, instance=lesson, initial=initial)
     if request.method == "POST" and form.is_valid():
         lesson = form.save()
-        messages.success(request, "Урок сохранён.")
+        messages.success(request, _("Урок сохранён."))
         return redirect("t_lessons")
-    return render(request, "core/teacher/lesson_form.html", {"form": form, "lesson": lesson})
+    panels, active = _lang_panels(form, ("title", "topic"))
+    return render(request, "core/teacher/lesson_form.html", {"form": form, "lesson": lesson, "panels": panels, "active": active})
 
 
 @teacher_required
@@ -284,7 +356,7 @@ def task_pdf(request, pk):
 def lesson_delete(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
     lesson.delete()
-    messages.success(request, f"Урок «{lesson.title}» удалён.")
+    messages.success(request, _("Урок «%(title)s» удалён.") % {"title": lesson.title})
     return redirect("t_lessons")
 
 
@@ -344,12 +416,13 @@ def task_form(request, pk=None):
             for i, f in enumerate(formset.forms):
                 if f.instance.pk and not f.cleaned_data.get("DELETE"):
                     type(f.instance).objects.filter(pk=f.instance.pk).update(order=i)
-        messages.success(request, "Задача сохранена.")
+        messages.success(request, _("Задача сохранена."))
         if "save_stay" in request.POST:
             return redirect("t_task_edit", task.pk)
         return redirect(reverse("t_lessons") + f"#lesson-{task.lesson_id}")
+    panels, active = _lang_panels(form, ("title", "statement", "input_format", "output_format"))
     return render(request, "core/teacher/task_form.html", {
-        "form": form, "formset": formset, "task": task,
+        "form": form, "formset": formset, "task": task, "panels": panels, "active": active,
     })
 
 
@@ -358,7 +431,7 @@ def task_form(request, pk=None):
 def task_delete(request, pk):
     task = get_object_or_404(Task, pk=pk)
     task.delete()
-    messages.success(request, f"Задача «{task.title}» удалена.")
+    messages.success(request, _("Задача «%(title)s» удалена.") % {"title": task.title})
     return redirect("t_lessons")
 
 
@@ -370,7 +443,7 @@ def task_rejudge(request, pk):
     Submission.objects.filter(id__in=ids).update(status=Submission.PENDING)
     for sid in ids:
         queue.enqueue(sid)
-    messages.success(request, f"Отправлено на перепроверку: {len(ids)}.")
+    messages.success(request, _("Отправлено на перепроверку: %(n)s.") % {"n": len(ids)})
     return redirect("t_task_edit", pk)
 
 
@@ -381,20 +454,20 @@ def tasks_import(request):
     warnings = []
     if request.method == "POST" and form.is_valid():
         try:
-            tasks = importer.parse(form.cleaned_data["raw"])
+            tasks = importer.parse(form.cleaned_data["raw"], form.cleaned_data["language"])
         except importer.TaskFileError as e:
             form.add_error(None, str(e))
         else:
             if form.cleaned_data["check_solutions"]:
                 warnings = importer.verify_solutions(tasks)
             if warnings and "force" not in request.POST:
-                form.add_error(None, "Эталонные решения не прошли часть тестов — задачи не созданы. "
-                                     "Исправьте файл или нажмите «Всё равно импортировать».")
+                form.add_error(None, _("Эталонные решения не прошли часть тестов — задачи не созданы. "
+                                       "Исправьте файл или нажмите «Всё равно импортировать»."))
             else:
                 lesson = form.cleaned_data["lesson"]
-                created = importer.create_tasks(lesson, tasks, form.cleaned_data["is_open"])
+                created = importer.create_tasks(lesson, tasks, form.cleaned_data["is_open"], form.cleaned_data["language"])
                 n_tests = sum(t.tests.count() for t in created)
-                messages.success(request, f"Добавлено задач: {len(created)}, тестов: {n_tests}.")
+                messages.success(request, _("Добавлено задач: %(tasks)s, тестов: %(tests)s.") % {"tasks": len(created), "tests": n_tests})
                 return redirect(reverse("t_lessons") + f"#lesson-{lesson.pk}")
     return render(request, "core/teacher/tasks_import.html", {"form": form, "warnings": warnings})
 
@@ -447,7 +520,7 @@ def submission_detail(request, pk):
             sub.status = Submission.REJECTED
         sub.checked_at = timezone.now()
         sub.save()
-        messages.success(request, "Решение отмечено.")
+        messages.success(request, _("Решение отмечено."))
         nxt = Submission.objects.filter(status=Submission.REVIEW).order_by("created_at").first()
         if nxt and "next_review" in request.POST:
             return redirect("t_submission", nxt.pk)
@@ -463,7 +536,7 @@ def submission_rejudge(request, pk):
     sub.status = Submission.PENDING
     sub.save(update_fields=["status"])
     queue.enqueue(sub.pk)
-    messages.success(request, "Отправка поставлена на перепроверку.")
+    messages.success(request, _("Отправка поставлена на перепроверку."))
     return redirect("t_submission", pk)
 
 
@@ -471,7 +544,7 @@ def submission_rejudge(request, pk):
 @require_POST
 def requeue_stale(request):
     n = queue.requeue_stale(minutes=2)
-    messages.success(request, f"Возвращено в очередь: {n}.")
+    messages.success(request, _("Возвращено в очередь: %(n)s.") % {"n": n})
     return redirect("t_submissions")
 
 
@@ -481,7 +554,6 @@ def requeue_stale(request):
 def results(request):
     groups_qs = StudyGroup.objects.all()
     sections_qs = ClassSection.objects.all()
-    lessons_qs = Lesson.objects.all()
     # Кого показывать: «s12» — занятие, «g3» — группа. Старые ссылки ?group=3 тоже работают.
     who = request.GET.get("who") or (f"g{request.GET['group']}" if request.GET.get("group") else "")
     target, students_qs, by_section = None, None, False
@@ -497,10 +569,33 @@ def results(request):
         who = f"{'s' if by_section else 'g'}{target.pk}"
         students_qs = target.students.select_related("group")
 
-    lesson_id = request.GET.get("lesson", "")
+    # Уроки: новые сверху. Отмечаем открытые для выбранного занятия/группы.
+    lessons_list = list(Lesson.objects.order_by("-order", "-id"))
+    open_ids = set()
+    if target is not None:
+        rel = "open_for_sections" if by_section else "open_for"
+        open_ids = set(Lesson.objects.filter(**{rel: target}).values_list("id", flat=True))
+    for lesson in lessons_list:
+        lesson.is_open_here = lesson.id in open_ids
+
+    # Какой урок показать: явно выбранный, «все» или по умолчанию — последний открытый
+    lesson_param = request.GET.get("lesson")
+    if lesson_param == "all":
+        current = None
+    elif lesson_param and lesson_param.isdigit():
+        current = next((x for x in lessons_list if x.id == int(lesson_param)), None)
+    else:
+        current = next((x for x in lessons_list if x.is_open_here), None) or (lessons_list[0] if lessons_list else None)
+    lesson_id = "all" if current is None else str(current.id)
+    newer = older = None
+    if current is not None:
+        idx = lessons_list.index(current)
+        newer = lessons_list[idx - 1] if idx > 0 else None
+        older = lessons_list[idx + 1] if idx + 1 < len(lessons_list) else None
+
     tasks = Task.objects.select_related("lesson")
-    if lesson_id:
-        tasks = tasks.filter(lesson_id=lesson_id)
+    if current is not None:
+        tasks = tasks.filter(lesson=current)
     tasks = list(tasks)
     rows = []
     if students_qs is not None:
@@ -508,9 +603,9 @@ def results(request):
         best, attempts = best_submissions([s.id for s in students], [t.id for t in tasks])
         for s in students:
             cells = [(t, best.get((s.id, t.id)), attempts.get((s.id, t.id), 0)) for t in tasks]
-            rows.append((s, cells, sum(1 for _, b, _ in cells if b and b.is_good)))
+            rows.append((s, cells, sum(1 for _t, b, _n in cells if b and b.is_good)))
     return render(request, "core/teacher/results.html", {
-        "lessons": lessons_qs,
+        "lessons": lessons_list, "current": current, "newer": newer, "older": older,
         "section_opts": [(f"s{x.pk}", str(x)) for x in sections_qs],
         "group_opts": [(f"g{x.pk}", x.name) for x in groups_qs],
         "target": target, "who": who, "by_section": by_section,
@@ -520,7 +615,7 @@ def results(request):
 
 # --- Журнал входов и IP ---
 
-PERIODS = {"3h": ("3 часа", 3), "day": ("сутки", 24), "week": ("неделя", 24 * 7)}
+PERIODS = {"3h": (gettext_lazy("3 часа"), 3), "day": (gettext_lazy("сутки"), 24), "week": (gettext_lazy("неделя"), 24 * 7)}
 
 
 @teacher_required
@@ -562,8 +657,8 @@ def site_settings(request):
     if request.method == "POST":
         obj.single_session = "single_session" in request.POST
         obj.save()
-        messages.success(request, "Настройки сохранены. "
-                         + ("Один вход на аккаунт — включено." if obj.single_session else "Один вход на аккаунт — выключено."))
+        messages.success(request, _("Настройки сохранены. ")
+                         + (_("Один вход на аккаунт — включено.") if obj.single_session else _("Один вход на аккаунт — выключено.")))
         return redirect(request.POST.get("next") or "t_settings")
     return render(request, "core/teacher/settings.html", {"s": obj})
 

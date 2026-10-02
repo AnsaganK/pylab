@@ -10,6 +10,7 @@ import re
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.utils.translation import gettext as _
 
 from .models import ClassSection, StudyGroup
 
@@ -85,11 +86,11 @@ def apply(rows, default_group=None):
         elif default_group:
             group = default_group
         else:
-            report["errors"].append((r["line"], "не указана группа — выберите её в форме"))
+            report["errors"].append((r["line"], _("не указана группа — выберите её в форме")))
             continue
         user = User.objects.filter(username=r["sid"]).first()
         if user and user.is_staff:
-            report["errors"].append((r["line"], "этот ID занят аккаунтом преподавателя"))
+            report["errors"].append((r["line"], _("этот ID занят аккаунтом преподавателя")))
             continue
         if user:
             user.full_name = r["name"]

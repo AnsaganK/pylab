@@ -1,26 +1,27 @@
 {% extends "core/base.html" %}
-{% block title %}Главная{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Главная" %}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Здравствуйте, {{ user.full_name|default:user.username }}</h1><p class="muted">Отправки за последние 24 часа</p></div>
+  <div><h1>{% blocktranslate with name=user.full_name|default:user.username %}Здравствуйте, {{ name }}{% endblocktranslate %}</h1><p class="muted">{% translate "Отправки за последние 24 часа" %}</p></div>
   <div class="actions">
-    <a class="btn" href="{% url 't_lesson_new' %}">Новый урок</a>
-    <a class="btn primary" href="{% url 't_task_new' %}">Новая задача</a>
+    <a class="btn" href="{% url 't_lesson_new' %}">{% translate "Новый урок" %}</a>
+    <a class="btn primary" href="{% url 't_task_new' %}">{% translate "Новая задача" %}</a>
   </div>
 </div>
-{% if alerts %}<ul class="msgs"><li class="error">За последние 3 часа есть совпадения по ID или компьютерам: {{ alerts }}. <a href="{% url 't_log' %}">Открыть журнал</a></li></ul>{% endif %}
+{% if alerts %}<ul class="msgs"><li class="error">{% translate "За последние 3 часа есть совпадения по ID или компьютерам:" %} {{ alerts }}. <a href="{% url 't_log' %}">{% translate "Открыть журнал" %}</a></li></ul>{% endif %}
 <div class="stats">
-  <div><b>{{ stats.total }}</b><span>отправок</span></div>
-  <div><b>{{ stats.good }}</b><span>верных</span></div>
-  <div><b>{{ review_total }}</b><span>ждут вашей проверки</span></div>
+  <div><b>{{ stats.total }}</b><span>{% translate "отправок" %}</span></div>
+  <div><b>{{ stats.good }}</b><span>{% translate "верных" %}</span></div>
+  <div><b>{{ review_total }}</b><span>{% translate "ждут вашей проверки" %}</span></div>
 </div>
 <div class="two">
   <section>
-    <div class="head" style="margin-bottom:.5rem"><h2 style="margin:0">Последние отправки</h2><a class="small" href="{% url 't_submissions' %}">Все отправки</a></div>
+    <div class="head" style="margin-bottom:.5rem"><h2 style="margin:0">{% translate "Последние отправки" %}</h2><a class="small" href="{% url 't_submissions' %}">{% translate "Все отправки" %}</a></div>
     <div class="table-wrap">
       {% if recent %}
       <table class="t">
-        <tr><th>Студент</th><th>Задача</th><th>Результат</th><th>Время</th></tr>
+        <tr><th>{% translate "Студент" %}</th><th>{% translate "Задача" %}</th><th>{% translate "Результат" %}</th><th>{% translate "Время" %}</th></tr>
         {% for s in recent %}
         <tr class="link">
           <td><a href="{% url 't_submission' s.pk %}">{{ s.user.display_name }}</a> <span class="muted small">{{ s.user.group|default:"" }}</span></td>
@@ -30,17 +31,17 @@
         </tr>
         {% endfor %}
       </table>
-      {% else %}<div class="empty">Пока никто ничего не отправлял.</div>{% endif %}
+      {% else %}<div class="empty">{% translate "Пока никто ничего не отправлял." %}</div>{% endif %}
     </div>
   </section>
   <aside>
-    <h2 style="margin-top:0">Группы</h2>
+    <h2 style="margin-top:0">{% translate "Группы" %}</h2>
     <div class="table-wrap">
       {% if groups %}
-      <table class="t">{% for g in groups %}<tr class="link"><td><a href="{% url 't_group' g.pk %}">{{ g.name }}</a></td><td class="muted num" style="text-align:right">{{ g.n }} студ.</td></tr>{% endfor %}</table>
-      {% else %}<div class="empty">Групп нет. <a href="{% url 't_groups' %}">Создать группу</a></div>{% endif %}
+      <table class="t">{% for g in groups %}<tr class="link"><td><a href="{% url 't_group' g.pk %}">{{ g.name }}</a></td><td class="muted num" style="text-align:right">{% blocktranslate with n=g.n %}{{ n }} студ.{% endblocktranslate %}</td></tr>{% endfor %}</table>
+      {% else %}<div class="empty">{% translate "Групп нет." %} <a href="{% url 't_groups' %}">{% translate "Создать группу" %}</a></div>{% endif %}
     </div>
-    {% if review_total %}<p style="margin-top:1rem"><a class="btn go" href="{% url 't_submissions' %}?status=review">Проверить решения ({{ review_total }})</a></p>{% endif %}
+    {% if review_total %}<p style="margin-top:1rem"><a class="btn go" href="{% url 't_submissions' %}?status=review">{% blocktranslate with n=review_total %}Проверить решения ({{ n }}){% endblocktranslate %}</a></p>{% endif %}
   </aside>
 </div>
 {% endblock %}

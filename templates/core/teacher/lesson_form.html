@@ -1,26 +1,27 @@
 {% extends "core/base.html" %}
-{% block title %}{% if lesson %}{{ lesson.title }}{% else %}Новый урок{% endif %}{% endblock %}
+{% load i18n %}
+{% block title %}{% if lesson %}{{ lesson.title }}{% else %}{% translate "Новый урок" %}{% endif %}{% endblock %}
 {% block content %}
-<div class="crumbs"><a href="{% url 't_lessons' %}">Уроки и задачи</a></div>
-<div class="head"><h1>{% if lesson %}{{ lesson.title }}{% else %}Новый урок{% endif %}</h1></div>
+<div class="crumbs"><a href="{% url 't_lessons' %}">{% translate "Уроки и задачи" %}</a></div>
+<div class="head"><h1>{% if lesson %}{{ lesson.title }}{% else %}{% translate "Новый урок" %}{% endif %}</h1></div>
 <form method="post" class="sheet" style="max-width:720px">{% csrf_token %}
-  {% include "core/_field.html" with f=form.title %}
-  {% include "core/_field.html" with f=form.topic %}
+  {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  {% include "core/teacher/_ml_panels.html" %}
   {% include "core/_field.html" with f=form.order %}
   <div class="field">
-    <label>Открыт для занятий</label>
-    <div class="checks">{% for c in form.open_for_sections %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% empty %}<span class="muted small">Занятий пока нет.</span>{% endfor %}</div>
+    <label>{% translate "Открыт для занятий" %}</label>
+    <div class="checks">{% for c in form.open_for_sections %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% empty %}<span class="muted small">{% translate "Занятий пока нет." %}</span>{% endfor %}</div>
   </div>
   <div class="field">
-    <label>Открыт для групп</label>
-    <div class="checks">{% for c in form.open_for %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% empty %}<span class="muted small">Групп пока нет.</span>{% endfor %}</div>
-    <div class="help">Студент видит урок, если он открыт для его занятия или его группы.</div>
+    <label>{% translate "Открыт для групп" %}</label>
+    <div class="checks">{% for c in form.open_for %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% empty %}<span class="muted small">{% translate "Групп пока нет." %}</span>{% endfor %}</div>
+    <div class="help">{% translate "Студент видит урок, если он открыт для его занятия или его группы." %}</div>
   </div>
-  <button class="btn primary" type="submit">Сохранить урок</button>
+  <button class="btn primary" type="submit">{% translate "Сохранить урок" %}</button>
 </form>
 {% if lesson %}
-<form method="post" action="{% url 't_lesson_delete' lesson.pk %}" onsubmit="return confirm('Удалить урок вместе со всеми задачами и отправками?')" style="margin-top:1rem">{% csrf_token %}
-  <button class="btn danger sm" type="submit">Удалить урок</button>
+<form method="post" action="{% url 't_lesson_delete' lesson.pk %}" onsubmit="return confirm('{% filter escapejs %}{% translate "Удалить урок вместе со всеми задачами и отправками?" %}{% endfilter %}')" style="margin-top:1rem">{% csrf_token %}
+  <button class="btn danger sm" type="submit">{% translate "Удалить урок" %}</button>
 </form>
 {% endif %}
 {% endblock %}

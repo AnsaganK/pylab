@@ -1,0 +1,2087 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-02 11:16+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: kk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: core/context_processors.py:15
+msgid "Черновик сохранён"
+msgstr "Нобай сақталды"
+
+#: core/context_processors.py:16
+msgid "Заменить код в редакторе начальным? Текущий черновик пропадёт."
+msgstr ""
+"Редактордағы кодты бастапқы кодпен ауыстыру керек пе? Ағымдағы нобай "
+"жойылады."
+
+#: core/context_processors.py:17
+msgid "Вы вышли из аккаунта."
+msgstr "Сіз аккаунттан шықтыңыз."
+
+#: core/context_processors.py:18
+msgid "Сессия закончилась, войдите снова."
+msgstr "Сессия аяқталды, қайта кіріңіз."
+
+#: core/context_processors.py:19
+msgid "Ошибка сервера"
+msgstr "Сервер қатесі"
+
+#: core/context_processors.py:20
+msgid "Программа ничего не вывела."
+msgstr "Бағдарлама ештеңе шығарған жоқ."
+
+#: core/context_processors.py:21
+msgid "Ввод для программы"
+msgstr "Бағдарламаға енгізу"
+
+#: core/context_processors.py:22
+msgid "Программа остановлена."
+msgstr "Бағдарлама тоқтатылды."
+
+#: core/context_processors.py:23
+msgid "выполняется…"
+msgstr "орындалуда…"
+
+#: core/context_processors.py:24
+msgid "ждёт ввод…"
+msgstr "енгізуді күтуде…"
+
+#: core/context_processors.py:25 core/judge/sandbox.py:284
+#: templates/core/teacher/submissions.html:37
+msgid "с"
+msgstr "с"
+
+#: core/context_processors.py:26
+msgid "Нет связи с сервером."
+msgstr "Сервермен байланыс жоқ."
+
+#: core/context_processors.py:27
+msgid "Код изменён — нажмите «Запустить» заново."
+msgstr "Код өзгерді — «Іске қосу» батырмасын қайта басыңыз."
+
+#: core/context_processors.py:28 templates/core/teacher/submissions.html:28
+msgid "Отправлено"
+msgstr "Жіберілді"
+
+#: core/context_processors.py:29
+msgid "Порядок сохранён"
+msgstr "Рет сақталды"
+
+#: core/context_processors.py:30
+msgid "Не удалось сохранить порядок — обновите страницу"
+msgstr "Ретті сақтау мүмкін болмады — бетті жаңартыңыз"
+
+#: core/decorators.py:15
+msgid "Эта страница доступна только преподавателю."
+msgstr "Бұл бет тек оқытушыға қолжетімді."
+
+#: core/forms.py:12
+msgid "Ваше имя"
+msgstr "Атыңыз"
+
+#: core/forms.py:13 templates/core/login.html:22
+#: templates/core/teacher/group_detail.html:21
+msgid "Логин"
+msgstr "Логин"
+
+#: core/forms.py:14 core/forms.py:31 templates/core/login.html:23
+#: templates/core/teacher/group_detail.html:21
+msgid "Пароль"
+msgstr "Құпиясөз"
+
+#: core/forms.py:19
+msgid "Такой логин уже есть."
+msgstr "Мұндай логин бар."
+
+#: core/forms.py:32
+msgid "Оставьте пустым — сгенерируется автоматически."
+msgstr "Бос қалдырыңыз — автоматты түрде жасалады."
+
+#: core/forms.py:38
+msgid "Логин / ID"
+msgstr "Логин / ID"
+
+#: core/forms.py:49 core/models.py:17 core/models.py:44
+#: templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/access_log.html:67
+#: templates/core/teacher/access_log.html:77
+#: templates/core/teacher/groups.html:21
+#: templates/core/teacher/results.html:31
+#: templates/core/teacher/students_roster.html:15
+#: templates/core/teacher/submissions.html:11
+#: templates/core/teacher/submissions.html:28
+msgid "Группа"
+msgstr "Топ"
+
+#: core/forms.py:51
+msgid "Список студентов"
+msgstr "Студенттер тізімі"
+
+#: core/forms.py:52
+msgid ""
+"Фамилия Имя Отчество\n"
+"Фамилия Имя\n"
+"…"
+msgstr ""
+"Тегі Аты Әкесінің аты\n"
+"Тегі Аты\n"
+"…"
+
+#: core/forms.py:53
+msgid "Одна строка — один студент. Логины и пароли создадутся автоматически."
+msgstr ""
+"Бір жол — бір студент. Логиндер мен құпиясөздер автоматты түрде жасалады."
+
+#: core/forms.py:73 core/forms.py:99
+msgid "Заполните название хотя бы на одном языке."
+msgstr "Атауын кемінде бір тілде толтырыңыз."
+
+#: core/forms.py:115
+msgid "Комментарий"
+msgstr "Пікір"
+
+#: core/forms.py:119 core/models.py:145 templates/core/teacher/results.html:12
+#: templates/core/teacher/submissions.html:13
+msgid "Урок"
+msgstr "Сабақ"
+
+#: core/forms.py:120
+msgid "Файл с задачами (.json)"
+msgstr "Есептер файлы (.json)"
+
+#: core/forms.py:122
+msgid "…или вставьте содержимое файла"
+msgstr "…немесе файл мазмұнын қойыңыз"
+
+#: core/forms.py:126
+msgid "Язык условий"
+msgstr "Шарттар тілі"
+
+#: core/forms.py:127
+msgid ""
+"Для текстов, заданных строкой. Тексты в виде {\"ru\": …, \"kk\": …, \"en\": "
+"…} раскладываются по своим языкам сами."
+msgstr ""
+"Жол түрінде берілген мәтіндер үшін. {\"ru\": …, \"kk\": …, \"en\": …} "
+"түріндегі мәтіндер өз тілдеріне өздігінен бөлінеді."
+
+#: core/forms.py:129
+msgid "Сразу открыть задачи"
+msgstr "Есептерді бірден ашу"
+
+#: core/forms.py:131
+msgid "Прогнать эталонные решения на тестах (если есть в файле)"
+msgstr "Эталон шешімдерді тесттерде тексеру (файлда болса)"
+
+#: core/forms.py:142
+msgid "Загрузите файл или вставьте его содержимое."
+msgstr "Файлды жүктеңіз немесе оның мазмұнын қойыңыз."
+
+#: core/forms.py:149 templates/core/teacher/group_detail.html:10
+#: templates/core/teacher/students_roster.html:3
+#: templates/core/teacher/students_roster.html:6
+msgid "Список из расписания"
+msgstr "Кестедегі тізім"
+
+#: core/forms.py:152
+msgid ""
+"Вставьте список как есть. Строки без ID (например, заголовок дисциплины) "
+"пропускаются."
+msgstr ""
+"Тізімді сол күйінде қойыңыз. ID жоқ жолдар (мысалы, пән атауы) өткізіліп "
+"жіберіледі."
+
+#: core/forms.py:155
+msgid "Группа для строк без группы"
+msgstr "Тобы көрсетілмеген жолдарға арналған топ"
+
+#: core/forms.py:156
+msgid ""
+"Если в строке указана группа (МИК241), она найдётся среди ваших групп "
+"(МИК-241) или создастся."
+msgstr ""
+"Жолда топ көрсетілсе (МИК241), ол сіздің топтарыңыздан табылады (МИК-241) "
+"немесе жасалады."
+
+#: core/importer.py:60
+#, python-format
+msgid "Файл не похож на JSON: строка %(line)s, позиция %(col)s: %(msg)s"
+msgstr "Файл JSON-ға ұқсамайды: %(line)s-жол, %(col)s-позиция: %(msg)s"
+
+#: core/importer.py:63
+msgid "В файле нет списка задач (ключ \"tasks\")."
+msgstr "Файлда есептер тізімі жоқ (\"tasks\" кілті)."
+
+#: core/importer.py:66
+#, python-format
+msgid "У задачи №%(n)s нет названия (\"title\")."
+msgstr "№%(n)s есептің атауы жоқ (\"title\")."
+
+#: core/importer.py:70
+#, python-format
+msgid "Задача «%(title)s»: kind должен быть \"io\" или \"manual\"."
+msgstr "«%(title)s» есебі: kind \"io\" немесе \"manual\" болуы керек."
+
+#: core/importer.py:73
+#, python-format
+msgid "Задача «%(title)s»: tests должен быть списком."
+msgstr "«%(title)s» есебі: tests тізім болуы керек."
+
+#: core/importer.py:75
+#, python-format
+msgid "Задача «%(title)s»: для автопроверки нужны тесты."
+msgstr "«%(title)s» есебі: автотексеру үшін тесттер қажет."
+
+#: core/importer.py:78
+#, python-format
+msgid "Задача «%(title)s», тест %(n)s: нужен ключ \"output\"."
+msgstr "«%(title)s» есебі, %(n)s-тест: \"output\" кілті қажет."
+
+#: core/importer.py:94
+#, python-format
+msgid ""
+"«%(title)s», тест %(n)s: эталон завершился с ошибкой (%(status)s). %(err)s"
+msgstr ""
+"«%(title)s», %(n)s-тест: эталон қатемен аяқталды (%(status)s). %(err)s"
+
+#: core/importer.py:97
+#, python-format
+msgid ""
+"«%(title)s», тест %(n)s: эталон вывел «%(got)s», в тесте «%(expected)s»."
+msgstr ""
+"«%(title)s», %(n)s-тест: эталон «%(got)s» шығарды, тестте «%(expected)s»."
+
+#: core/judge/queue.py:76
+#, python-format
+msgid "Строка %(n)s"
+msgstr "%(n)s-жол"
+
+#: core/judge/queue.py:104
+msgid "У задачи нет тестов — сообщите преподавателю."
+msgstr "Есептің тесттері жоқ — оқытушыға хабарлаңыз."
+
+#: core/judge/sandbox.py:193
+#, python-format
+msgid "Не найден исполняемый файл: %(f)s. Проверьте constants.py."
+msgstr "Орындалатын файл табылмады: %(f)s. constants.py файлын тексеріңіз."
+
+#: core/judge/sandbox.py:231
+msgid ""
+"bubblewrap не смог создать песочницу — см. раздел «Песочница» в README."
+msgstr ""
+"bubblewrap құмсалғыш жасай алмады — README ішіндегі «Песочница» бөлімін "
+"қараңыз."
+
+#: core/judge/sandbox.py:277
+msgid "Программа запускается и читает ввод"
+msgstr "Бағдарлама іске қосылып, енгізуді оқиды"
+
+#: core/judge/sandbox.py:279
+msgid "Нет доступа в сеть"
+msgstr "Желіге қол жеткізу жоқ"
+
+#: core/judge/sandbox.py:280
+msgid "Нельзя писать в файлы сервера"
+msgstr "Сервер файлдарына жазуға болмайды"
+
+#: core/judge/sandbox.py:281
+msgid "Каталоги пользователей скрыты"
+msgstr "Пайдаланушы каталогтары жасырылған"
+
+#: core/judge/sandbox.py:284
+msgid "Бесконечный цикл останавливается по времени"
+msgstr "Шексіз цикл уақыт бойынша тоқтайды"
+
+#: core/judge/sandbox.py:286
+msgid "Лимит памяти работает"
+msgstr "Жад шегі жұмыс істейді"
+
+#: core/judge/sandbox.py:289
+msgid "пользователь сервера"
+msgstr "сервер пайдаланушысы"
+
+#: core/middleware.py:11
+msgid ""
+"Под этим ID вошли на другом компьютере, поэтому здесь вы вышли из аккаунта. "
+"Если это были не вы — сообщите преподавателю."
+msgstr ""
+"Осы ID-мен басқа компьютерден кірді, сондықтан мұнда сіз аккаунттан "
+"шықтыңыз. Егер бұл сіз болмасаңыз — оқытушыға хабарлаңыз."
+
+#: core/models.py:11 core/models.py:28 core/models.py:146 core/models.py:147
+#: core/models.py:148 templates/core/teacher/groups.html:11
+msgid "Название"
+msgstr "Атауы"
+
+#: core/models.py:12 templates/core/teacher/groups.html:21
+msgid "Описание"
+msgstr "Сипаттама"
+
+#: core/models.py:18 templates/core/base.html:22
+#: templates/core/teacher/dashboard.html:38
+#: templates/core/teacher/group_detail.html:5
+#: templates/core/teacher/groups.html:16
+#: templates/core/teacher/lessons.html:41
+#: templates/core/teacher/results.html:10
+#: templates/core/teacher/student_form.html:5
+#: templates/core/teacher/students_bulk.html:5
+#: templates/core/teacher/students_roster.html:5
+msgid "Группы"
+msgstr "Топтар"
+
+#: core/models.py:27
+msgid "Код занятия"
+msgstr "Кесте сабағының коды"
+
+#: core/models.py:33 templates/core/teacher/section_detail.html:3
+#: templates/core/teacher/students_roster.html:15
+#: templates/core/teacher/submissions.html:12
+msgid "Занятие"
+msgstr "Кесте сабағы"
+
+#: core/models.py:34 core/models.py:48
+#: templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/lessons.html:33
+#: templates/core/teacher/results.html:9
+#: templates/core/teacher/student_form.html:12
+msgid "Занятия"
+msgstr "Кесте сабақтары"
+
+#: core/models.py:42 templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/group_detail.html:21
+#: templates/core/teacher/students_roster.html:15
+msgid "ФИО"
+msgstr "Аты-жөні"
+
+#: core/models.py:50
+msgid "Язык интерфейса"
+msgstr "Интерфейс тілі"
+
+#: core/models.py:52
+msgid "Вход по ID"
+msgstr "ID арқылы кіру"
+
+#: core/models.py:104 core/models.py:105 core/models.py:106
+msgid "Название урока"
+msgstr "Сабақ атауы"
+
+#: core/models.py:107 core/models.py:108 core/models.py:109
+msgid "Тема / описание"
+msgstr "Тақырып / сипаттама"
+
+#: core/models.py:110 core/models.py:162 core/models.py:213
+msgid "Порядок"
+msgstr "Реті"
+
+#: core/models.py:112 templates/core/teacher/lesson_form.html:16
+msgid "Открыт для групп"
+msgstr "Топтарға ашық"
+
+#: core/models.py:115 templates/core/teacher/lesson_form.html:12
+msgid "Открыт для занятий"
+msgstr "Кесте сабақтарына ашық"
+
+#: core/models.py:141
+msgid "Автопроверка на тестах"
+msgstr "Тесттер бойынша автотексеру"
+
+#: core/models.py:142
+msgid "Вручную, преподавателем"
+msgstr "Оқытушы қолмен тексереді"
+
+#: core/models.py:149 core/models.py:150 core/models.py:151
+msgid "Условие"
+msgstr "Шарты"
+
+#: core/models.py:149 core/models.py:150 core/models.py:151
+msgid "Поддерживается Markdown: **жирный**, `код`, списки, блоки кода."
+msgstr ""
+"Markdown қолдау көрсетіледі: **қалың**, `код`, тізімдер, код блоктары."
+
+#: core/models.py:152 core/models.py:153 core/models.py:154
+msgid "Формат ввода"
+msgstr "Енгізу пішімі"
+
+#: core/models.py:155 core/models.py:156 core/models.py:157
+msgid "Формат вывода"
+msgstr "Шығару пішімі"
+
+#: core/models.py:158
+msgid "Тип проверки"
+msgstr "Тексеру түрі"
+
+#: core/models.py:159
+msgid "Лимит времени, с"
+msgstr "Уақыт шегі, с"
+
+#: core/models.py:160
+msgid "Лимит памяти, МБ"
+msgstr "Жад шегі, МБ"
+
+#: core/models.py:161
+msgid "Начальный код"
+msgstr "Бастапқы код"
+
+#: core/models.py:163
+msgid "Задача открыта"
+msgstr "Есеп ашық"
+
+#: core/models.py:210 templates/core/pdf/lesson.html:73
+#: templates/core/student/task.html:31
+msgid "Входные данные"
+msgstr "Кіріс деректер"
+
+#: core/models.py:211 templates/core/teacher/task_form.html:49
+#: templates/core/teacher/task_form.html:65
+msgid "Ожидаемый вывод"
+msgstr "Күтілетін шығару"
+
+#: core/models.py:212 templates/core/pdf/lesson.html:76
+#: templates/core/student/task.html:34
+#: templates/core/teacher/task_form.html:43
+#: templates/core/teacher/task_form.html:59
+msgid "Пример"
+msgstr "Мысал"
+
+#: core/models.py:237
+msgid "В очереди"
+msgstr "Кезекте"
+
+#: core/models.py:238
+msgid "Проверяется"
+msgstr "Тексерілуде"
+
+#: core/models.py:239
+msgid "Верно"
+msgstr "Дұрыс"
+
+#: core/models.py:240
+msgid "Неверный ответ"
+msgstr "Қате жауап"
+
+#: core/models.py:241 core/views_student.py:99
+msgid "Превышено время"
+msgstr "Уақыт шегінен асты"
+
+#: core/models.py:242 core/views_student.py:100
+msgid "Превышена память"
+msgstr "Жад шегінен асты"
+
+#: core/models.py:243 core/views_student.py:101
+msgid "Ошибка выполнения"
+msgstr "Орындау қатесі"
+
+#: core/models.py:244 core/views_student.py:139
+msgid "Синтаксическая ошибка"
+msgstr "Синтаксистік қате"
+
+#: core/models.py:245 core/views_student.py:102
+msgid "Слишком большой вывод"
+msgstr "Шығару тым үлкен"
+
+#: core/models.py:246
+msgid "Ошибка проверяющей системы"
+msgstr "Тексеру жүйесінің қатесі"
+
+#: core/models.py:247
+msgid "Ждёт проверки"
+msgstr "Тексеруді күтуде"
+
+#: core/models.py:248
+msgid "Зачтено"
+msgstr "Есептелді"
+
+#: core/models.py:249
+msgid "Не зачтено"
+msgstr "Есептелмеді"
+
+#: core/models.py:268 templates/core/student/submission.html:12
+msgid "Комментарий преподавателя"
+msgstr "Оқытушының пікірі"
+
+#: core/models.py:316 templates/core/login.html:3
+msgid "Вход"
+msgstr "Кіру"
+
+#: core/models.py:317
+msgid "Неудачный вход"
+msgstr "Сәтсіз кіру"
+
+#: core/models.py:318
+msgid "Вытеснен другим входом"
+msgstr "Басқа кіру арқылы шығарылды"
+
+#: core/models.py:319
+msgid "Запуск"
+msgstr "Іске қосу"
+
+#: core/models.py:320 templates/core/student/submission.html:3
+msgid "Отправка"
+msgstr "Жіберілім"
+
+#: core/models.py:339 templates/core/teacher/settings.html:10
+msgid "Один вход на аккаунт студента"
+msgstr "Студент аккаунтына бір кіру"
+
+#: core/models.py:340
+msgid ""
+"При входе под ID на другом компьютере прежний компьютер выходит из аккаунта."
+msgstr ""
+"Осы ID-мен басқа компьютерден кірген кезде алдыңғы компьютер аккаунттан "
+"шығады."
+
+#: core/models.py:345
+msgid "Настройки сайта"
+msgstr "Сайт баптаулары"
+
+#: core/pdf.py:57
+msgid "стр."
+msgstr "бет"
+
+#: core/pdf.py:58
+msgid "из"
+msgstr "/"
+
+#: core/roster.py:89
+msgid "не указана группа — выберите её в форме"
+msgstr "топ көрсетілмеген — оны формада таңдаңыз"
+
+#: core/roster.py:93
+msgid "этот ID занят аккаунтом преподавателя"
+msgstr "бұл ID оқытушы аккаунтына тиесілі"
+
+#: core/views_auth.py:55
+msgid "Вход по ID разрешён только из учебной аудитории."
+msgstr "ID арқылы кіруге тек оқу аудиториясынан рұқсат етілген."
+
+#: core/views_auth.py:58
+msgid ""
+"Студент с таким ID не найден. Проверьте номер или обратитесь к "
+"преподавателю."
+msgstr ""
+"Мұндай ID-мен студент табылмады. Нөмірді тексеріңіз немесе оқытушыға "
+"хабарласыңыз."
+
+#: core/views_auth.py:69
+msgid "Неверный логин или пароль."
+msgstr "Логин немесе құпиясөз қате."
+
+#: core/views_student.py:65
+msgid "русский"
+msgstr "орыс тілі"
+
+#: core/views_student.py:65
+msgid "казахский"
+msgstr "қазақ тілі"
+
+#: core/views_student.py:65
+msgid "английский"
+msgstr "ағылшын тілі"
+
+#: core/views_student.py:97
+msgid "Ждёт ввод"
+msgstr "Енгізуді күтуде"
+
+#: core/views_student.py:98
+msgid "Программа завершилась"
+msgstr "Бағдарлама аяқталды"
+
+#: core/views_student.py:103
+msgid "Ошибка песочницы"
+msgstr "Құмсалғыш қатесі"
+
+#: core/views_student.py:125
+msgid "Неверный формат ввода."
+msgstr "Енгізу пішімі қате."
+
+#: core/views_student.py:128
+msgid "Слишком большой код или ввод."
+msgstr "Код немесе енгізу тым үлкен."
+
+#: core/views_student.py:130
+msgid ""
+"В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку "
+"вручную."
+msgstr ""
+"Кодта немесе енгізуде рұқсат етілмеген таңба (NUL) бар. Жолды қолмен қайта "
+"теріңіз."
+
+#: core/views_student.py:135 core/views_student.py:155
+msgid ""
+"Проблема с отступами: внутри блока все строки должны начинаться с "
+"одинакового отступа."
+msgstr ""
+"Шегініс қатесі: блок ішіндегі барлық жол бірдей шегіністен басталуы керек."
+
+#: core/views_student.py:137
+msgid ""
+"Проверьте указанную строку и строку перед ней: часто там не закрыта скобка "
+"или кавычка, либо забыто двоеточие после if/for/while/def."
+msgstr ""
+"Көрсетілген жолды және оның алдындағы жолды тексеріңіз: көбіне жақша немесе "
+"тырнақша жабылмай қалады, не if/for/while/def-тен кейін қос нүкте ұмытылады."
+
+#: core/views_student.py:147
+msgid "Сервер сейчас занят — попробуйте через несколько секунд."
+msgstr "Сервер қазір бос емес — бірнеше секундтан кейін қайталап көріңіз."
+
+#: core/views_student.py:151
+msgid ""
+"Программа читает ввод через sys.stdin, а он закончился. Впишите данные в "
+"поле «Ввод заранее»."
+msgstr ""
+"Бағдарлама енгізуді sys.stdin арқылы оқиды, бірақ ол аяқталды. Деректерді "
+"«Алдын ала енгізу» өрісіне жазыңыз."
+
+#: core/views_student.py:153
+msgid ""
+"Опечатка в имени переменной или функции, либо переменная используется "
+"раньше, чем создана."
+msgstr ""
+"Айнымалының немесе функцияның атында қате бар, не айнымалы құрылмай тұрып "
+"қолданылған."
+
+#: core/views_student.py:168
+msgid "Код пустой."
+msgstr "Код бос."
+
+#: core/views_student.py:170
+msgid "Слишком большой код."
+msgstr "Код тым үлкен."
+
+#: core/views_student.py:173
+msgid "В коде есть недопустимый символ (NUL). Перепечатайте строку вручную."
+msgstr "Кодта рұқсат етілмеген таңба (NUL) бар. Жолды қолмен қайта теріңіз."
+
+#: core/views_student.py:175
+msgid "Дождитесь проверки предыдущих отправок."
+msgstr "Алдыңғы жіберілімдердің тексерілуін күтіңіз."
+
+#: core/views_teacher.py:64
+#, python-format
+msgid "Группа %(name)s создана."
+msgstr "%(name)s тобы құрылды."
+
+#: core/views_teacher.py:77
+msgid "Группа сохранена."
+msgstr "Топ сақталды."
+
+#: core/views_teacher.py:107
+msgid "Занятие сохранено."
+msgstr "Кесте сабағы сақталды."
+
+#: core/views_teacher.py:120
+#, python-format
+msgid "Занятие %(code)s удалено. Студенты остались в своих группах."
+msgstr "%(code)s кесте сабағы жойылды. Студенттер өз топтарында қалды."
+
+#: core/views_teacher.py:129
+msgid "В группе есть студенты — сначала удалите или переведите их."
+msgstr "Топта студенттер бар — алдымен оларды жойыңыз немесе ауыстырыңыз."
+
+#: core/views_teacher.py:132
+msgid "Группа удалена."
+msgstr "Топ жойылды."
+
+#: core/views_teacher.py:147
+#, python-format
+msgid "Студент %(name)s добавлен."
+msgstr "%(name)s студенті қосылды."
+
+#: core/views_teacher.py:151
+msgid "Новый студент"
+msgstr "Жаңа студент"
+
+#: core/views_teacher.py:165
+msgid "Данные студента сохранены."
+msgstr "Студент деректері сақталды."
+
+#: core/views_teacher.py:190
+#, python-format
+msgid "Добавлено студентов: %(n)s."
+msgstr "Қосылған студенттер: %(n)s."
+
+#: core/views_teacher.py:203
+#, python-format
+msgid "Новый пароль для %(name)s ниже."
+msgstr "%(name)s үшін жаңа құпиясөз төменде."
+
+#: core/views_teacher.py:213
+msgid "Студент удалён вместе с отправками."
+msgstr "Студент жіберілімдерімен бірге жойылды."
+
+#: core/views_teacher.py:224
+msgid "Не нашёл ни одной строки вида «1) ФИО (группа) ID»."
+msgstr "«1) Аты-жөні (топ) ID» түріндегі бірде-бір жол табылмады."
+
+#: core/views_teacher.py:227
+#, python-format
+msgid "Создано: %(created)s, обновлено: %(updated)s."
+msgstr "Құрылды: %(created)s, жаңартылды: %(updated)s."
+
+#: core/views_teacher.py:292 core/views_teacher.py:312
+msgid "Неверные данные"
+msgstr "Деректер қате"
+
+#: core/views_teacher.py:333
+msgid "Урок сохранён."
+msgstr "Сабақ сақталды."
+
+#: core/views_teacher.py:359
+#, python-format
+msgid "Урок «%(title)s» удалён."
+msgstr "«%(title)s» сабағы жойылды."
+
+#: core/views_teacher.py:419
+msgid "Задача сохранена."
+msgstr "Есеп сақталды."
+
+#: core/views_teacher.py:434
+#, python-format
+msgid "Задача «%(title)s» удалена."
+msgstr "«%(title)s» есебі жойылды."
+
+#: core/views_teacher.py:446
+#, python-format
+msgid "Отправлено на перепроверку: %(n)s."
+msgstr "Қайта тексеруге жіберілді: %(n)s."
+
+#: core/views_teacher.py:464
+msgid ""
+"Эталонные решения не прошли часть тестов — задачи не созданы. Исправьте файл"
+" или нажмите «Всё равно импортировать»."
+msgstr ""
+"Эталон шешімдер кейбір тесттерден өтпеді — есептер құрылмады. Файлды "
+"түзетіңіз немесе «Бәрібір импорттау» батырмасын басыңыз."
+
+#: core/views_teacher.py:470
+#, python-format
+msgid "Добавлено задач: %(tasks)s, тестов: %(tests)s."
+msgstr "Қосылған есептер: %(tasks)s, тесттер: %(tests)s."
+
+#: core/views_teacher.py:523
+msgid "Решение отмечено."
+msgstr "Шешім белгіленді."
+
+#: core/views_teacher.py:539
+msgid "Отправка поставлена на перепроверку."
+msgstr "Жіберілім қайта тексеруге қойылды."
+
+#: core/views_teacher.py:547
+#, python-format
+msgid "Возвращено в очередь: %(n)s."
+msgstr "Кезекке қайтарылды: %(n)s."
+
+#: core/views_teacher.py:618
+msgid "3 часа"
+msgstr "3 сағат"
+
+#: core/views_teacher.py:618
+msgid "сутки"
+msgstr "тәулік"
+
+#: core/views_teacher.py:618
+msgid "неделя"
+msgstr "апта"
+
+#: core/views_teacher.py:660
+msgid "Настройки сохранены. "
+msgstr "Баптаулар сақталды. "
+
+#: core/views_teacher.py:661
+msgid "Один вход на аккаунт — включено."
+msgstr "Аккаунтқа бір кіру — қосулы."
+
+#: core/views_teacher.py:661
+msgid "Один вход на аккаунт — выключено."
+msgstr "Аккаунтқа бір кіру — өшірулі."
+
+#: templates/core/_status.html:1
+#, python-format
+msgid ", тест %(n)s"
+msgstr ", %(n)s-тест"
+
+#: templates/core/_strip.html:1
+#, python-format
+msgid "Пройдено тестов: %(passed)s из %(total)s"
+msgstr "Өткен тесттер: %(total)s ішінен %(passed)s"
+
+#: templates/core/base.html:20 templates/core/teacher/dashboard.html:3
+msgid "Главная"
+msgstr "Басты бет"
+
+#: templates/core/base.html:21 templates/core/teacher/lesson_form.html:5
+#: templates/core/teacher/lessons.html:4 templates/core/teacher/lessons.html:7
+#: templates/core/teacher/task_form.html:5
+#: templates/core/teacher/tasks_import.html:5
+msgid "Уроки и задачи"
+msgstr "Сабақтар мен есептер"
+
+#: templates/core/base.html:23 templates/core/teacher/section_detail.html:10
+#: templates/core/teacher/submission_detail.html:5
+#: templates/core/teacher/submissions.html:3
+#: templates/core/teacher/submissions.html:7
+#: templates/core/teacher/task_form.html:11
+msgid "Отправки"
+msgstr "Жіберілімдер"
+
+#: templates/core/base.html:24
+msgid "Сводная"
+msgstr "Жиынтық"
+
+#: templates/core/base.html:25
+msgid "Журнал"
+msgstr "Журнал"
+
+#: templates/core/base.html:26 templates/core/teacher/settings.html:3
+#: templates/core/teacher/settings.html:5
+msgid "Настройки"
+msgstr "Баптаулар"
+
+#: templates/core/base.html:27 templates/core/teacher/sandbox.html:3
+#: templates/core/teacher/sandbox.html:5
+msgid "Песочница"
+msgstr "Құмсалғыш"
+
+#: templates/core/base.html:29 templates/core/student/lessons.html:3
+#: templates/core/student/lessons.html:5
+#: templates/core/student/submission.html:5 templates/core/student/task.html:6
+msgid "Мои задачи"
+msgstr "Менің есептерім"
+
+#: templates/core/base.html:37
+msgid "Выйти"
+msgstr "Шығу"
+
+#: templates/core/login.html:7
+msgid "Задачи и проверка решений по Python"
+msgstr "Python бойынша есептер және шешімдерді тексеру"
+
+#: templates/core/login.html:15
+msgid "Ваш ID из расписания"
+msgstr "Кестедегі сіздің ID"
+
+#: templates/core/login.html:17
+msgid "например, 49562"
+msgstr "мысалы, 49562"
+
+#: templates/core/login.html:18
+msgid ""
+"Входите только под своим ID — все входы записываются вместе с адресом "
+"компьютера."
+msgstr ""
+"Тек өз ID-іңізбен кіріңіз — барлық кіру компьютер мекенжайымен бірге "
+"жазылады."
+
+#: templates/core/login.html:20 templates/core/login.html:24
+msgid "Войти"
+msgstr "Кіру"
+
+#: templates/core/login.html:29
+msgid "Вход по логину и паролю"
+msgstr "Логин және құпиясөз арқылы кіру"
+
+#: templates/core/login.html:29
+msgid "для преподавателя"
+msgstr "оқытушы үшін"
+
+#: templates/core/login.html:30
+msgid "Вход студента по ID"
+msgstr "Студенттің ID арқылы кіруі"
+
+#: templates/core/pdf/lesson.html:54
+msgid ""
+"Серверная выгрузка PDF не настроена. Нажмите «Печать» и выберите «Сохранить "
+"как PDF»."
+msgstr ""
+"Серверде PDF жасау бапталмаған. «Басып шығару» батырмасын басып, «PDF "
+"ретінде сақтау» таңдаңыз."
+
+#: templates/core/pdf/lesson.html:55
+msgid "Печать / PDF"
+msgstr "Басып шығару / PDF"
+
+#: templates/core/pdf/lesson.html:63
+#, python-format
+msgid ""
+"Задач: %(n)s. Решения отправляйте на %(url)s, когда сайт станет доступен. "
+"Сверяйте свою программу с примерами: вывод должен совпадать точно."
+msgstr ""
+"Есептер: %(n)s. Сайт қолжетімді болғанда шешімдерді %(url)s мекенжайына "
+"жіберіңіз. Бағдарламаңызды мысалдармен салыстырыңыз: шығару дәл сәйкес келуі"
+" керек."
+
+#: templates/core/pdf/lesson.html:70 templates/core/student/task.html:26
+#, python-format
+msgid "Время: %(t)s с"
+msgstr "Уақыт: %(t)s с"
+
+#: templates/core/pdf/lesson.html:70 templates/core/student/task.html:26
+#, python-format
+msgid "Память: %(m)s МБ"
+msgstr "Жад: %(m)s МБ"
+
+#: templates/core/pdf/lesson.html:70 templates/core/student/task.html:26
+msgid "Решение проверяет преподаватель"
+msgstr "Шешімді оқытушы тексереді"
+
+#: templates/core/pdf/lesson.html:70
+msgid "Без ввода"
+msgstr "Енгізусіз"
+
+#: templates/core/pdf/lesson.html:74 templates/core/student/task.html:32
+msgid "Выходные данные"
+msgstr "Шығыс деректер"
+
+#: templates/core/pdf/lesson.html:76 templates/core/student/task.html:34
+msgid "Примеры"
+msgstr "Мысалдар"
+
+#: templates/core/pdf/lesson.html:78 templates/core/student/submission.html:17
+#: templates/core/student/task.html:38
+#: templates/core/teacher/submission_detail.html:29
+#: templates/core/teacher/task_form.html:48
+#: templates/core/teacher/task_form.html:64
+msgid "Ввод"
+msgstr "Енгізу"
+
+#: templates/core/pdf/lesson.html:78 templates/core/student/task.html:40
+msgid "Вывод"
+msgstr "Шығару"
+
+#: templates/core/setup.html:3
+msgid "Первый запуск — PyLab"
+msgstr "Алғашқы іске қосу — PyLab"
+
+#: templates/core/setup.html:7
+msgid ""
+"Первый запуск: создайте аккаунт преподавателя. Эта страница больше не "
+"откроется."
+msgstr "Алғашқы іске қосу: оқытушы аккаунтын жасаңыз. Бұл бет енді ашылмайды."
+
+#: templates/core/setup.html:10
+msgid "Создать аккаунт"
+msgstr "Аккаунт жасау"
+
+#: templates/core/student/_state.html:1
+#: templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/results.html:31
+msgid "Решено"
+msgstr "Шешілді"
+
+#: templates/core/student/_state.html:1
+#, python-format
+msgid "Есть ошибки: %(status)s"
+msgstr "Қателер бар: %(status)s"
+
+#: templates/core/student/_state.html:1
+msgid "Не решалась"
+msgstr "Шешілмеген"
+
+#: templates/core/student/_subs.html:10
+msgid "код"
+msgstr "код"
+
+#: templates/core/student/_subs.html:14
+msgid "Вы ещё не отправляли решения."
+msgstr "Сіз әлі шешім жібермедіңіз."
+
+#: templates/core/student/lessons.html:5
+#, python-format
+msgid "Группа %(group)s"
+msgstr "Топ: %(group)s"
+
+#: templates/core/student/lessons.html:7
+msgid "Вас ещё не добавили в группу или занятие. Сообщите преподавателю."
+msgstr "Сіз әлі топқа немесе сабаққа қосылмағансыз. Оқытушыға хабарлаңыз."
+
+#: templates/core/student/lessons.html:12
+#, python-format
+msgid "Решено %(solved)s из %(total)s"
+msgstr "%(total)s ішінен %(solved)s шешілді"
+
+#: templates/core/student/lessons.html:19 templates/core/student/task.html:12
+#, python-format
+msgid "%(status)s, попыток: %(n)s"
+msgstr "%(status)s, әрекеттер: %(n)s"
+
+#: templates/core/student/lessons.html:19
+msgid "не начата"
+msgstr "басталмаған"
+
+#: templates/core/student/lessons.html:26
+msgid "Пока нет открытых уроков. Преподаватель откроет их на занятии."
+msgstr "Әзірге ашық сабақтар жоқ. Оқытушы оларды сабақта ашады."
+
+#: templates/core/student/submission.html:6
+#: templates/core/teacher/submission_detail.html:9
+#, python-format
+msgid "Отправлено %(when)s"
+msgstr "Жіберілген уақыты: %(when)s"
+
+#: templates/core/student/submission.html:10
+#: templates/core/teacher/submission_detail.html:20
+#, python-format
+msgid "пройдено %(passed)s из %(total)s"
+msgstr "%(total)s ішінен %(passed)s өтті"
+
+#: templates/core/student/submission.html:15
+#, python-format
+msgid "Пример %(n)s"
+msgstr "%(n)s-мысал"
+
+#: templates/core/student/submission.html:18
+#: templates/core/teacher/submission_detail.html:30
+msgid "Ожидалось"
+msgstr "Күтілген"
+
+#: templates/core/student/submission.html:19
+msgid "Ваш вывод"
+msgstr "Сіздің шығаруыңыз"
+
+#: templates/core/student/submission.html:22
+#, python-format
+msgid ""
+"Тест %(n)s скрытый. Подумайте о крайних случаях: ноль, отрицательные числа, "
+"очень большие значения, пустой ввод."
+msgstr ""
+"%(n)s-тест жасырын. Шеткі жағдайларды ойластырыңыз: нөл, теріс сандар, өте "
+"үлкен мәндер, бос енгізу."
+
+#: templates/core/student/submission.html:24
+#: templates/core/teacher/submission_detail.html:34
+msgid "Сообщение об ошибке"
+msgstr "Қате туралы хабар"
+
+#: templates/core/student/submission.html:25
+msgid "Вернуться к задаче"
+msgstr "Есепке оралу"
+
+#: templates/core/student/task.html:8
+msgid "Задачи урока"
+msgstr "Сабақ есептері"
+
+#: templates/core/student/task.html:12
+msgid "не решалась"
+msgstr "шешілмеген"
+
+#: templates/core/student/task.html:24
+#, python-format
+msgid "Условие пока доступно только на языке: %(lang)s"
+msgstr "Шарт әзірге тек мына тілде қолжетімді: %(lang)s"
+
+#: templates/core/student/task.html:27
+msgid "Без ввода: программа ничего не читает"
+msgstr "Енгізусіз: бағдарлама ештеңе оқымайды"
+
+#: templates/core/student/task.html:38
+msgid "в поле ввода"
+msgstr "енгізу өрісіне"
+
+#: templates/core/student/task.html:45
+msgid "Мои отправки"
+msgstr "Менің жіберілімдерім"
+
+#: templates/core/student/task.html:49
+msgid "Предыдущая задача"
+msgstr "Алдыңғы есеп"
+
+#: templates/core/student/task.html:50
+msgid "Следующая задача"
+msgstr "Келесі есеп"
+
+#: templates/core/student/task.html:62
+msgid "Горячие клавиши"
+msgstr "Жылдам пернелер"
+
+#: templates/core/student/task.html:65
+msgid "Мельче"
+msgstr "Кішірек"
+
+#: templates/core/student/task.html:66
+msgid "Крупнее"
+msgstr "Үлкенірек"
+
+#: templates/core/student/task.html:67
+msgid "Запустить"
+msgstr "Іске қосу"
+
+#: templates/core/student/task.html:68
+msgid "Отправить на проверку"
+msgstr "Тексеруге жіберу"
+
+#: templates/core/student/task.html:71
+msgid "запустить"
+msgstr "іске қосу"
+
+#: templates/core/student/task.html:72
+msgid "в консоли — отправить строку"
+msgstr "консольде — жолды жіберу"
+
+#: templates/core/student/task.html:72
+msgid "остановить программу"
+msgstr "бағдарламаны тоқтату"
+
+#: templates/core/student/task.html:73
+msgid "отступ вправо / влево (работает и для выделения)"
+msgstr "шегініс оңға / солға (белгіленген бөлікке де жұмыс істейді)"
+
+#: templates/core/student/task.html:74
+msgid "в начале строки — убирает весь отступ целиком"
+msgstr "жол басында — бүкіл шегіністі бірден өшіреді"
+
+#: templates/core/student/task.html:75
+msgid "закомментировать"
+msgstr "түсініктемеге айналдыру"
+
+#: templates/core/student/task.html:76
+msgid "дублировать строку"
+msgstr "жолды көшірмелеу"
+
+#: templates/core/student/task.html:77
+msgid "перенести строку"
+msgstr "жолды жылжыту"
+
+#: templates/core/student/task.html:78
+msgid "сохранить черновик"
+msgstr "нобайды сақтау"
+
+#: templates/core/student/task.html:79
+msgid "Вернуть начальный код"
+msgstr "Бастапқы кодты қайтару"
+
+#: templates/core/student/task.html:85
+msgid "Ввод заранее"
+msgstr "Алдын ала енгізу"
+
+#: templates/core/student/task.html:85
+msgid "необязательно"
+msgstr "міндетті емес"
+
+#: templates/core/student/task.html:85
+msgid "скрыть"
+msgstr "жасыру"
+
+#: templates/core/student/task.html:86
+msgid ""
+"Можно оставить пустым — программа сама спросит ввод в консоли. Или впишите "
+"данные заранее, по строке на каждый input()."
+msgstr ""
+"Бос қалдыруға болады — бағдарлама енгізуді консольде өзі сұрайды. Немесе "
+"деректерді алдын ала жазыңыз, әр input() үшін бір жолдан."
+
+#: templates/core/student/task.html:90
+msgid "Консоль"
+msgstr "Консоль"
+
+#: templates/core/student/task.html:90
+msgid "ввод заранее"
+msgstr "алдын ала енгізу"
+
+#: templates/core/student/task.html:91
+msgid "остановить"
+msgstr "тоқтату"
+
+#: templates/core/student/task.html:93
+msgid ""
+"Нажмите «Запустить». Если программа вызывает input(), здесь появится строка "
+"для ввода — впишите значение и нажмите Enter."
+msgstr ""
+"«Іске қосу» батырмасын басыңыз. Егер бағдарлама input() шақырса, мұнда "
+"енгізу жолы пайда болады — мәнді жазып, Enter басыңыз."
+
+#: templates/core/teacher/_ml_panels.html:8
+msgid ""
+"Заполните хотя бы один язык — студенты увидят его, если перевода на их язык "
+"нет."
+msgstr ""
+"Кемінде бір тілді толтырыңыз — студенттің тілінде аударма болмаса, ол осыны "
+"көреді."
+
+#: templates/core/teacher/_students_table.html:4
+msgid "ID / логин"
+msgstr "ID / логин"
+
+#: templates/core/teacher/_students_table.html:4
+msgid "Последняя активность"
+msgstr "Соңғы белсенділік"
+
+#: templates/core/teacher/_students_table.html:8
+msgid "по ID"
+msgstr "ID арқылы"
+
+#: templates/core/teacher/_students_table.html:11
+msgid "не входил"
+msgstr "кірмеген"
+
+#: templates/core/teacher/_students_table.html:14
+#: templates/core/teacher/lessons.html:49
+msgid "Изменить"
+msgstr "Өзгерту"
+
+#: templates/core/teacher/_students_table.html:15
+msgid "Новый пароль"
+msgstr "Жаңа құпиясөз"
+
+#: templates/core/teacher/access_log.html:3
+#: templates/core/teacher/access_log.html:7
+msgid "Журнал входов"
+msgstr "Кіру журналы"
+
+#: templates/core/teacher/access_log.html:7
+msgid "Входы, запуски и отправки студентов с IP-адресами компьютеров."
+msgstr ""
+"Студенттердің кіруі, іске қосулары мен жіберілімдері компьютерлердің IP-"
+"мекенжайларымен."
+
+#: templates/core/teacher/access_log.html:14
+msgid "Включено"
+msgstr "Қосулы"
+
+#: templates/core/teacher/access_log.html:14
+msgid "Один вход на аккаунт: при входе на другом ПК прежний выходит."
+msgstr "Аккаунтқа бір кіру: басқа компьютерден кіргенде алдыңғысы шығады."
+
+#: templates/core/teacher/access_log.html:15
+msgid "Выключить"
+msgstr "Өшіру"
+
+#: templates/core/teacher/access_log.html:18
+msgid "Выключено"
+msgstr "Өшірулі"
+
+#: templates/core/teacher/access_log.html:18
+msgid ""
+"Один вход на аккаунт: под одним ID можно сидеть на нескольких ПК сразу."
+msgstr ""
+"Аккаунтқа бір кіру: бір ID-мен бірнеше компьютерде қатар отыруға болады."
+
+#: templates/core/teacher/access_log.html:19
+msgid "Включить"
+msgstr "Қосу"
+
+#: templates/core/teacher/access_log.html:25
+msgid "Вытеснения другим входом"
+msgstr "Басқа кіру арқылы шығарылғандар"
+
+#: templates/core/teacher/access_log.html:26
+msgid ""
+"Под этим ID вошли в другом месте, и прежний компьютер выкинуло. Одно-два "
+"вытеснения — обычно студент пересел. Много подряд — двое сидят под одним ID."
+msgstr ""
+"Осы ID-мен басқа жерден кірді, алдыңғы компьютер шығарылды. Бір-екі рет — "
+"әдетте студент басқа орынға ауысқан. Қатарынан көп рет — бір ID-мен екі адам"
+" отыр."
+
+#: templates/core/teacher/access_log.html:28
+#: templates/core/teacher/access_log.html:68
+#: templates/core/teacher/access_log.html:77
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/results.html:31
+#: templates/core/teacher/submissions.html:21
+#: templates/core/teacher/submissions.html:28
+msgid "Студент"
+msgstr "Студент"
+
+#: templates/core/teacher/access_log.html:28
+msgid "Сколько раз"
+msgstr "Неше рет"
+
+#: templates/core/teacher/access_log.html:28
+msgid "Последнее"
+msgstr "Соңғысы"
+
+#: templates/core/teacher/access_log.html:28
+msgid "IP выкинутых"
+msgstr "Шығарылғандардың IP"
+
+#: templates/core/teacher/access_log.html:41
+msgid "Один ID — несколько компьютеров"
+msgstr "Бір ID — бірнеше компьютер"
+
+#: templates/core/teacher/access_log.html:46
+#: templates/core/teacher/access_log.html:57
+msgid "действ."
+msgstr "әрекет"
+
+#: templates/core/teacher/access_log.html:49
+#: templates/core/teacher/access_log.html:60
+msgid "Совпадений нет."
+msgstr "Сәйкестік жоқ."
+
+#: templates/core/teacher/access_log.html:52
+msgid "Один компьютер — несколько студентов"
+msgstr "Бір компьютер — бірнеше студент"
+
+#: templates/core/teacher/access_log.html:63
+msgid ""
+"Совпадение — не всегда нарушение: студент мог пересесть за другой компьютер,"
+" а после пары за тот же компьютер садится следующая группа. Смотрите на "
+"время."
+msgstr ""
+"Сәйкестік әрдайым бұзушылық емес: студент басқа компьютерге ауысуы мүмкін, "
+"ал сабақтан кейін сол компьютерге келесі топ отырады. Уақытқа қараңыз."
+
+#: templates/core/teacher/access_log.html:67
+#: templates/core/teacher/access_log.html:70
+#: templates/core/teacher/submissions.html:11
+#: templates/core/teacher/submissions.html:12
+#: templates/core/teacher/submissions.html:13
+#: templates/core/teacher/submissions.html:14
+#: templates/core/teacher/submissions.html:16
+msgid "Все"
+msgstr "Барлығы"
+
+#: templates/core/teacher/access_log.html:70
+#: templates/core/teacher/access_log.html:77
+msgid "Действие"
+msgstr "Әрекет"
+
+#: templates/core/teacher/access_log.html:71
+#: templates/core/teacher/submissions.html:22
+msgid "Найти"
+msgstr "Іздеу"
+
+#: templates/core/teacher/access_log.html:71
+#: templates/core/teacher/submissions.html:22
+msgid "Сбросить"
+msgstr "Тазалау"
+
+#: templates/core/teacher/access_log.html:77
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/submissions.html:28
+msgid "Время"
+msgstr "Уақыт"
+
+#: templates/core/teacher/access_log.html:77
+msgid "Подробности"
+msgstr "Толығырақ"
+
+#: templates/core/teacher/access_log.html:90
+msgid "За этот период записей нет."
+msgstr "Бұл кезеңде жазбалар жоқ."
+
+#: templates/core/teacher/access_log.html:94
+#: templates/core/teacher/submissions.html:46
+msgid "Назад"
+msgstr "Артқа"
+
+#: templates/core/teacher/access_log.html:95
+#: templates/core/teacher/submissions.html:47
+#, python-format
+msgid "Страница %(n)s из %(total)s"
+msgstr "%(total)s беттің %(n)s-беті"
+
+#: templates/core/teacher/access_log.html:96
+#: templates/core/teacher/submissions.html:48
+msgid "Дальше"
+msgstr "Әрі қарай"
+
+#: templates/core/teacher/dashboard.html:6
+#, python-format
+msgid "Здравствуйте, %(name)s"
+msgstr "Сәлеметсіз бе, %(name)s"
+
+#: templates/core/teacher/dashboard.html:6
+msgid "Отправки за последние 24 часа"
+msgstr "Соңғы 24 сағаттағы жіберілімдер"
+
+#: templates/core/teacher/dashboard.html:8
+#: templates/core/teacher/lesson_form.html:3
+#: templates/core/teacher/lesson_form.html:6
+#: templates/core/teacher/lessons.html:8
+msgid "Новый урок"
+msgstr "Жаңа сабақ"
+
+#: templates/core/teacher/dashboard.html:9
+#: templates/core/teacher/task_form.html:3
+#: templates/core/teacher/task_form.html:7
+msgid "Новая задача"
+msgstr "Жаңа есеп"
+
+#: templates/core/teacher/dashboard.html:12
+msgid "За последние 3 часа есть совпадения по ID или компьютерам:"
+msgstr "Соңғы 3 сағатта ID немесе компьютерлер бойынша сәйкестіктер бар:"
+
+#: templates/core/teacher/dashboard.html:12
+msgid "Открыть журнал"
+msgstr "Журналды ашу"
+
+#: templates/core/teacher/dashboard.html:14
+msgid "отправок"
+msgstr "жіберілім"
+
+#: templates/core/teacher/dashboard.html:15
+msgid "верных"
+msgstr "дұрыс"
+
+#: templates/core/teacher/dashboard.html:16
+msgid "ждут вашей проверки"
+msgstr "сіздің тексеруіңізді күтуде"
+
+#: templates/core/teacher/dashboard.html:20
+msgid "Последние отправки"
+msgstr "Соңғы жіберілімдер"
+
+#: templates/core/teacher/dashboard.html:20
+msgid "Все отправки"
+msgstr "Барлық жіберілімдер"
+
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/submission_detail.html:12
+#: templates/core/teacher/submissions.html:14
+#: templates/core/teacher/submissions.html:28
+msgid "Задача"
+msgstr "Есеп"
+
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/submissions.html:15
+#: templates/core/teacher/submissions.html:28
+msgid "Результат"
+msgstr "Нәтиже"
+
+#: templates/core/teacher/dashboard.html:34
+msgid "Пока никто ничего не отправлял."
+msgstr "Әзірге ешкім ештеңе жібермеді."
+
+#: templates/core/teacher/dashboard.html:41
+#: templates/core/teacher/group_detail.html:7
+#, python-format
+msgid "%(n)s студ."
+msgstr "%(n)s студ."
+
+#: templates/core/teacher/dashboard.html:42
+msgid "Групп нет."
+msgstr "Топтар жоқ."
+
+#: templates/core/teacher/dashboard.html:42
+#: templates/core/teacher/groups.html:29
+msgid "Создать группу"
+msgstr "Топ құру"
+
+#: templates/core/teacher/dashboard.html:44
+#, python-format
+msgid "Проверить решения (%(n)s)"
+msgstr "Шешімдерді тексеру (%(n)s)"
+
+#: templates/core/teacher/group_detail.html:9
+#: templates/core/teacher/results.html:3 templates/core/teacher/results.html:6
+#: templates/core/teacher/section_detail.html:9
+msgid "Сводная таблица"
+msgstr "Жиынтық кесте"
+
+#: templates/core/teacher/group_detail.html:11
+msgid "Добавить списком"
+msgstr "Тізіммен қосу"
+
+#: templates/core/teacher/group_detail.html:12
+msgid "Добавить студента"
+msgstr "Студент қосу"
+
+#: templates/core/teacher/group_detail.html:18
+msgid "Логины и пароли —"
+msgstr "Логиндер мен құпиясөздер —"
+
+#: templates/core/teacher/group_detail.html:19
+msgid ""
+"Пароли показываются только сейчас. Распечатайте или перепишите их; позже "
+"можно выдать новый пароль кнопкой «Новый пароль»."
+msgstr ""
+"Құпиясөздер тек қазір көрсетіледі. Оларды басып шығарыңыз немесе көшіріп "
+"алыңыз; кейін «Жаңа құпиясөз» батырмасымен жаңасын беруге болады."
+
+#: templates/core/teacher/group_detail.html:24
+#: templates/core/teacher/results.html:22
+msgid "Распечатать"
+msgstr "Басып шығару"
+
+#: templates/core/teacher/group_detail.html:28
+msgid ""
+"В группе пока нет студентов. Загрузите список из расписания или добавьте ФИО"
+" построчно."
+msgstr ""
+"Топта әзірге студенттер жоқ. Кестедегі тізімді жүктеңіз немесе аты-жөндерін "
+"жол-жолымен қосыңыз."
+
+#: templates/core/teacher/group_detail.html:31
+msgid "Настройки группы"
+msgstr "Топ баптаулары"
+
+#: templates/core/teacher/group_detail.html:34
+#: templates/core/teacher/section_detail.html:19
+#: templates/core/teacher/settings.html:15
+#: templates/core/teacher/student_form.html:16
+#: templates/core/teacher/task_form.html:72
+msgid "Сохранить"
+msgstr "Сақтау"
+
+#: templates/core/teacher/group_detail.html:36
+#, python-format
+msgid "Удалить группу %(name)s?"
+msgstr "%(name)s тобын жою керек пе?"
+
+#: templates/core/teacher/group_detail.html:37
+msgid "Удалить группу"
+msgstr "Топты жою"
+
+#: templates/core/teacher/groups.html:3 templates/core/teacher/groups.html:5
+#: templates/core/teacher/section_detail.html:5
+msgid "Группы и занятия"
+msgstr "Топтар мен кесте сабақтары"
+
+#: templates/core/teacher/groups.html:5
+#: templates/core/teacher/students_bulk.html:6
+msgid "Добавить студентов списком"
+msgstr "Студенттерді тізіммен қосу"
+
+#: templates/core/teacher/groups.html:5
+msgid "Загрузить список из расписания"
+msgstr "Кестедегі тізімді жүктеу"
+
+#: templates/core/teacher/groups.html:6
+msgid "Занятия (пары из расписания)"
+msgstr "Сабақтар (кестедегі жұп сабақтар)"
+
+#: templates/core/teacher/groups.html:7
+msgid ""
+"По занятиям удобно открывать уроки: на одной паре могут сидеть студенты "
+"разных групп. Занятия создаются сами при загрузке списка из расписания — по "
+"строке вида «74469) Программирование на Python ЛЗ»."
+msgstr ""
+"Сабақтарды кесте бойынша ашқан ыңғайлы: бір жұп сабақта әртүрлі топтардың "
+"студенттері отыруы мүмкін. Кестедегі тізімді жүктегенде сабақтар өздігінен "
+"құрылады — «74469) Программирование на Python ЛЗ» түріндегі жол бойынша."
+
+#: templates/core/teacher/groups.html:11
+msgid "Код"
+msgstr "Коды"
+
+#: templates/core/teacher/groups.html:11 templates/core/teacher/groups.html:21
+msgid "Студентов"
+msgstr "Студенттер"
+
+#: templates/core/teacher/groups.html:14
+msgid ""
+"Занятий пока нет. Загрузите список из расписания вместе с первой строкой-"
+"заголовком."
+msgstr ""
+"Кесте сабақтары әзірге жоқ. Кестедегі тізімді бірінші тақырып жолымен бірге "
+"жүктеңіз."
+
+#: templates/core/teacher/groups.html:24
+msgid "Создайте первую группу, например МИК-241."
+msgstr "Алғашқы топты құрыңыз, мысалы МИК-241."
+
+#: templates/core/teacher/groups.html:27
+msgid "Новая группа"
+msgstr "Жаңа топ"
+
+#: templates/core/teacher/lesson_form.html:13
+#: templates/core/teacher/student_form.html:13
+msgid "Занятий пока нет."
+msgstr "Кесте сабақтары әзірге жоқ."
+
+#: templates/core/teacher/lesson_form.html:17
+msgid "Групп пока нет."
+msgstr "Топтар әзірге жоқ."
+
+#: templates/core/teacher/lesson_form.html:18
+msgid "Студент видит урок, если он открыт для его занятия или его группы."
+msgstr ""
+"Студент сабақты көреді, егер ол оның кестедегі сабағына немесе тобына ашық "
+"болса."
+
+#: templates/core/teacher/lesson_form.html:20
+msgid "Сохранить урок"
+msgstr "Сабақты сақтау"
+
+#: templates/core/teacher/lesson_form.html:23
+msgid "Удалить урок вместе со всеми задачами и отправками?"
+msgstr "Сабақты барлық есептері мен жіберілімдерімен бірге жою керек пе?"
+
+#: templates/core/teacher/lesson_form.html:24
+msgid "Удалить урок"
+msgstr "Сабақты жою"
+
+#: templates/core/teacher/lessons.html:7
+msgid ""
+"Нажмите на занятие или группу, чтобы открыть или закрыть урок. Жёлтые — "
+"открыты. Студент видит урок, если он открыт для его занятия или его группы. "
+"Новые уроки — сверху. Уроки и задачи можно перетаскивать за значок ⠿ слева."
+msgstr ""
+"Сабақты ашу немесе жабу үшін кестедегі сабақты не топты басыңыз. Сарылары — "
+"ашық. Студент сабақты көреді, егер ол оның сабағына немесе тобына ашық "
+"болса. Жаңа сабақтар — жоғарыда. Сабақтар мен есептерді сол жақтағы ⠿ "
+"белгісінен сүйреп жылжытуға болады."
+
+#: templates/core/teacher/lessons.html:8
+#: templates/core/teacher/tasks_import.html:3
+#: templates/core/teacher/tasks_import.html:6
+msgid "Импорт задач"
+msgstr "Есептерді импорттау"
+
+#: templates/core/teacher/lessons.html:12
+msgid "Развернуть все"
+msgstr "Барлығын ашу"
+
+#: templates/core/teacher/lessons.html:13
+msgid "Свернуть все"
+msgstr "Барлығын жию"
+
+#: templates/core/teacher/lessons.html:20
+msgid "Перетащите, чтобы поменять порядок уроков"
+msgstr "Сабақтар ретін өзгерту үшін сүйреңіз"
+
+#: templates/core/teacher/lessons.html:26
+msgid "Задач:"
+msgstr "Есептер:"
+
+#: templates/core/teacher/lessons.html:36
+msgid "закрыть"
+msgstr "жабу"
+
+#: templates/core/teacher/lessons.html:36
+msgid "открыть"
+msgstr "ашу"
+
+#: templates/core/teacher/lessons.html:44
+#, python-format
+msgid "Закрыть для %(name)s"
+msgstr "%(name)s үшін жабу"
+
+#: templates/core/teacher/lessons.html:44
+#, python-format
+msgid "Открыть для %(name)s"
+msgstr "%(name)s үшін ашу"
+
+#: templates/core/teacher/lessons.html:46
+msgid "Нет групп"
+msgstr "Топтар жоқ"
+
+#: templates/core/teacher/lessons.html:50
+msgid "Добавить задачу"
+msgstr "Есеп қосу"
+
+#: templates/core/teacher/lessons.html:51
+msgid "Импорт"
+msgstr "Импорт"
+
+#: templates/core/teacher/lessons.html:52
+msgid "Все задачи урока одним PDF — на случай, если сайт недоступен"
+msgstr ""
+"Сабақтың барлық есебі бір PDF файлда — сайт қолжетімсіз болған жағдайға"
+
+#: templates/core/teacher/lessons.html:59
+msgid "Перетащите, чтобы поменять порядок задач"
+msgstr "Есептер ретін өзгерту үшін сүйреңіз"
+
+#: templates/core/teacher/lessons.html:62
+msgid "Языки условия"
+msgstr "Шарт тілдері"
+
+#: templates/core/teacher/lessons.html:63
+msgid "тесты"
+msgstr "тесттер"
+
+#: templates/core/teacher/lessons.html:63
+msgid "вручную"
+msgstr "қолмен"
+
+#: templates/core/teacher/lessons.html:64
+msgid "отправки"
+msgstr "жіберілімдер"
+
+#: templates/core/teacher/lessons.html:66
+msgid "Видна ли задача студентам"
+msgstr "Есеп студенттерге көріне ме"
+
+#: templates/core/teacher/lessons.html:66
+msgid "открыта"
+msgstr "ашық"
+
+#: templates/core/teacher/lessons.html:74
+msgid "Уроков пока нет. Создайте первый урок, затем добавьте в него задачи."
+msgstr "Сабақтар әзірге жоқ. Алғашқы сабақты құрып, оған есептер қосыңыз."
+
+#: templates/core/teacher/results.html:8
+msgid "Кого показать"
+msgstr "Кімді көрсету"
+
+#: templates/core/teacher/results.html:13
+msgid "Все уроки"
+msgstr "Барлық сабақтар"
+
+#: templates/core/teacher/results.html:18
+#| msgid "Предыдущая задача"
+msgid "Предыдущий"
+msgstr "Алдыңғы"
+
+#: templates/core/teacher/results.html:19
+#| msgid "Следующая задача"
+msgid "Следующий"
+msgstr "Келесі"
+
+#: templates/core/teacher/results.html:24
+msgid "Сначала загрузите список студентов."
+msgstr "Алдымен студенттер тізімін жүктеңіз."
+
+#: templates/core/teacher/results.html:25
+msgid "Задач нет."
+msgstr "Есептер жоқ."
+
+#: templates/core/teacher/results.html:28
+msgid ""
+"В ячейке — число попыток. Зелёная — зачтено, красная — есть попытки, но "
+"решение не принято."
+msgstr ""
+"Ұяшықта — әрекеттер саны. Жасыл — есептелді, қызыл — әрекеттер бар, бірақ "
+"шешім қабылданбады."
+
+#: templates/core/teacher/results.html:28
+#| msgid ""
+#| "Студент видит урок, если он открыт для его занятия или его группы."
+msgid ""
+"По умолчанию показывается последний урок, открытый для выбранного занятия "
+"или группы (● в списке)."
+msgstr ""
+"Әдепкі бойынша таңдалған кесте сабағына немесе топқа ашылған соңғы сабақ "
+"көрсетіледі (тізімде ●)."
+
+#: templates/core/teacher/results.html:40
+msgid "Здесь пока нет студентов."
+msgstr "Мұнда әзірге студенттер жоқ."
+
+#: templates/core/teacher/sandbox.html:5
+msgid ""
+"Проверка того, что код студентов запускается изолированно. Запускайте после "
+"установки и после переезда на сервер."
+msgstr ""
+"Студенттер кодының оқшау іске қосылатынын тексеру. Орнатқаннан кейін және "
+"серверге көшкеннен кейін іске қосыңыз."
+
+#: templates/core/teacher/sandbox.html:6
+msgid "Проверить песочницу"
+msgstr "Құмсалғышты тексеру"
+
+#: templates/core/teacher/sandbox.html:9
+msgid "Режим:"
+msgstr "Режим:"
+
+#: templates/core/teacher/sandbox.html:9
+msgid "без изоляции"
+msgstr "оқшаулаусыз"
+
+#: templates/core/teacher/sandbox.html:9
+msgid "Запуск от имени:"
+msgstr "Кімнің атынан іске қосылады:"
+
+#: templates/core/teacher/sandbox.html:12
+msgid "да"
+msgstr "иә"
+
+#: templates/core/teacher/sandbox.html:12
+msgid "нет"
+msgstr "жоқ"
+
+#: templates/core/teacher/sandbox.html:15
+msgid "Всё в порядке — можно пускать студентов."
+msgstr "Бәрі дұрыс — студенттерді жіберуге болады."
+
+#: templates/core/teacher/sandbox.html:16
+msgid ""
+"Сейчас изоляция выключена, поэтому пункты про файлы и каталоги не проходят. "
+"Так можно только на своём компьютере — для пар и онлайна включите "
+"SANDBOX_USE_BWRAP = True в constants.py."
+msgstr ""
+"Қазір оқшаулау өшірулі, сондықтан файлдар мен каталогтар туралы тармақтар "
+"өтпейді. Бұл тек өз компьютеріңізде мүмкін — сабақ пен онлайн үшін "
+"constants.py ішінде SANDBOX_USE_BWRAP = True қосыңыз."
+
+#: templates/core/teacher/sandbox.html:17
+msgid ""
+"Есть проблемы с изоляцией — студентов пускать рано. Пришлите скриншот этой "
+"страницы."
+msgstr ""
+"Оқшаулауда ақаулар бар — студенттерді жіберуге әлі ерте. Осы беттің "
+"скриншотын жіберіңіз."
+
+#: templates/core/teacher/section_detail.html:7
+#, python-format
+msgid "Занятие из расписания: %(n)s студ. из разных групп"
+msgstr "Кестедегі сабақ: әртүрлі топтардан %(n)s студ."
+
+#: templates/core/teacher/section_detail.html:11
+msgid "Обновить список"
+msgstr "Тізімді жаңарту"
+
+#: templates/core/teacher/section_detail.html:14
+msgid "На этом занятии пока нет студентов."
+msgstr "Бұл кесте сабағында әзірге студенттер жоқ."
+
+#: templates/core/teacher/section_detail.html:16
+msgid "Настройки занятия"
+msgstr "Кесте сабағының баптаулары"
+
+#: templates/core/teacher/section_detail.html:21
+#, python-format
+msgid ""
+"Удалить занятие %(code)s? Студенты и их отправки останутся, они просто "
+"перестанут относиться к этому занятию."
+msgstr ""
+"%(code)s сабағын жою керек пе? Студенттер мен олардың жіберілімдері "
+"сақталады, тек бұл сабаққа қатысты болмай қалады."
+
+#: templates/core/teacher/section_detail.html:22
+msgid "Удалить занятие"
+msgstr "Кесте сабағын жою"
+
+#: templates/core/teacher/settings.html:5
+msgid "Изменения действуют сразу, перезапускать сервер не нужно."
+msgstr ""
+"Өзгерістер бірден күшіне енеді, серверді қайта іске қосудың қажеті жоқ."
+
+#: templates/core/teacher/settings.html:11
+msgid ""
+"Если под тем же ID войти на другом компьютере, прежний компьютер выйдет из "
+"аккаунта с сообщением «Под этим ID вошли на другом компьютере». Каждое такое"
+" вытеснение попадает в журнал. Если двое сидят под одним ID, они будут "
+"выкидывать друг друга, и это сразу видно."
+msgstr ""
+"Сол ID-мен басқа компьютерден кірсе, алдыңғы компьютер «Осы ID-мен басқа "
+"компьютерден кірді» деген хабармен аккаунттан шығады. Әрбір осындай жағдай "
+"журналға жазылады. Егер бір ID-мен екі адам отырса, олар бірін-бірі шығара "
+"береді, бұл бірден байқалады."
+
+#: templates/core/teacher/settings.html:12
+msgid ""
+"Выключите, если студентам нужно работать одновременно с ПК и телефона. На "
+"преподавателя режим не действует."
+msgstr ""
+"Студенттерге компьютер мен телефоннан қатар жұмыс істеу керек болса, "
+"өшіріңіз. Режим оқытушыға әсер етпейді."
+
+#: templates/core/teacher/student_form.html:19
+msgid "Удалить студента вместе со всеми отправками?"
+msgstr "Студентті барлық жіберілімдерімен бірге жою керек пе?"
+
+#: templates/core/teacher/student_form.html:20
+msgid "Удалить студента"
+msgstr "Студентті жою"
+
+#: templates/core/teacher/students_bulk.html:3
+msgid "Студенты списком"
+msgstr "Студенттер тізіммен"
+
+#: templates/core/teacher/students_bulk.html:9
+msgid ""
+"Логин собирается из фамилии и первой буквы имени латиницей: «Сейтқали "
+"Ансаған» → seitqali.a. Совпадения получают цифру в конце."
+msgstr ""
+"Логин тегі мен атының бірінші әрпінен латынша құрылады: «Сейтқали Ансаған» →"
+" seitqali.a. Қайталанса, соңына сан қосылады."
+
+#: templates/core/teacher/students_bulk.html:10
+msgid "Создать аккаунты"
+msgstr "Аккаунттар жасау"
+
+#: templates/core/teacher/students_roster.html:6
+msgid "Студенты будут входить на сайт по своему ID, без пароля."
+msgstr "Студенттер сайтқа өз ID-імен, құпиясөзсіз кіреді."
+
+#: templates/core/teacher/students_roster.html:12
+#, python-format
+msgid "Проверьте перед сохранением: %(n)s студ."
+msgstr "Сақтамас бұрын тексеріңіз: %(n)s студ."
+
+#: templates/core/teacher/students_roster.html:17
+msgid "из формы"
+msgstr "формадан"
+
+#: templates/core/teacher/students_roster.html:18
+msgid "обновится"
+msgstr "жаңартылады"
+
+#: templates/core/teacher/students_roster.html:18
+msgid "новый"
+msgstr "жаңа"
+
+#: templates/core/teacher/students_roster.html:22
+msgid "Не распознаны и пропущены:"
+msgstr "Танылмай, өткізіліп жіберілді:"
+
+#: templates/core/teacher/students_roster.html:24
+msgid "Сохранить студентов"
+msgstr "Студенттерді сақтау"
+
+#: templates/core/teacher/students_roster.html:25
+msgid "Проверить ещё раз"
+msgstr "Қайта тексеру"
+
+#: templates/core/teacher/students_roster.html:28
+msgid "Проверить список"
+msgstr "Тізімді тексеру"
+
+#: templates/core/teacher/students_roster.html:32
+msgid "Не сохранены"
+msgstr "Сақталмағандар"
+
+#: templates/core/teacher/submission_detail.html:3
+#, python-format
+msgid "Отправка #%(n)s"
+msgstr "Жіберілім #%(n)s"
+
+#: templates/core/teacher/submission_detail.html:13
+msgid "Перепроверить"
+msgstr "Қайта тексеру"
+
+#: templates/core/teacher/submission_detail.html:21
+#, python-format
+msgid "макс. время %(t)s с"
+msgstr "ең ұзақ уақыт %(t)s с"
+
+#: templates/core/teacher/submission_detail.html:27
+#: templates/core/teacher/task_form.html:36
+#: templates/core/teacher/task_form.html:41
+msgid "Тест"
+msgstr "Тест"
+
+#: templates/core/teacher/submission_detail.html:27
+msgid "(пример из условия)"
+msgstr "(шарттағы мысал)"
+
+#: templates/core/teacher/submission_detail.html:31
+msgid "Вывод программы"
+msgstr "Бағдарлама шығарғаны"
+
+#: templates/core/teacher/submission_detail.html:37
+msgid "Оценка преподавателя"
+msgstr "Оқытушы бағасы"
+
+#: templates/core/teacher/submission_detail.html:40
+msgid "Зачесть"
+msgstr "Есептеу"
+
+#: templates/core/teacher/submission_detail.html:41
+msgid "Не зачесть"
+msgstr "Есептемеу"
+
+#: templates/core/teacher/submission_detail.html:42
+msgid "Только сохранить комментарий"
+msgstr "Тек пікірді сақтау"
+
+#: templates/core/teacher/submission_detail.html:43
+msgid "затем открыть следующее непроверенное"
+msgstr "содан кейін келесі тексерілмегенін ашу"
+
+#: templates/core/teacher/submission_detail.html:48
+msgid "Все попытки по задаче"
+msgstr "Есеп бойынша барлық әрекеттер"
+
+#: templates/core/teacher/submission_detail.html:50
+msgid "(эта)"
+msgstr "(осы)"
+
+#: templates/core/teacher/submissions.html:8
+msgid "Вернуть зависшие в очередь"
+msgstr "Тұрып қалғандарды кезекке қайтару"
+
+#: templates/core/teacher/submissions.html:17
+msgid "Только верные"
+msgstr "Тек дұрыстары"
+
+#: templates/core/teacher/submissions.html:18
+msgid "Только ошибки"
+msgstr "Тек қателер"
+
+#: templates/core/teacher/submissions.html:28
+#: templates/core/teacher/task_form.html:31
+msgid "Тесты"
+msgstr "Тесттер"
+
+#: templates/core/teacher/submissions.html:42
+msgid "Отправок с такими условиями нет."
+msgstr "Мұндай шарттармен жіберілімдер жоқ."
+
+#: templates/core/teacher/task_form.html:9
+msgid "Как видит студент"
+msgstr "Студент қалай көреді"
+
+#: templates/core/teacher/task_form.html:31
+msgid ""
+"Проверяются по порядку до первой ошибки. Отмеченные «Пример» показываются "
+"студентам в условии. Добавьте крайние случаи: ноль, минимум, максимум, "
+"пустые строки."
+msgstr ""
+"Бірінші қатеге дейін ретімен тексеріледі. «Мысал» деп белгіленгендері шартта"
+" студенттерге көрсетіледі. Шеткі жағдайларды қосыңыз: нөл, минимум, "
+"максимум, бос жолдар."
+
+#: templates/core/teacher/task_form.html:32
+msgid "Добавить тест"
+msgstr "Тест қосу"
+
+#: templates/core/teacher/task_form.html:44
+#: templates/core/teacher/task_form.html:60
+msgid "Удалить"
+msgstr "Жою"
+
+#: templates/core/teacher/task_form.html:57
+msgid "Новый тест"
+msgstr "Жаңа тест"
+
+#: templates/core/teacher/task_form.html:73
+msgid "Сохранить и к урокам"
+msgstr "Сақтап, сабақтарға өту"
+
+#: templates/core/teacher/task_form.html:79
+msgid "Перепроверить все отправки"
+msgstr "Барлық жіберілімді қайта тексеру"
+
+#: templates/core/teacher/task_form.html:80
+msgid "Удалить задачу"
+msgstr "Есепті жою"
+
+#: templates/core/teacher/tasks_import.html:6
+msgid ""
+"Задачи из JSON-файла добавятся в конец выбранного урока вместе с тестами."
+msgstr ""
+"JSON файлындағы есептер тесттерімен бірге таңдалған сабақтың соңына "
+"қосылады."
+
+#: templates/core/teacher/tasks_import.html:18
+msgid "Импортировать"
+msgstr "Импорттау"
+
+#: templates/core/teacher/tasks_import.html:19
+msgid "Всё равно импортировать"
+msgstr "Бәрібір импорттау"
+
+#: templates/core/teacher/tasks_import.html:23
+msgid "Формат файла"
+msgstr "Файл пішімі"
+
+#: templates/core/teacher/tasks_import.html:41
+msgid ""
+"Ключ solution необязателен: эталон нужен только для проверки тестов при "
+"импорте и в базу не сохраняется."
+msgstr ""
+"solution кілті міндетті емес: эталон тек импорт кезінде тесттерді тексеру "
+"үшін қажет және базаға сақталмайды."
+
+#, fuzzy
+#~ msgid ". Отправлено"
+#~ msgstr "Жіберілді"

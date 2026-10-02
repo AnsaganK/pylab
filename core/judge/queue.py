@@ -10,6 +10,7 @@ from django.db import close_old_connections, transaction
 from django.utils import timezone
 
 import constants
+from django.utils.translation import gettext as _
 from core.models import Submission
 
 from . import sandbox
@@ -72,7 +73,7 @@ def check_syntax(code: str):
         compile(code, "main.py", "exec")
     except SyntaxError as e:
         line = (e.text or "").rstrip()
-        msg = f"Строка {e.lineno}: {type(e).__name__}: {e.msg}"
+        msg = _("Строка %(n)s") % {"n": e.lineno} + f": {type(e).__name__}: {e.msg}"
         if line:
             msg += f"\n    {line.strip()}"
         return msg
@@ -100,7 +101,7 @@ def judge(submission_id: int):
 
     if not tests:
         sub.status = Submission.SE
-        sub.details = "У задачи нет тестов — сообщите преподавателю."
+        sub.details = _("У задачи нет тестов — сообщите преподавателю.")
         sub.checked_at = timezone.now()
         sub.save()
         return

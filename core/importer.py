@@ -4,8 +4,8 @@
 {
   "tasks": [
     {
-      "title": "Название",
-      "statement": "Условие (Markdown)",
+      "title": "Название",                 # строка — на языке, выбранном в форме импорта,
+      "statement": "Условие (Markdown)",   # или словарь {"ru": "...", "kk": "...", "en": "..."}
       "input_format": "...", "output_format": "...",
       "kind": "io" | "manual",            # по умолчанию io
       "time_limit": 1, "memory_limit": 256, # необязательно
@@ -21,6 +21,7 @@ import json
 from django.db import transaction
 
 import constants
+from django.utils.translation import gettext as _
 
 from .judge import sandbox
 from .judge.checker import outputs_match
@@ -31,28 +32,50 @@ class TaskFileError(Exception):
     pass
 
 
-def parse(raw: str):
+LANGS = ("ru", "kk", "en")
+ML_FIELDS = ("title", "statement", "input_format", "output_format")
+
+
+def ml_values(value, default_lang):
+    """Строка → {язык_импорта: строка}; словарь → только известные языки."""
+    if isinstance(value, dict):
+        return {k: str(v) for k, v in value.items() if k in LANGS and v is not None and str(v).strip()}
+    if value is None or not str(value).strip():
+        return {}
+    return {default_lang: str(value)}
+
+
+def display_title(t, default_lang="ru"):
+    vals = ml_values(t.get("title"), default_lang) if isinstance(t, dict) else {}
+    for code in (default_lang,) + LANGS:
+        if vals.get(code):
+            return vals[code]
+    return "?"
+
+
+def parse(raw: str, default_lang="ru"):
     try:
         data = json.loads(raw)
     except json.JSONDecodeError as e:
-        raise TaskFileError(f"Файл не похож на JSON: строка {e.lineno}, позиция {e.colno}: {e.msg}")
+        raise TaskFileError(_("Файл не похож на JSON: строка %(line)s, позиция %(col)s: %(msg)s") % {"line": e.lineno, "col": e.colno, "msg": e.msg})
     tasks = data.get("tasks") if isinstance(data, dict) else data
     if not isinstance(tasks, list) or not tasks:
-        raise TaskFileError("В файле нет списка задач (ключ \"tasks\").")
+        raise TaskFileError(_("В файле нет списка задач (ключ \"tasks\")."))
     for i, t in enumerate(tasks, 1):
-        if not isinstance(t, dict) or not str(t.get("title", "")).strip():
-            raise TaskFileError(f"У задачи №{i} нет названия (\"title\").")
+        if not isinstance(t, dict) or not ml_values(t.get("title"), default_lang):
+            raise TaskFileError(_("У задачи №%(n)s нет названия (\"title\").") % {"n": i})
+        t["_title"] = display_title(t, default_lang)
         kind = t.get("kind", Task.KIND_IO)
         if kind not in (Task.KIND_IO, Task.KIND_MANUAL):
-            raise TaskFileError(f"Задача «{t['title']}»: kind должен быть \"io\" или \"manual\".")
+            raise TaskFileError(_("Задача «%(title)s»: kind должен быть \"io\" или \"manual\".") % {"title": t["_title"]})
         tests = t.get("tests", [])
         if not isinstance(tests, list):
-            raise TaskFileError(f"Задача «{t['title']}»: tests должен быть списком.")
+            raise TaskFileError(_("Задача «%(title)s»: tests должен быть списком.") % {"title": t["_title"]})
         if kind == Task.KIND_IO and not tests:
-            raise TaskFileError(f"Задача «{t['title']}»: для автопроверки нужны тесты.")
+            raise TaskFileError(_("Задача «%(title)s»: для автопроверки нужны тесты.") % {"title": t["_title"]})
         for j, tc in enumerate(tests, 1):
             if not isinstance(tc, dict) or "output" not in tc:
-                raise TaskFileError(f"Задача «{t['title']}», тест {j}: нужен ключ \"output\".")
+                raise TaskFileError(_("Задача «%(title)s», тест %(n)s: нужен ключ \"output\".") % {"title": t["_title"], "n": j})
     return tasks
 
 
@@ -68,24 +91,25 @@ def verify_solutions(tasks):
         for j, tc in enumerate(t["tests"], 1):
             res = sandbox.run_program(sol, str(tc.get("input", "")), tl, ml)
             if res.status != sandbox.OK:
-                warnings.append(f"«{t['title']}», тест {j}: эталон завершился с ошибкой ({res.status}). {res.stderr[-200:]}")
+                warnings.append(_("«%(title)s», тест %(n)s: эталон завершился с ошибкой (%(status)s). %(err)s") % {"title": t["_title"], "n": j, "status": res.status, "err": res.stderr[-200:]})
                 break
             if not outputs_match(str(tc["output"]), res.stdout):
-                warnings.append(f"«{t['title']}», тест {j}: эталон вывел «{res.stdout.strip()[:60]}», в тесте «{str(tc['output']).strip()[:60]}».")
+                warnings.append(_("«%(title)s», тест %(n)s: эталон вывел «%(got)s», в тесте «%(expected)s».") % {"title": t["_title"], "n": j, "got": res.stdout.strip()[:60], "expected": str(tc["output"]).strip()[:60]})
     return warnings
 
 
 @transaction.atomic
-def create_tasks(lesson, tasks, is_open=True):
+def create_tasks(lesson, tasks, is_open=True, default_lang="ru"):
     start = lesson.tasks.count()
     created = []
     for i, t in enumerate(tasks, 1):
+        texts = {}
+        for field in ML_FIELDS:
+            for code, value in ml_values(t.get(field), default_lang).items():
+                texts[f"{field}_{code}"] = value.strip()[:200] if field == "title" else value
         task = Task.objects.create(
             lesson=lesson,
-            title=str(t["title"]).strip()[:200],
-            statement=t.get("statement", ""),
-            input_format=t.get("input_format", ""),
-            output_format=t.get("output_format", ""),
+            **texts,
             kind=t.get("kind", Task.KIND_IO),
             time_limit=float(t.get("time_limit", constants.DEFAULT_TIME_LIMIT)),
             memory_limit=int(t.get("memory_limit", constants.DEFAULT_MEMORY_LIMIT)),

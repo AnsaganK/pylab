@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="ru">
+{% load i18n %}{% get_current_language as LANG %}<!doctype html>
+<html lang="{{ LANG }}">
 <head>
 <meta charset="utf-8">
 <title>{{ lesson.title }}</title>
@@ -14,7 +14,7 @@
   margin: 16mm 15mm 18mm;
   @top-left { content: "{{ header_css }}"; font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
   @bottom-left { content: "{{ site_css }}"; font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
-  @bottom-right { content: "стр. " counter(page) " из " counter(pages); font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
+  @bottom-right { content: "{{ page_word }} " counter(page) " {{ of_word }} " counter(pages); font: 8pt "PDF Sans", sans-serif; color: #6b7280; }
 }
 * { box-sizing: border-box; }
 body { font-family: "PDF Sans", "DejaVu Sans", Arial, sans-serif; font-size: 10pt; line-height: 1.45; color: #1c2433; margin: 0; }
@@ -51,8 +51,8 @@ code, pre, .mono { font-family: "PDF Mono", "DejaVu Sans Mono", Consolas, monosp
 <body>
 {% if print_mode %}
 <div class="print-bar">
-  <span>Серверная выгрузка PDF не настроена. Нажмите «Печать» и выберите «Сохранить как PDF».</span>
-  <button type="button" onclick="window.print()">Печать / PDF</button>
+  <span>{% translate "Серверная выгрузка PDF не настроена. Нажмите «Печать» и выберите «Сохранить как PDF»." %}</span>
+  <button type="button" onclick="window.print()">{% translate "Печать / PDF" %}</button>
 </div>
 {% endif %}
 <div class="sheet">
@@ -60,22 +60,22 @@ code, pre, .mono { font-family: "PDF Mono", "DejaVu Sans Mono", Consolas, monosp
     <div class="course">{{ course }}</div>
     <h1>{{ lesson.title }}</h1>
     {% if lesson.topic %}<div class="topic">{{ lesson.topic }}</div>{% endif %}
-    <div class="how">Задач: {{ blocks|length }}. Решения отправляйте на {{ site_url }}, когда сайт станет доступен. Сверяйте свою программу с примерами: вывод должен совпадать точно.</div>
+    <div class="how">{% blocktranslate with n=blocks|length url=site_url %}Задач: {{ n }}. Решения отправляйте на {{ url }}, когда сайт станет доступен. Сверяйте свою программу с примерами: вывод должен совпадать точно.{% endblocktranslate %}</div>
   </div>
 
   {% for b in blocks %}
   <section class="task">
     <h2><span class="no">{{ b.n }}.</span>{{ b.task.title }}</h2>
     <div class="limits">
-      {% if b.task.is_io %}Время: {{ b.task.time_limit|floatformat:"-1" }} с · Память: {{ b.task.memory_limit }} МБ{% else %}Решение проверяет преподаватель{% endif %}{% if not b.has_input %} · Без ввода{% endif %}
+      {% if b.task.is_io %}{% blocktranslate with t=b.task.time_limit|floatformat:"-1" %}Время: {{ t }} с{% endblocktranslate %} · {% blocktranslate with m=b.task.memory_limit %}Память: {{ m }} МБ{% endblocktranslate %}{% else %}{% translate "Решение проверяет преподаватель" %}{% endif %}{% if not b.has_input %} · {% translate "Без ввода" %}{% endif %}
     </div>
     {{ b.statement }}
-    {% if b.task.input_format %}<h3>Входные данные</h3>{{ b.input_format }}{% endif %}
-    {% if b.task.output_format %}<h3>Выходные данные</h3>{{ b.output_format }}{% endif %}
+    {% if b.task.input_format %}<h3>{% translate "Входные данные" %}</h3>{{ b.input_format }}{% endif %}
+    {% if b.task.output_format %}<h3>{% translate "Выходные данные" %}</h3>{{ b.output_format }}{% endif %}
     {% if b.samples %}
-    <h3>Пример{{ b.samples|length|pluralize:"ы" }}</h3>
+    <h3>{% if b.samples|length > 1 %}{% translate "Примеры" %}{% else %}{% translate "Пример" %}{% endif %}</h3>
     <table class="samples">
-      <tr>{% if b.has_input %}<th>Ввод</th>{% endif %}<th>Вывод</th></tr>
+      <tr>{% if b.has_input %}<th>{% translate "Ввод" %}</th>{% endif %}<th>{% translate "Вывод" %}</th></tr>
       {% for s in b.samples %}
       <tr>{% if b.has_input %}<td><pre>{{ s.input_data }}</pre></td>{% endif %}<td><pre>{{ s.output_data }}</pre></td></tr>
       {% endfor %}

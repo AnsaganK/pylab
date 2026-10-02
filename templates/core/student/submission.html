@@ -1,25 +1,26 @@
 {% extends "core/base.html" %}
-{% block title %}Отправка{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Отправка" %}{% endblock %}
 {% block content %}
-<div class="crumbs"><a href="{% url 's_lessons' %}">Мои задачи</a> / <a href="{% url 's_task' sub.task.pk %}">{{ sub.task.title }}</a></div>
-<div class="head"><div><h1>{{ sub.task.title }}</h1><p class="muted">Отправлено {{ sub.created_at|date:"d.m.Y H:i:s" }}</p></div></div>
+<div class="crumbs"><a href="{% url 's_lessons' %}">{% translate "Мои задачи" %}</a> / <a href="{% url 's_task' sub.task.pk %}">{{ sub.task.title }}</a></div>
+<div class="head"><div><h1>{{ sub.task.title }}</h1><p class="muted">{% blocktranslate with when=sub.created_at|date:"d.m.Y H:i:s" %}Отправлено {{ when }}{% endblocktranslate %}</p></div></div>
 <div class="verdict">
   {% include "core/_status.html" with s=sub %}
   {% include "core/_strip.html" with s=sub big=1 %}
-  {% if sub.tests_total %}<span class="muted num">пройдено {{ sub.tests_passed }} из {{ sub.tests_total }}</span>{% endif %}
+  {% if sub.tests_total %}<span class="muted num">{% blocktranslate with passed=sub.tests_passed total=sub.tests_total %}пройдено {{ passed }} из {{ total }}{% endblocktranslate %}</span>{% endif %}
 </div>
-{% if sub.teacher_comment %}<div class="cred-box"><b>Комментарий преподавателя</b><p style="margin:.35rem 0 0">{{ sub.teacher_comment|linebreaksbr }}</p></div>{% endif %}
+{% if sub.teacher_comment %}<div class="cred-box"><b>{% translate "Комментарий преподавателя" %}</b><p style="margin:.35rem 0 0">{{ sub.teacher_comment|linebreaksbr }}</p></div>{% endif %}
 <div class="code-box"><textarea class="code-view">{{ sub.code }}</textarea></div>
 {% if sub.failed_test and sub.failed_is_sample %}
-<h2>Пример {{ sub.failed_test }}</h2>
+<h2>{% blocktranslate with n=sub.failed_test %}Пример {{ n }}{% endblocktranslate %}</h2>
 <div class="fail-io">
-  <div><div class="small muted">Ввод</div><pre>{{ sub.failed_input }}</pre></div>
-  <div><div class="small muted">Ожидалось</div><pre>{{ sub.failed_expected }}</pre></div>
-  <div><div class="small muted">Ваш вывод</div><pre>{{ sub.failed_output }}</pre></div>
+  <div><div class="small muted">{% translate "Ввод" %}</div><pre>{{ sub.failed_input }}</pre></div>
+  <div><div class="small muted">{% translate "Ожидалось" %}</div><pre>{{ sub.failed_expected }}</pre></div>
+  <div><div class="small muted">{% translate "Ваш вывод" %}</div><pre>{{ sub.failed_output }}</pre></div>
 </div>
 {% elif sub.failed_test %}
-<p class="muted" style="margin-top:1rem">Тест {{ sub.failed_test }} скрытый. Подумайте о крайних случаях: ноль, отрицательные числа, очень большие значения, пустой ввод.</p>
+<p class="muted" style="margin-top:1rem">{% blocktranslate with n=sub.failed_test %}Тест {{ n }} скрытый. Подумайте о крайних случаях: ноль, отрицательные числа, очень большие значения, пустой ввод.{% endblocktranslate %}</p>
 {% endif %}
-{% if sub.details %}<h2>Сообщение об ошибке</h2><pre class="box err">{{ sub.details }}</pre>{% endif %}
-<p style="margin-top:1.5rem"><a class="btn" href="{% url 's_task' sub.task.pk %}">Вернуться к задаче</a></p>
+{% if sub.details %}<h2>{% translate "Сообщение об ошибке" %}</h2><pre class="box err">{{ sub.details }}</pre>{% endif %}
+<p style="margin-top:1.5rem"><a class="btn" href="{% url 's_task' sub.task.pk %}">{% translate "Вернуться к задаче" %}</a></p>
 {% endblock %}

@@ -1,34 +1,35 @@
 {% extends "core/base.html" %}
-{% block title %}Список из расписания{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Список из расписания" %}{% endblock %}
 {% block content %}
-<div class="crumbs"><a href="{% url 't_groups' %}">Группы</a></div>
-<div class="head"><div><h1>Список из расписания</h1><p class="muted">Студенты будут входить на сайт по своему ID, без пароля.</p></div></div>
+<div class="crumbs"><a href="{% url 't_groups' %}">{% translate "Группы" %}</a></div>
+<div class="head"><div><h1>{% translate "Список из расписания" %}</h1><p class="muted">{% translate "Студенты будут входить на сайт по своему ID, без пароля." %}</p></div></div>
 <form method="post" class="sheet" style="max-width:860px">{% csrf_token %}
   {% include "core/_field.html" with f=form.text %}
   {% include "core/_field.html" with f=form.group %}
 
   {% if preview %}
-  <h3>Проверьте перед сохранением: {{ preview|length }} студ.</h3>
+  <h3>{% blocktranslate with n=preview|length %}Проверьте перед сохранением: {{ n }} студ.{% endblocktranslate %}</h3>
   <div class="table-wrap" style="margin-bottom:1rem">
     <table class="t">
-      <tr><th>Занятие</th><th>ID</th><th>ФИО</th><th>Группа</th><th></th></tr>
+      <tr><th>{% translate "Занятие" %}</th><th>ID</th><th>{% translate "ФИО" %}</th><th>{% translate "Группа" %}</th><th></th></tr>
       {% for r in preview %}
-      <tr><td class="mono" title="{{ r.section_title }}">{{ r.section|default:"—" }}</td><td class="mono">{{ r.sid }}</td><td>{{ r.name }}</td><td>{{ r.group|default:"из формы" }}</td>
-          <td class="small">{% if r.exists %}<span class="tag">обновится</span>{% else %}<span class="st good">новый</span>{% endif %}</td></tr>
+      <tr><td class="mono" title="{{ r.section_title }}">{{ r.section|default:"—" }}</td><td class="mono">{{ r.sid }}</td><td>{{ r.name }}</td><td>{% if r.group %}{{ r.group }}{% else %}{% translate "из формы" %}{% endif %}</td>
+          <td class="small">{% if r.exists %}<span class="tag">{% translate "обновится" %}</span>{% else %}<span class="st good">{% translate "новый" %}</span>{% endif %}</td></tr>
       {% endfor %}
     </table>
   </div>
-  {% if skipped %}<p class="small muted">Не распознаны и пропущены: {% for l in skipped %}«{{ l|truncatechars:60 }}»{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+  {% if skipped %}<p class="small muted">{% translate "Не распознаны и пропущены:" %} {% for l in skipped %}«{{ l|truncatechars:60 }}»{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
   <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <button class="btn go" type="submit" name="confirm" value="1">Сохранить студентов</button>
-    <button class="btn" type="submit">Проверить ещё раз</button>
+    <button class="btn go" type="submit" name="confirm" value="1">{% translate "Сохранить студентов" %}</button>
+    <button class="btn" type="submit">{% translate "Проверить ещё раз" %}</button>
   </div>
   {% else %}
-  <button class="btn primary" type="submit">Проверить список</button>
+  <button class="btn primary" type="submit">{% translate "Проверить список" %}</button>
   {% endif %}
 
   {% if report.errors %}
-  <h3>Не сохранены</h3>
+  <h3>{% translate "Не сохранены" %}</h3>
   <ul class="errorlist">{% for line, why in report.errors %}<li>{{ line }} — {{ why }}</li>{% endfor %}</ul>
   {% endif %}
 </form>

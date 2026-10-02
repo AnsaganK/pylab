@@ -1,1 +1,1 @@
-<span class="st {{ s.tone }}">{% if s.status|length <= 3 %}<span class="code">{{ s.status }}</span>{% endif %}{{ s.get_status_display }}{% if s.failed_test %}, тест {{ s.failed_test }}{% endif %}</span>
+{% load i18n %}<span class="st {{ s.tone }}">{% if s.status|length <= 3 %}<span class="code">{{ s.status }}</span>{% endif %}{{ s.get_status_display }}{% if s.failed_test %}{% blocktranslate with n=s.failed_test %}, тест {{ n }}{% endblocktranslate %}{% endif %}</span>

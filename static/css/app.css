@@ -329,3 +329,48 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 .lesson.open .lesson-body { display: block; }
 .lesson:not(.open) .lesson-head { border-bottom: 0; }
 @media (prefers-reduced-motion: reduce) { .lesson-toggle .chev { transition: none; } }
+
+/* ---------- Перетаскивание ---------- */
+.grip { width: 10px; height: 16px; flex: none; cursor: grab; opacity: .45; margin-top: .3rem;
+  background-image: radial-gradient(circle, var(--ink) 1.3px, transparent 1.4px);
+  background-size: 5px 5px; }
+.grip:hover { opacity: .9; }
+.grip:active { cursor: grabbing; }
+.inline-grip { display: inline-block; vertical-align: -2px; margin: 0 .1rem; cursor: default; }
+.lesson-head { align-items: flex-start; }
+.lesson-head .lesson-grip { margin-right: -.2rem; }
+.task-row .task-grip { margin-top: 0; }
+.drag-ghost { opacity: .35; background: var(--marker-soft) !important; }
+.drag-chosen { box-shadow: 0 6px 18px rgba(28, 36, 51, .15); }
+.toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translate(-50%, 1rem); background: var(--ink); color: #fff;
+  padding: .5rem 1rem; border-radius: var(--radius); font-size: .9rem; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.bad { background: var(--bad); }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+.task-list.is-empty { min-height: 3rem; position: relative; }
+.task-list.is-empty::before { content: "В уроке нет задач — добавьте новую или перетащите сюда задачу из другого урока"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .87rem; pointer-events: none; }
+.task-list.is-empty:has(.task-row)::before { content: none; }
+
+/* ---------- Переключатель языка ---------- */
+.lang-switch { display: inline-flex; border: 1px solid rgba(255,255,255,.25); border-radius: var(--radius); overflow: hidden; }
+.lang-switch button { font: inherit; font-size: .75rem; font-weight: 600; letter-spacing: .03em; background: none; border: 0; color: #C9D0DB; padding: .2rem .45rem; cursor: pointer; }
+.lang-switch button:hover { color: #fff; background: rgba(255,255,255,.08); }
+.lang-switch button.on { background: var(--marker); color: var(--ink); }
+.auth-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.auth-top .lang-switch { border-color: var(--rule); }
+.auth-top .lang-switch button { color: var(--muted); }
+.auth-top .lang-switch button.on { color: var(--ink); }
+
+/* ---------- Вкладки языков в формах ---------- */
+.ml { margin-bottom: 1rem; }
+.ml-tabs { display: flex; gap: .35rem; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--rule); margin-bottom: 1rem; }
+.ml-tab { font: inherit; font-weight: 600; font-size: .85rem; letter-spacing: .03em; background: none; border: 1px solid transparent; border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; padding: .4rem .8rem; cursor: pointer; color: var(--muted); display: inline-flex; align-items: center; gap: .4rem; margin-bottom: -1px; }
+.ml-tab.on { background: var(--sheet); border-color: var(--rule); color: var(--ink); }
+.ml-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--rule); }
+.ml-dot.filled { background: var(--good); border-color: var(--good); }
+.ml-hint { margin-left: auto; }
+.lang-badges { display: inline-flex; gap: 2px; }
+.lang-badges span { font-size: .68rem; font-weight: 600; letter-spacing: .03em; padding: 0 .25rem; border-radius: 3px; color: var(--muted); border: 1px dashed var(--rule); text-transform: uppercase; }
+.lang-badges span.on { color: var(--good); border: 1px solid #9FD3B6; background: var(--good-bg); }
+.lang-note { font-size: .85rem; color: var(--muted); background: var(--wait-bg); border-radius: 4px; padding: .3rem .6rem; margin: -.25rem 0 .9rem; display: inline-block; }
+.lesson-steps { display: flex; gap: .4rem; }

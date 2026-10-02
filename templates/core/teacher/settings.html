@@ -1,16 +1,17 @@
 {% extends "core/base.html" %}
-{% block title %}Настройки{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Настройки" %}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Настройки</h1><p class="muted">Изменения действуют сразу, перезапускать сервер не нужно.</p></div></div>
+<div class="head"><div><h1>{% translate "Настройки" %}</h1><p class="muted">{% translate "Изменения действуют сразу, перезапускать сервер не нужно." %}</p></div></div>
 <form method="post" class="sheet" style="max-width:720px">{% csrf_token %}
   <label class="setting">
     <input type="checkbox" name="single_session" {% if s.single_session %}checked{% endif %}>
     <span>
-      <b>Один вход на аккаунт студента</b>
-      <span class="muted small">Если под тем же ID войти на другом компьютере, прежний компьютер выйдет из аккаунта с сообщением «Под этим ID вошли на другом компьютере». Каждое такое вытеснение попадает в журнал. Если двое сидят под одним ID, они будут выкидывать друг друга, и это сразу видно.</span>
-      <span class="muted small">Выключите, если студентам нужно работать одновременно с ПК и телефона. На преподавателя режим не действует.</span>
+      <b>{% translate "Один вход на аккаунт студента" %}</b>
+      <span class="muted small">{% translate "Если под тем же ID войти на другом компьютере, прежний компьютер выйдет из аккаунта с сообщением «Под этим ID вошли на другом компьютере». Каждое такое вытеснение попадает в журнал. Если двое сидят под одним ID, они будут выкидывать друг друга, и это сразу видно." %}</span>
+      <span class="muted small">{% translate "Выключите, если студентам нужно работать одновременно с ПК и телефона. На преподавателя режим не действует." %}</span>
     </span>
   </label>
-  <button class="btn primary" type="submit">Сохранить</button>
+  <button class="btn primary" type="submit">{% translate "Сохранить" %}</button>
 </form>
 {% endblock %}

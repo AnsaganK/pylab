@@ -6,6 +6,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
 from django.views.decorators.http import require_POST
+from django.utils.translation import gettext as _, gettext_lazy
 
 from . import netlog
 from .judge import queue
@@ -41,7 +42,7 @@ def lessons(request):
         tasks = [(t, best.get((user.id, t.id)), attempts.get((user.id, t.id), 0))
                  for t in lesson.tasks.all() if t.is_open]
         if tasks:
-            solved = sum(1 for _, b, _ in tasks if b and b.is_good)
+            solved = sum(1 for _t, b, _n in tasks if b and b.is_good)
             items.append((lesson, tasks, solved))
     has_place = bool(user.group_id) or user.sections.exists()
     return render(request, "core/student/lessons.html", {"items": items, "has_place": has_place})
@@ -59,8 +60,13 @@ def task_page(request, pk):
     tests = list(task.tests.all())
     # «Задача без ввода»: во всех тестах пустой ввод и формат ввода не описан
     has_input = bool(task.input_format.strip()) or any(t.input_data.strip() for t in tests) or not tests
-    idx = next(i for i, (t, _, _) in enumerate(siblings) if t.id == task.id) if siblings else 0
+    idx = next(i for i, (t, _b, _n) in enumerate(siblings) if t.id == task.id) if siblings else 0
+    from django.utils.translation import get_language
+    lang_names = {"ru": _("русский"), "kk": _("казахский"), "en": _("английский")}
+    shown = task.statement_lang
+    lang_note = lang_names.get(shown) if shown != (get_language() or "ru")[:2] else None
     return render(request, "core/student/task.html", {
+        "lang_note": lang_note,
         "current": current,
         "has_input": has_input,
         "prev_task": siblings[idx - 1][0] if idx > 0 else None,
@@ -88,13 +94,13 @@ def submissions_fragment(request, pk):
 
 
 RUN_LABELS = {
-    INPUT: "Ждёт ввод",
-    OK: "Программа завершилась",
-    TLE: "Превышено время",
-    MLE: "Превышена память",
-    RE: "Ошибка выполнения",
-    OLE: "Слишком большой вывод",
-    SE: "Ошибка песочницы",
+    INPUT: gettext_lazy("Ждёт ввод"),
+    OK: gettext_lazy("Программа завершилась"),
+    TLE: gettext_lazy("Превышено время"),
+    MLE: gettext_lazy("Превышена память"),
+    RE: gettext_lazy("Ошибка выполнения"),
+    OLE: gettext_lazy("Слишком большой вывод"),
+    SE: gettext_lazy("Ошибка песочницы"),
 }
 
 
@@ -116,21 +122,21 @@ def run_code(request, pk):
         if not isinstance(typed, list) or not all(isinstance(x, str) for x in typed) or len(typed) > 500:
             raise ValueError
     except ValueError:
-        return JsonResponse({"error": "Неверный формат ввода."}, status=400)
+        return JsonResponse({"error": _("Неверный формат ввода.")}, status=400)
     typed_text = "".join(line.replace("\n", " ") + "\n" for line in typed)
     if len(code) > MAX_CODE_SIZE or len(stdin) + len(typed_text) > MAX_STDIN_SIZE:
-        return JsonResponse({"error": "Слишком большой код или ввод."}, status=400)
+        return JsonResponse({"error": _("Слишком большой код или ввод.")}, status=400)
     if "\x00" in code or "\x00" in stdin or "\x00" in typed_text:
-        return JsonResponse({"error": "В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку вручную."}, status=400)
+        return JsonResponse({"error": _("В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку вручную.")}, status=400)
     if not request.POST.get("continue"):
         netlog.log(request, AccessLog.RUN, details=task.title)  # повторы ради консоли в журнал не пишем
     syntax = queue.check_syntax(code)
     if syntax:
-        hint = ("Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа."
+        hint = (_("Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа.")
                 if ("IndentationError" in syntax or "TabError" in syntax)
-                else "Проверьте указанную строку и строку перед ней: часто там не закрыта скобка или кавычка, "
-                     "либо забыто двоеточие после if/for/while/def.")
-        return JsonResponse({"status": "ce", "label": "Синтаксическая ошибка", "stdout": "", "stderr": syntax,
+                else _("Проверьте указанную строку и строку перед ней: часто там не закрыта скобка или кавычка, "
+                       "либо забыто двоеточие после if/for/while/def."))
+        return JsonResponse({"status": "ce", "label": _("Синтаксическая ошибка"), "stdout": "", "stderr": syntax,
                              "hint": hint, "time": 0})
 
     if stdin and not stdin.endswith("\n"):
@@ -138,17 +144,17 @@ def run_code(request, pk):
     prefilled = stdin.count("\n")
     res = queue.run_once(code, stdin + typed_text, task.time_limit, task.memory_limit, console_prefilled=prefilled)
     if res is None:
-        return JsonResponse({"error": "Сервер сейчас занят — попробуйте через несколько секунд."}, status=503)
+        return JsonResponse({"error": _("Сервер сейчас занят — попробуйте через несколько секунд.")}, status=503)
     stderr = res.stderr or "\n".join(res.notes)
     hint = ""
     if "EOFError" in stderr:
-        hint = "Программа читает ввод через sys.stdin, а он закончился. Впишите данные в поле «Ввод заранее»."
+        hint = _("Программа читает ввод через sys.stdin, а он закончился. Впишите данные в поле «Ввод заранее».")
     elif "NameError" in stderr and "name '" in stderr:
-        hint = "Опечатка в имени переменной или функции, либо переменная используется раньше, чем создана."
+        hint = _("Опечатка в имени переменной или функции, либо переменная используется раньше, чем создана.")
     elif "IndentationError" in stderr or "TabError" in stderr:
-        hint = "Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа."
+        hint = _("Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа.")
     return JsonResponse({
-        "status": res.status, "label": RUN_LABELS.get(res.status, res.status),
+        "status": res.status, "label": str(RUN_LABELS.get(res.status, res.status)),
         "stdout": res.stdout, "stderr": stderr, "hint": hint, "time": res.time,
     })
 
@@ -159,14 +165,14 @@ def submit(request, pk):
     task = _visible_task_or_404(request, pk)
     code = request.POST.get("code", "")
     if not code.strip():
-        return JsonResponse({"error": "Код пустой."}, status=400)
+        return JsonResponse({"error": _("Код пустой.")}, status=400)
     if len(code) > MAX_CODE_SIZE:
-        return JsonResponse({"error": "Слишком большой код."}, status=400)
+        return JsonResponse({"error": _("Слишком большой код.")}, status=400)
     if "\x00" in code:
         # PostgreSQL не хранит символ NUL в текстовых полях — без проверки была бы ошибка 500
-        return JsonResponse({"error": "В коде есть недопустимый символ (NUL). Перепечатайте строку вручную."}, status=400)
+        return JsonResponse({"error": _("В коде есть недопустимый символ (NUL). Перепечатайте строку вручную.")}, status=400)
     if Submission.objects.filter(user=request.user, status__in=Submission.IN_PROGRESS).count() >= 3:
-        return JsonResponse({"error": "Дождитесь проверки предыдущих отправок."}, status=429)
+        return JsonResponse({"error": _("Дождитесь проверки предыдущих отправок.")}, status=429)
     status = Submission.PENDING if task.is_io else Submission.REVIEW
     sub = Submission.objects.create(user=request.user, task=task, code=code, status=status,
                                     ip=netlog.client_ip(request))

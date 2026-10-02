@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.http import content_disposition_header
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 import constants
 
@@ -53,6 +54,8 @@ def render_lesson(request, lesson, tasks, filename):
         "lesson": lesson,
         "header_css": _css_string(f"{course} · {lesson.title}"),
         "site_css": _css_string(site_url),
+        "page_word": _css_string(_("стр.")),
+        "of_word": _css_string(_("из")),
         "blocks": _task_blocks(tasks),
         "course": course,
         "site_url": site_url,

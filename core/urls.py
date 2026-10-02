@@ -10,6 +10,7 @@ urlpatterns = [
     path("login/", a.login_view, name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("setup/", a.setup, name="setup"),
+    path("lang/", a.set_lang, name="set_lang"),
 
     # Студент
     path("lessons/", s.lessons, name="s_lessons"),
@@ -34,6 +35,8 @@ urlpatterns = [
     path("t/students/<int:pk>/delete/", t.student_delete, name="t_student_delete"),
     path("t/lessons/", t.lessons, name="t_lessons"),
     path("t/lessons/new/", t.lesson_form, name="t_lesson_new"),
+    path("t/lessons/reorder/", t.lessons_reorder, name="t_lessons_reorder"),
+    path("t/lessons/<int:pk>/tasks/reorder/", t.tasks_reorder, name="t_tasks_reorder"),
     path("t/lessons/<int:pk>/", t.lesson_form, name="t_lesson_edit"),
     path("t/lessons/<int:pk>/delete/", t.lesson_delete, name="t_lesson_delete"),
     path("t/lessons/<int:pk>/pdf/", t.lesson_pdf, name="t_lesson_pdf"),

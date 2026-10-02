@@ -1,13 +1,13 @@
-{% load static %}<!doctype html>
+{% load i18n static %}<!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Первый запуск — PyLab</title><link rel="stylesheet" href="{% static 'css/app.css' %}"></head>
+<title>{% translate "Первый запуск — PyLab" %}</title><link rel="stylesheet" href="{% static 'css/app.css' %}"></head>
 <body>
 <div class="auth"><div class="auth-card">
   <div class="brand"><span class="brand-mark">py</span>PyLab</div>
-  <p class="muted">Первый запуск: создайте аккаунт преподавателя. Эта страница больше не откроется.</p>
+  <p class="muted">{% translate "Первый запуск: создайте аккаунт преподавателя. Эта страница больше не откроется." %}</p>
   <form method="post" class="sheet">{% csrf_token %}
     {% for f in form %}{% include "core/_field.html" %}{% endfor %}
-    <button class="btn primary" type="submit" style="width:100%;justify-content:center">Создать аккаунт</button>
+    <button class="btn primary" type="submit" style="width:100%;justify-content:center">{% translate "Создать аккаунт" %}</button>
   </form>
 </div></div>
 </body></html>

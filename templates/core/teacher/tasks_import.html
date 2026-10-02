@@ -1,8 +1,9 @@
 {% extends "core/base.html" %}
-{% block title %}Импорт задач{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Импорт задач" %}{% endblock %}
 {% block content %}
-<div class="crumbs"><a href="{% url 't_lessons' %}">Уроки и задачи</a></div>
-<div class="head"><div><h1>Импорт задач</h1><p class="muted">Задачи из JSON-файла добавятся в конец выбранного урока вместе с тестами.</p></div></div>
+<div class="crumbs"><a href="{% url 't_lessons' %}">{% translate "Уроки и задачи" %}</a></div>
+<div class="head"><div><h1>{% translate "Импорт задач" %}</h1><p class="muted">{% translate "Задачи из JSON-файла добавятся в конец выбранного урока вместе с тестами." %}</p></div></div>
 <form method="post" enctype="multipart/form-data" class="sheet" style="max-width:820px">{% csrf_token %}
   {% if form.non_field_errors %}<ul class="msgs">{% for e in form.non_field_errors %}<li class="error">{{ e }}</li>{% endfor %}</ul>{% endif %}
   {% if warnings %}<pre class="box err" style="margin-bottom:1rem">{% for w in warnings %}{{ w }}
@@ -10,15 +11,16 @@
   {% include "core/_field.html" with f=form.lesson %}
   {% include "core/_field.html" with f=form.file %}
   {% include "core/_field.html" with f=form.text %}
+  {% include "core/_field.html" with f=form.language %}
   {% include "core/_field.html" with f=form.is_open %}
   {% include "core/_field.html" with f=form.check_solutions %}
   <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <button class="btn primary" type="submit">Импортировать</button>
-    {% if warnings %}<button class="btn danger" type="submit" name="force" value="1">Всё равно импортировать</button>{% endif %}
+    <button class="btn primary" type="submit">{% translate "Импортировать" %}</button>
+    {% if warnings %}<button class="btn danger" type="submit" name="force" value="1">{% translate "Всё равно импортировать" %}</button>{% endif %}
   </div>
 </form>
 <details class="sheet" style="max-width:820px;margin-top:1rem">
-  <summary style="cursor:pointer;font-weight:500">Формат файла</summary>
+  <summary style="cursor:pointer;font-weight:500">{% translate "Формат файла" %}</summary>
 <pre class="box" style="margin-top:.75rem">{
   "tasks": [
     {
@@ -36,6 +38,6 @@
     }
   ]
 }</pre>
-  <p class="small muted" style="margin:.5rem 0 0">Ключ <span class="mono">solution</span> необязателен: эталон нужен только для проверки тестов при импорте и в базу не сохраняется.</p>
+  <p class="small muted" style="margin:.5rem 0 0">{% translate "Ключ solution необязателен: эталон нужен только для проверки тестов при импорте и в базу не сохраняется." %}</p>
 </details>
 {% endblock %}

@@ -1,0 +1,2083 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-02 11:16+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: core/context_processors.py:15
+msgid "Черновик сохранён"
+msgstr "Draft saved"
+
+#: core/context_processors.py:16
+msgid "Заменить код в редакторе начальным? Текущий черновик пропадёт."
+msgstr ""
+"Replace the code in the editor with the starter code? Your current draft "
+"will be lost."
+
+#: core/context_processors.py:17
+msgid "Вы вышли из аккаунта."
+msgstr "You have been logged out."
+
+#: core/context_processors.py:18
+msgid "Сессия закончилась, войдите снова."
+msgstr "Your session has ended, please log in again."
+
+#: core/context_processors.py:19
+msgid "Ошибка сервера"
+msgstr "Server error"
+
+#: core/context_processors.py:20
+msgid "Программа ничего не вывела."
+msgstr "The program printed nothing."
+
+#: core/context_processors.py:21
+msgid "Ввод для программы"
+msgstr "Input for the program"
+
+#: core/context_processors.py:22
+msgid "Программа остановлена."
+msgstr "Program stopped."
+
+#: core/context_processors.py:23
+msgid "выполняется…"
+msgstr "running…"
+
+#: core/context_processors.py:24
+msgid "ждёт ввод…"
+msgstr "waiting for input…"
+
+#: core/context_processors.py:25 core/judge/sandbox.py:284
+#: templates/core/teacher/submissions.html:37
+msgid "с"
+msgstr "s"
+
+#: core/context_processors.py:26
+msgid "Нет связи с сервером."
+msgstr "No connection to the server."
+
+#: core/context_processors.py:27
+msgid "Код изменён — нажмите «Запустить» заново."
+msgstr "The code has changed — press “Run” again."
+
+#: core/context_processors.py:28 templates/core/teacher/submissions.html:28
+msgid "Отправлено"
+msgstr "Submitted"
+
+#: core/context_processors.py:29
+msgid "Порядок сохранён"
+msgstr "Order saved"
+
+#: core/context_processors.py:30
+msgid "Не удалось сохранить порядок — обновите страницу"
+msgstr "Could not save the order — please reload the page"
+
+#: core/decorators.py:15
+msgid "Эта страница доступна только преподавателю."
+msgstr "This page is available to the teacher only."
+
+#: core/forms.py:12
+msgid "Ваше имя"
+msgstr "Your name"
+
+#: core/forms.py:13 templates/core/login.html:22
+#: templates/core/teacher/group_detail.html:21
+msgid "Логин"
+msgstr "Login"
+
+#: core/forms.py:14 core/forms.py:31 templates/core/login.html:23
+#: templates/core/teacher/group_detail.html:21
+msgid "Пароль"
+msgstr "Password"
+
+#: core/forms.py:19
+msgid "Такой логин уже есть."
+msgstr "This login already exists."
+
+#: core/forms.py:32
+msgid "Оставьте пустым — сгенерируется автоматически."
+msgstr "Leave empty to generate automatically."
+
+#: core/forms.py:38
+msgid "Логин / ID"
+msgstr "Login / ID"
+
+#: core/forms.py:49 core/models.py:17 core/models.py:44
+#: templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/access_log.html:67
+#: templates/core/teacher/access_log.html:77
+#: templates/core/teacher/groups.html:21
+#: templates/core/teacher/results.html:31
+#: templates/core/teacher/students_roster.html:15
+#: templates/core/teacher/submissions.html:11
+#: templates/core/teacher/submissions.html:28
+msgid "Группа"
+msgstr "Group"
+
+#: core/forms.py:51
+msgid "Список студентов"
+msgstr "List of students"
+
+#: core/forms.py:52
+msgid ""
+"Фамилия Имя Отчество\n"
+"Фамилия Имя\n"
+"…"
+msgstr ""
+"Last name First name Patronymic\n"
+"Last name First name\n"
+"…"
+
+#: core/forms.py:53
+msgid "Одна строка — один студент. Логины и пароли создадутся автоматически."
+msgstr "One line per student. Logins and passwords are created automatically."
+
+#: core/forms.py:73 core/forms.py:99
+msgid "Заполните название хотя бы на одном языке."
+msgstr "Fill in the title in at least one language."
+
+#: core/forms.py:115
+msgid "Комментарий"
+msgstr "Comment"
+
+#: core/forms.py:119 core/models.py:145 templates/core/teacher/results.html:12
+#: templates/core/teacher/submissions.html:13
+msgid "Урок"
+msgstr "Lesson"
+
+#: core/forms.py:120
+msgid "Файл с задачами (.json)"
+msgstr "Tasks file (.json)"
+
+#: core/forms.py:122
+msgid "…или вставьте содержимое файла"
+msgstr "…or paste the file contents"
+
+#: core/forms.py:126
+msgid "Язык условий"
+msgstr "Statement language"
+
+#: core/forms.py:127
+msgid ""
+"Для текстов, заданных строкой. Тексты в виде {\"ru\": …, \"kk\": …, \"en\": "
+"…} раскладываются по своим языкам сами."
+msgstr ""
+"For texts given as a plain string. Texts given as {\"ru\": …, \"kk\": …, "
+"\"en\": …} are placed into their languages automatically."
+
+#: core/forms.py:129
+msgid "Сразу открыть задачи"
+msgstr "Open tasks right away"
+
+#: core/forms.py:131
+msgid "Прогнать эталонные решения на тестах (если есть в файле)"
+msgstr "Run reference solutions on the tests (if present in the file)"
+
+#: core/forms.py:142
+msgid "Загрузите файл или вставьте его содержимое."
+msgstr "Upload a file or paste its contents."
+
+#: core/forms.py:149 templates/core/teacher/group_detail.html:10
+#: templates/core/teacher/students_roster.html:3
+#: templates/core/teacher/students_roster.html:6
+msgid "Список из расписания"
+msgstr "List from the timetable"
+
+#: core/forms.py:152
+msgid ""
+"Вставьте список как есть. Строки без ID (например, заголовок дисциплины) "
+"пропускаются."
+msgstr ""
+"Paste the list as is. Lines without an ID (e.g. the course title) are "
+"skipped."
+
+#: core/forms.py:155
+msgid "Группа для строк без группы"
+msgstr "Group for lines without a group"
+
+#: core/forms.py:156
+msgid ""
+"Если в строке указана группа (МИК241), она найдётся среди ваших групп "
+"(МИК-241) или создастся."
+msgstr ""
+"If a line has a group (МИК241), it is matched to your groups (МИК-241) or "
+"created."
+
+#: core/importer.py:60
+#, python-format
+msgid "Файл не похож на JSON: строка %(line)s, позиция %(col)s: %(msg)s"
+msgstr ""
+"The file does not look like JSON: line %(line)s, column %(col)s: %(msg)s"
+
+#: core/importer.py:63
+msgid "В файле нет списка задач (ключ \"tasks\")."
+msgstr "The file has no list of tasks (key \"tasks\")."
+
+#: core/importer.py:66
+#, python-format
+msgid "У задачи №%(n)s нет названия (\"title\")."
+msgstr "Task #%(n)s has no title (\"title\")."
+
+#: core/importer.py:70
+#, python-format
+msgid "Задача «%(title)s»: kind должен быть \"io\" или \"manual\"."
+msgstr "Task “%(title)s”: kind must be \"io\" or \"manual\"."
+
+#: core/importer.py:73
+#, python-format
+msgid "Задача «%(title)s»: tests должен быть списком."
+msgstr "Task “%(title)s”: tests must be a list."
+
+#: core/importer.py:75
+#, python-format
+msgid "Задача «%(title)s»: для автопроверки нужны тесты."
+msgstr "Task “%(title)s”: automatic checking needs tests."
+
+#: core/importer.py:78
+#, python-format
+msgid "Задача «%(title)s», тест %(n)s: нужен ключ \"output\"."
+msgstr "Task “%(title)s”, test %(n)s: the \"output\" key is required."
+
+#: core/importer.py:94
+#, python-format
+msgid ""
+"«%(title)s», тест %(n)s: эталон завершился с ошибкой (%(status)s). %(err)s"
+msgstr ""
+"“%(title)s”, test %(n)s: the reference solution failed (%(status)s). %(err)s"
+
+#: core/importer.py:97
+#, python-format
+msgid ""
+"«%(title)s», тест %(n)s: эталон вывел «%(got)s», в тесте «%(expected)s»."
+msgstr ""
+"“%(title)s”, test %(n)s: the reference printed “%(got)s”, the test expects "
+"“%(expected)s”."
+
+#: core/judge/queue.py:76
+#, python-format
+msgid "Строка %(n)s"
+msgstr "Line %(n)s"
+
+#: core/judge/queue.py:104
+msgid "У задачи нет тестов — сообщите преподавателю."
+msgstr "The task has no tests — tell your teacher."
+
+#: core/judge/sandbox.py:193
+#, python-format
+msgid "Не найден исполняемый файл: %(f)s. Проверьте constants.py."
+msgstr "Executable not found: %(f)s. Check constants.py."
+
+#: core/judge/sandbox.py:231
+msgid ""
+"bubblewrap не смог создать песочницу — см. раздел «Песочница» в README."
+msgstr ""
+"bubblewrap could not create the sandbox — see the “Sandbox” section in "
+"README."
+
+#: core/judge/sandbox.py:277
+msgid "Программа запускается и читает ввод"
+msgstr "The program runs and reads input"
+
+#: core/judge/sandbox.py:279
+msgid "Нет доступа в сеть"
+msgstr "No network access"
+
+#: core/judge/sandbox.py:280
+msgid "Нельзя писать в файлы сервера"
+msgstr "Cannot write to server files"
+
+#: core/judge/sandbox.py:281
+msgid "Каталоги пользователей скрыты"
+msgstr "User directories are hidden"
+
+#: core/judge/sandbox.py:284
+msgid "Бесконечный цикл останавливается по времени"
+msgstr "An infinite loop is stopped by the time limit"
+
+#: core/judge/sandbox.py:286
+msgid "Лимит памяти работает"
+msgstr "The memory limit works"
+
+#: core/judge/sandbox.py:289
+msgid "пользователь сервера"
+msgstr "server user"
+
+#: core/middleware.py:11
+msgid ""
+"Под этим ID вошли на другом компьютере, поэтому здесь вы вышли из аккаунта. "
+"Если это были не вы — сообщите преподавателю."
+msgstr ""
+"Someone logged in with this ID on another computer, so you were logged out "
+"here. If it wasn't you, tell your teacher."
+
+#: core/models.py:11 core/models.py:28 core/models.py:146 core/models.py:147
+#: core/models.py:148 templates/core/teacher/groups.html:11
+msgid "Название"
+msgstr "Title"
+
+#: core/models.py:12 templates/core/teacher/groups.html:21
+msgid "Описание"
+msgstr "Description"
+
+#: core/models.py:18 templates/core/base.html:22
+#: templates/core/teacher/dashboard.html:38
+#: templates/core/teacher/group_detail.html:5
+#: templates/core/teacher/groups.html:16
+#: templates/core/teacher/lessons.html:41
+#: templates/core/teacher/results.html:10
+#: templates/core/teacher/student_form.html:5
+#: templates/core/teacher/students_bulk.html:5
+#: templates/core/teacher/students_roster.html:5
+msgid "Группы"
+msgstr "Groups"
+
+#: core/models.py:27
+msgid "Код занятия"
+msgstr "Class code"
+
+#: core/models.py:33 templates/core/teacher/section_detail.html:3
+#: templates/core/teacher/students_roster.html:15
+#: templates/core/teacher/submissions.html:12
+msgid "Занятие"
+msgstr "Class"
+
+#: core/models.py:34 core/models.py:48
+#: templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/lessons.html:33
+#: templates/core/teacher/results.html:9
+#: templates/core/teacher/student_form.html:12
+msgid "Занятия"
+msgstr "Classes"
+
+#: core/models.py:42 templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/group_detail.html:21
+#: templates/core/teacher/students_roster.html:15
+msgid "ФИО"
+msgstr "Full name"
+
+#: core/models.py:50
+msgid "Язык интерфейса"
+msgstr "Interface language"
+
+#: core/models.py:52
+msgid "Вход по ID"
+msgstr "Login by ID"
+
+#: core/models.py:104 core/models.py:105 core/models.py:106
+msgid "Название урока"
+msgstr "Lesson title"
+
+#: core/models.py:107 core/models.py:108 core/models.py:109
+msgid "Тема / описание"
+msgstr "Topic / description"
+
+#: core/models.py:110 core/models.py:162 core/models.py:213
+msgid "Порядок"
+msgstr "Order"
+
+#: core/models.py:112 templates/core/teacher/lesson_form.html:16
+msgid "Открыт для групп"
+msgstr "Open for groups"
+
+#: core/models.py:115 templates/core/teacher/lesson_form.html:12
+msgid "Открыт для занятий"
+msgstr "Open for classes"
+
+#: core/models.py:141
+msgid "Автопроверка на тестах"
+msgstr "Automatic check on tests"
+
+#: core/models.py:142
+msgid "Вручную, преподавателем"
+msgstr "Manual check by the teacher"
+
+#: core/models.py:149 core/models.py:150 core/models.py:151
+msgid "Условие"
+msgstr "Statement"
+
+#: core/models.py:149 core/models.py:150 core/models.py:151
+msgid "Поддерживается Markdown: **жирный**, `код`, списки, блоки кода."
+msgstr "Markdown is supported: **bold**, `code`, lists, code blocks."
+
+#: core/models.py:152 core/models.py:153 core/models.py:154
+msgid "Формат ввода"
+msgstr "Input format"
+
+#: core/models.py:155 core/models.py:156 core/models.py:157
+msgid "Формат вывода"
+msgstr "Output format"
+
+#: core/models.py:158
+msgid "Тип проверки"
+msgstr "Check type"
+
+#: core/models.py:159
+msgid "Лимит времени, с"
+msgstr "Time limit, s"
+
+#: core/models.py:160
+msgid "Лимит памяти, МБ"
+msgstr "Memory limit, MB"
+
+#: core/models.py:161
+msgid "Начальный код"
+msgstr "Starter code"
+
+#: core/models.py:163
+msgid "Задача открыта"
+msgstr "Task is open"
+
+#: core/models.py:210 templates/core/pdf/lesson.html:73
+#: templates/core/student/task.html:31
+msgid "Входные данные"
+msgstr "Input"
+
+#: core/models.py:211 templates/core/teacher/task_form.html:49
+#: templates/core/teacher/task_form.html:65
+msgid "Ожидаемый вывод"
+msgstr "Expected output"
+
+#: core/models.py:212 templates/core/pdf/lesson.html:76
+#: templates/core/student/task.html:34
+#: templates/core/teacher/task_form.html:43
+#: templates/core/teacher/task_form.html:59
+msgid "Пример"
+msgstr "Example"
+
+#: core/models.py:237
+msgid "В очереди"
+msgstr "Queued"
+
+#: core/models.py:238
+msgid "Проверяется"
+msgstr "Checking"
+
+#: core/models.py:239
+msgid "Верно"
+msgstr "Accepted"
+
+#: core/models.py:240
+msgid "Неверный ответ"
+msgstr "Wrong answer"
+
+#: core/models.py:241 core/views_student.py:99
+msgid "Превышено время"
+msgstr "Time limit exceeded"
+
+#: core/models.py:242 core/views_student.py:100
+msgid "Превышена память"
+msgstr "Memory limit exceeded"
+
+#: core/models.py:243 core/views_student.py:101
+msgid "Ошибка выполнения"
+msgstr "Runtime error"
+
+#: core/models.py:244 core/views_student.py:139
+msgid "Синтаксическая ошибка"
+msgstr "Syntax error"
+
+#: core/models.py:245 core/views_student.py:102
+msgid "Слишком большой вывод"
+msgstr "Output too large"
+
+#: core/models.py:246
+msgid "Ошибка проверяющей системы"
+msgstr "Judge system error"
+
+#: core/models.py:247
+msgid "Ждёт проверки"
+msgstr "Awaiting review"
+
+#: core/models.py:248
+msgid "Зачтено"
+msgstr "Accepted by teacher"
+
+#: core/models.py:249
+msgid "Не зачтено"
+msgstr "Rejected by teacher"
+
+#: core/models.py:268 templates/core/student/submission.html:12
+msgid "Комментарий преподавателя"
+msgstr "Teacher's comment"
+
+#: core/models.py:316 templates/core/login.html:3
+msgid "Вход"
+msgstr "Log in"
+
+#: core/models.py:317
+msgid "Неудачный вход"
+msgstr "Failed login"
+
+#: core/models.py:318
+msgid "Вытеснен другим входом"
+msgstr "Logged out by another login"
+
+#: core/models.py:319
+msgid "Запуск"
+msgstr "Run"
+
+#: core/models.py:320 templates/core/student/submission.html:3
+msgid "Отправка"
+msgstr "Submission"
+
+#: core/models.py:339 templates/core/teacher/settings.html:10
+msgid "Один вход на аккаунт студента"
+msgstr "One login per student account"
+
+#: core/models.py:340
+msgid ""
+"При входе под ID на другом компьютере прежний компьютер выходит из аккаунта."
+msgstr ""
+"When someone logs in with the ID on another computer, the previous computer "
+"is logged out."
+
+#: core/models.py:345
+msgid "Настройки сайта"
+msgstr "Site settings"
+
+#: core/pdf.py:57
+msgid "стр."
+msgstr "p."
+
+#: core/pdf.py:58
+msgid "из"
+msgstr "of"
+
+#: core/roster.py:89
+msgid "не указана группа — выберите её в форме"
+msgstr "no group specified — choose one in the form"
+
+#: core/roster.py:93
+msgid "этот ID занят аккаунтом преподавателя"
+msgstr "this ID belongs to the teacher's account"
+
+#: core/views_auth.py:55
+msgid "Вход по ID разрешён только из учебной аудитории."
+msgstr "Login by ID is allowed only from the classroom."
+
+#: core/views_auth.py:58
+msgid ""
+"Студент с таким ID не найден. Проверьте номер или обратитесь к "
+"преподавателю."
+msgstr ""
+"No student with this ID was found. Check the number or ask your teacher."
+
+#: core/views_auth.py:69
+msgid "Неверный логин или пароль."
+msgstr "Incorrect login or password."
+
+#: core/views_student.py:65
+msgid "русский"
+msgstr "Russian"
+
+#: core/views_student.py:65
+msgid "казахский"
+msgstr "Kazakh"
+
+#: core/views_student.py:65
+msgid "английский"
+msgstr "English"
+
+#: core/views_student.py:97
+msgid "Ждёт ввод"
+msgstr "Waiting for input"
+
+#: core/views_student.py:98
+msgid "Программа завершилась"
+msgstr "Program finished"
+
+#: core/views_student.py:103
+msgid "Ошибка песочницы"
+msgstr "Sandbox error"
+
+#: core/views_student.py:125
+msgid "Неверный формат ввода."
+msgstr "Invalid input format."
+
+#: core/views_student.py:128
+msgid "Слишком большой код или ввод."
+msgstr "The code or input is too large."
+
+#: core/views_student.py:130
+msgid ""
+"В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку "
+"вручную."
+msgstr ""
+"The code or input contains an invalid character (NUL). Retype the line "
+"manually."
+
+#: core/views_student.py:135 core/views_student.py:155
+msgid ""
+"Проблема с отступами: внутри блока все строки должны начинаться с "
+"одинакового отступа."
+msgstr ""
+"Indentation problem: all lines inside a block must start with the same "
+"indentation."
+
+#: core/views_student.py:137
+msgid ""
+"Проверьте указанную строку и строку перед ней: часто там не закрыта скобка "
+"или кавычка, либо забыто двоеточие после if/for/while/def."
+msgstr ""
+"Check the indicated line and the line before it: often a bracket or quote is"
+" not closed, or a colon after if/for/while/def is missing."
+
+#: core/views_student.py:147
+msgid "Сервер сейчас занят — попробуйте через несколько секунд."
+msgstr "The server is busy right now — try again in a few seconds."
+
+#: core/views_student.py:151
+msgid ""
+"Программа читает ввод через sys.stdin, а он закончился. Впишите данные в "
+"поле «Ввод заранее»."
+msgstr ""
+"The program reads input via sys.stdin, and it has run out. Enter the data in"
+" the “Input in advance” field."
+
+#: core/views_student.py:153
+msgid ""
+"Опечатка в имени переменной или функции, либо переменная используется "
+"раньше, чем создана."
+msgstr ""
+"A typo in a variable or function name, or the variable is used before it is "
+"created."
+
+#: core/views_student.py:168
+msgid "Код пустой."
+msgstr "The code is empty."
+
+#: core/views_student.py:170
+msgid "Слишком большой код."
+msgstr "The code is too large."
+
+#: core/views_student.py:173
+msgid "В коде есть недопустимый символ (NUL). Перепечатайте строку вручную."
+msgstr ""
+"The code contains an invalid character (NUL). Retype the line manually."
+
+#: core/views_student.py:175
+msgid "Дождитесь проверки предыдущих отправок."
+msgstr "Wait until your previous submissions are checked."
+
+#: core/views_teacher.py:64
+#, python-format
+msgid "Группа %(name)s создана."
+msgstr "Group %(name)s created."
+
+#: core/views_teacher.py:77
+msgid "Группа сохранена."
+msgstr "Group saved."
+
+#: core/views_teacher.py:107
+msgid "Занятие сохранено."
+msgstr "Class saved."
+
+#: core/views_teacher.py:120
+#, python-format
+msgid "Занятие %(code)s удалено. Студенты остались в своих группах."
+msgstr "Class %(code)s deleted. Students remain in their groups."
+
+#: core/views_teacher.py:129
+msgid "В группе есть студенты — сначала удалите или переведите их."
+msgstr "The group has students — delete or move them first."
+
+#: core/views_teacher.py:132
+msgid "Группа удалена."
+msgstr "Group deleted."
+
+#: core/views_teacher.py:147
+#, python-format
+msgid "Студент %(name)s добавлен."
+msgstr "Student %(name)s added."
+
+#: core/views_teacher.py:151
+msgid "Новый студент"
+msgstr "New student"
+
+#: core/views_teacher.py:165
+msgid "Данные студента сохранены."
+msgstr "Student data saved."
+
+#: core/views_teacher.py:190
+#, python-format
+msgid "Добавлено студентов: %(n)s."
+msgstr "Students added: %(n)s."
+
+#: core/views_teacher.py:203
+#, python-format
+msgid "Новый пароль для %(name)s ниже."
+msgstr "The new password for %(name)s is below."
+
+#: core/views_teacher.py:213
+msgid "Студент удалён вместе с отправками."
+msgstr "Student deleted together with submissions."
+
+#: core/views_teacher.py:224
+msgid "Не нашёл ни одной строки вида «1) ФИО (группа) ID»."
+msgstr "No lines like “1) Full name (group) ID” were found."
+
+#: core/views_teacher.py:227
+#, python-format
+msgid "Создано: %(created)s, обновлено: %(updated)s."
+msgstr "Created: %(created)s, updated: %(updated)s."
+
+#: core/views_teacher.py:292 core/views_teacher.py:312
+msgid "Неверные данные"
+msgstr "Invalid data"
+
+#: core/views_teacher.py:333
+msgid "Урок сохранён."
+msgstr "Lesson saved."
+
+#: core/views_teacher.py:359
+#, python-format
+msgid "Урок «%(title)s» удалён."
+msgstr "Lesson “%(title)s” deleted."
+
+#: core/views_teacher.py:419
+msgid "Задача сохранена."
+msgstr "Task saved."
+
+#: core/views_teacher.py:434
+#, python-format
+msgid "Задача «%(title)s» удалена."
+msgstr "Task “%(title)s” deleted."
+
+#: core/views_teacher.py:446
+#, python-format
+msgid "Отправлено на перепроверку: %(n)s."
+msgstr "Sent for re-checking: %(n)s."
+
+#: core/views_teacher.py:464
+msgid ""
+"Эталонные решения не прошли часть тестов — задачи не созданы. Исправьте файл"
+" или нажмите «Всё равно импортировать»."
+msgstr ""
+"Reference solutions failed some tests — tasks were not created. Fix the file"
+" or press “Import anyway”."
+
+#: core/views_teacher.py:470
+#, python-format
+msgid "Добавлено задач: %(tasks)s, тестов: %(tests)s."
+msgstr "Tasks added: %(tasks)s, tests: %(tests)s."
+
+#: core/views_teacher.py:523
+msgid "Решение отмечено."
+msgstr "Solution marked."
+
+#: core/views_teacher.py:539
+msgid "Отправка поставлена на перепроверку."
+msgstr "Submission queued for re-checking."
+
+#: core/views_teacher.py:547
+#, python-format
+msgid "Возвращено в очередь: %(n)s."
+msgstr "Returned to the queue: %(n)s."
+
+#: core/views_teacher.py:618
+msgid "3 часа"
+msgstr "3 hours"
+
+#: core/views_teacher.py:618
+msgid "сутки"
+msgstr "day"
+
+#: core/views_teacher.py:618
+msgid "неделя"
+msgstr "week"
+
+#: core/views_teacher.py:660
+msgid "Настройки сохранены. "
+msgstr "Settings saved. "
+
+#: core/views_teacher.py:661
+msgid "Один вход на аккаунт — включено."
+msgstr "One login per account — on."
+
+#: core/views_teacher.py:661
+msgid "Один вход на аккаунт — выключено."
+msgstr "One login per account — off."
+
+#: templates/core/_status.html:1
+#, python-format
+msgid ", тест %(n)s"
+msgstr ", test %(n)s"
+
+#: templates/core/_strip.html:1
+#, python-format
+msgid "Пройдено тестов: %(passed)s из %(total)s"
+msgstr "Tests passed: %(passed)s of %(total)s"
+
+#: templates/core/base.html:20 templates/core/teacher/dashboard.html:3
+msgid "Главная"
+msgstr "Home"
+
+#: templates/core/base.html:21 templates/core/teacher/lesson_form.html:5
+#: templates/core/teacher/lessons.html:4 templates/core/teacher/lessons.html:7
+#: templates/core/teacher/task_form.html:5
+#: templates/core/teacher/tasks_import.html:5
+msgid "Уроки и задачи"
+msgstr "Lessons & tasks"
+
+#: templates/core/base.html:23 templates/core/teacher/section_detail.html:10
+#: templates/core/teacher/submission_detail.html:5
+#: templates/core/teacher/submissions.html:3
+#: templates/core/teacher/submissions.html:7
+#: templates/core/teacher/task_form.html:11
+msgid "Отправки"
+msgstr "Submissions"
+
+#: templates/core/base.html:24
+msgid "Сводная"
+msgstr "Summary"
+
+#: templates/core/base.html:25
+msgid "Журнал"
+msgstr "Log"
+
+#: templates/core/base.html:26 templates/core/teacher/settings.html:3
+#: templates/core/teacher/settings.html:5
+msgid "Настройки"
+msgstr "Settings"
+
+#: templates/core/base.html:27 templates/core/teacher/sandbox.html:3
+#: templates/core/teacher/sandbox.html:5
+msgid "Песочница"
+msgstr "Sandbox"
+
+#: templates/core/base.html:29 templates/core/student/lessons.html:3
+#: templates/core/student/lessons.html:5
+#: templates/core/student/submission.html:5 templates/core/student/task.html:6
+msgid "Мои задачи"
+msgstr "My tasks"
+
+#: templates/core/base.html:37
+msgid "Выйти"
+msgstr "Log out"
+
+#: templates/core/login.html:7
+msgid "Задачи и проверка решений по Python"
+msgstr "Python tasks and solution checking"
+
+#: templates/core/login.html:15
+msgid "Ваш ID из расписания"
+msgstr "Your ID from the timetable"
+
+#: templates/core/login.html:17
+msgid "например, 49562"
+msgstr "for example, 49562"
+
+#: templates/core/login.html:18
+msgid ""
+"Входите только под своим ID — все входы записываются вместе с адресом "
+"компьютера."
+msgstr ""
+"Log in only with your own ID — every login is recorded along with the "
+"computer's address."
+
+#: templates/core/login.html:20 templates/core/login.html:24
+msgid "Войти"
+msgstr "Log in"
+
+#: templates/core/login.html:29
+msgid "Вход по логину и паролю"
+msgstr "Log in with login and password"
+
+#: templates/core/login.html:29
+msgid "для преподавателя"
+msgstr "for the teacher"
+
+#: templates/core/login.html:30
+msgid "Вход студента по ID"
+msgstr "Student login by ID"
+
+#: templates/core/pdf/lesson.html:54
+msgid ""
+"Серверная выгрузка PDF не настроена. Нажмите «Печать» и выберите «Сохранить "
+"как PDF»."
+msgstr ""
+"Server-side PDF export is not set up. Press “Print” and choose “Save as "
+"PDF”."
+
+#: templates/core/pdf/lesson.html:55
+msgid "Печать / PDF"
+msgstr "Print / PDF"
+
+#: templates/core/pdf/lesson.html:63
+#, python-format
+msgid ""
+"Задач: %(n)s. Решения отправляйте на %(url)s, когда сайт станет доступен. "
+"Сверяйте свою программу с примерами: вывод должен совпадать точно."
+msgstr ""
+"Tasks: %(n)s. Submit your solutions at %(url)s when the site is available. "
+"Check your program against the examples: the output must match exactly."
+
+#: templates/core/pdf/lesson.html:70 templates/core/student/task.html:26
+#, python-format
+msgid "Время: %(t)s с"
+msgstr "Time: %(t)s s"
+
+#: templates/core/pdf/lesson.html:70 templates/core/student/task.html:26
+#, python-format
+msgid "Память: %(m)s МБ"
+msgstr "Memory: %(m)s MB"
+
+#: templates/core/pdf/lesson.html:70 templates/core/student/task.html:26
+msgid "Решение проверяет преподаватель"
+msgstr "The solution is checked by the teacher"
+
+#: templates/core/pdf/lesson.html:70
+msgid "Без ввода"
+msgstr "No input"
+
+#: templates/core/pdf/lesson.html:74 templates/core/student/task.html:32
+msgid "Выходные данные"
+msgstr "Output"
+
+#: templates/core/pdf/lesson.html:76 templates/core/student/task.html:34
+msgid "Примеры"
+msgstr "Examples"
+
+#: templates/core/pdf/lesson.html:78 templates/core/student/submission.html:17
+#: templates/core/student/task.html:38
+#: templates/core/teacher/submission_detail.html:29
+#: templates/core/teacher/task_form.html:48
+#: templates/core/teacher/task_form.html:64
+msgid "Ввод"
+msgstr "Input"
+
+#: templates/core/pdf/lesson.html:78 templates/core/student/task.html:40
+msgid "Вывод"
+msgstr "Output"
+
+#: templates/core/setup.html:3
+msgid "Первый запуск — PyLab"
+msgstr "First run — PyLab"
+
+#: templates/core/setup.html:7
+msgid ""
+"Первый запуск: создайте аккаунт преподавателя. Эта страница больше не "
+"откроется."
+msgstr "First run: create the teacher account. This page will not open again."
+
+#: templates/core/setup.html:10
+msgid "Создать аккаунт"
+msgstr "Create account"
+
+#: templates/core/student/_state.html:1
+#: templates/core/teacher/_students_table.html:4
+#: templates/core/teacher/results.html:31
+msgid "Решено"
+msgstr "Solved"
+
+#: templates/core/student/_state.html:1
+#, python-format
+msgid "Есть ошибки: %(status)s"
+msgstr "Has errors: %(status)s"
+
+#: templates/core/student/_state.html:1
+msgid "Не решалась"
+msgstr "Not attempted"
+
+#: templates/core/student/_subs.html:10
+msgid "код"
+msgstr "code"
+
+#: templates/core/student/_subs.html:14
+msgid "Вы ещё не отправляли решения."
+msgstr "You have not submitted any solutions yet."
+
+#: templates/core/student/lessons.html:5
+#, python-format
+msgid "Группа %(group)s"
+msgstr "Group %(group)s"
+
+#: templates/core/student/lessons.html:7
+msgid "Вас ещё не добавили в группу или занятие. Сообщите преподавателю."
+msgstr "You have not been added to a group or class yet. Tell your teacher."
+
+#: templates/core/student/lessons.html:12
+#, python-format
+msgid "Решено %(solved)s из %(total)s"
+msgstr "Solved %(solved)s of %(total)s"
+
+#: templates/core/student/lessons.html:19 templates/core/student/task.html:12
+#, python-format
+msgid "%(status)s, попыток: %(n)s"
+msgstr "%(status)s, attempts: %(n)s"
+
+#: templates/core/student/lessons.html:19
+msgid "не начата"
+msgstr "not started"
+
+#: templates/core/student/lessons.html:26
+msgid "Пока нет открытых уроков. Преподаватель откроет их на занятии."
+msgstr "There are no open lessons yet. The teacher will open them in class."
+
+#: templates/core/student/submission.html:6
+#: templates/core/teacher/submission_detail.html:9
+#, python-format
+msgid "Отправлено %(when)s"
+msgstr "Submitted %(when)s"
+
+#: templates/core/student/submission.html:10
+#: templates/core/teacher/submission_detail.html:20
+#, python-format
+msgid "пройдено %(passed)s из %(total)s"
+msgstr "%(passed)s of %(total)s passed"
+
+#: templates/core/student/submission.html:15
+#, python-format
+msgid "Пример %(n)s"
+msgstr "Example %(n)s"
+
+#: templates/core/student/submission.html:18
+#: templates/core/teacher/submission_detail.html:30
+msgid "Ожидалось"
+msgstr "Expected"
+
+#: templates/core/student/submission.html:19
+msgid "Ваш вывод"
+msgstr "Your output"
+
+#: templates/core/student/submission.html:22
+#, python-format
+msgid ""
+"Тест %(n)s скрытый. Подумайте о крайних случаях: ноль, отрицательные числа, "
+"очень большие значения, пустой ввод."
+msgstr ""
+"Test %(n)s is hidden. Think about edge cases: zero, negative numbers, very "
+"large values, empty input."
+
+#: templates/core/student/submission.html:24
+#: templates/core/teacher/submission_detail.html:34
+msgid "Сообщение об ошибке"
+msgstr "Error message"
+
+#: templates/core/student/submission.html:25
+msgid "Вернуться к задаче"
+msgstr "Back to the task"
+
+#: templates/core/student/task.html:8
+msgid "Задачи урока"
+msgstr "Lesson tasks"
+
+#: templates/core/student/task.html:12
+msgid "не решалась"
+msgstr "not attempted"
+
+#: templates/core/student/task.html:24
+#, python-format
+msgid "Условие пока доступно только на языке: %(lang)s"
+msgstr "The statement is currently available only in: %(lang)s"
+
+#: templates/core/student/task.html:27
+msgid "Без ввода: программа ничего не читает"
+msgstr "No input: the program reads nothing"
+
+#: templates/core/student/task.html:38
+msgid "в поле ввода"
+msgstr "to input field"
+
+#: templates/core/student/task.html:45
+msgid "Мои отправки"
+msgstr "My submissions"
+
+#: templates/core/student/task.html:49
+msgid "Предыдущая задача"
+msgstr "Previous task"
+
+#: templates/core/student/task.html:50
+msgid "Следующая задача"
+msgstr "Next task"
+
+#: templates/core/student/task.html:62
+msgid "Горячие клавиши"
+msgstr "Keyboard shortcuts"
+
+#: templates/core/student/task.html:65
+msgid "Мельче"
+msgstr "Smaller"
+
+#: templates/core/student/task.html:66
+msgid "Крупнее"
+msgstr "Larger"
+
+#: templates/core/student/task.html:67
+msgid "Запустить"
+msgstr "Run"
+
+#: templates/core/student/task.html:68
+msgid "Отправить на проверку"
+msgstr "Submit"
+
+#: templates/core/student/task.html:71
+msgid "запустить"
+msgstr "run"
+
+#: templates/core/student/task.html:72
+msgid "в консоли — отправить строку"
+msgstr "in the console — send the line"
+
+#: templates/core/student/task.html:72
+msgid "остановить программу"
+msgstr "stop the program"
+
+#: templates/core/student/task.html:73
+msgid "отступ вправо / влево (работает и для выделения)"
+msgstr "indent right / left (works for a selection too)"
+
+#: templates/core/student/task.html:74
+msgid "в начале строки — убирает весь отступ целиком"
+msgstr "at the start of a line — removes a whole indent level"
+
+#: templates/core/student/task.html:75
+msgid "закомментировать"
+msgstr "comment out"
+
+#: templates/core/student/task.html:76
+msgid "дублировать строку"
+msgstr "duplicate line"
+
+#: templates/core/student/task.html:77
+msgid "перенести строку"
+msgstr "move line"
+
+#: templates/core/student/task.html:78
+msgid "сохранить черновик"
+msgstr "save draft"
+
+#: templates/core/student/task.html:79
+msgid "Вернуть начальный код"
+msgstr "Restore starter code"
+
+#: templates/core/student/task.html:85
+msgid "Ввод заранее"
+msgstr "Input in advance"
+
+#: templates/core/student/task.html:85
+msgid "необязательно"
+msgstr "optional"
+
+#: templates/core/student/task.html:85
+msgid "скрыть"
+msgstr "hide"
+
+#: templates/core/student/task.html:86
+msgid ""
+"Можно оставить пустым — программа сама спросит ввод в консоли. Или впишите "
+"данные заранее, по строке на каждый input()."
+msgstr ""
+"You can leave this empty — the program will ask for input in the console. Or"
+" enter the data in advance, one line per input()."
+
+#: templates/core/student/task.html:90
+msgid "Консоль"
+msgstr "Console"
+
+#: templates/core/student/task.html:90
+msgid "ввод заранее"
+msgstr "input in advance"
+
+#: templates/core/student/task.html:91
+msgid "остановить"
+msgstr "stop"
+
+#: templates/core/student/task.html:93
+msgid ""
+"Нажмите «Запустить». Если программа вызывает input(), здесь появится строка "
+"для ввода — впишите значение и нажмите Enter."
+msgstr ""
+"Press “Run”. If the program calls input(), an input line will appear here — "
+"type a value and press Enter."
+
+#: templates/core/teacher/_ml_panels.html:8
+msgid ""
+"Заполните хотя бы один язык — студенты увидят его, если перевода на их язык "
+"нет."
+msgstr ""
+"Fill in at least one language — students see it if there is no translation "
+"into theirs."
+
+#: templates/core/teacher/_students_table.html:4
+msgid "ID / логин"
+msgstr "ID / login"
+
+#: templates/core/teacher/_students_table.html:4
+msgid "Последняя активность"
+msgstr "Last activity"
+
+#: templates/core/teacher/_students_table.html:8
+msgid "по ID"
+msgstr "by ID"
+
+#: templates/core/teacher/_students_table.html:11
+msgid "не входил"
+msgstr "never logged in"
+
+#: templates/core/teacher/_students_table.html:14
+#: templates/core/teacher/lessons.html:49
+msgid "Изменить"
+msgstr "Edit"
+
+#: templates/core/teacher/_students_table.html:15
+msgid "Новый пароль"
+msgstr "New password"
+
+#: templates/core/teacher/access_log.html:3
+#: templates/core/teacher/access_log.html:7
+msgid "Журнал входов"
+msgstr "Access log"
+
+#: templates/core/teacher/access_log.html:7
+msgid "Входы, запуски и отправки студентов с IP-адресами компьютеров."
+msgstr "Student logins, runs and submissions with computers' IP addresses."
+
+#: templates/core/teacher/access_log.html:14
+msgid "Включено"
+msgstr "On"
+
+#: templates/core/teacher/access_log.html:14
+msgid "Один вход на аккаунт: при входе на другом ПК прежний выходит."
+msgstr ""
+"One login per account: logging in on another PC logs out the previous one."
+
+#: templates/core/teacher/access_log.html:15
+msgid "Выключить"
+msgstr "Turn off"
+
+#: templates/core/teacher/access_log.html:18
+msgid "Выключено"
+msgstr "Off"
+
+#: templates/core/teacher/access_log.html:18
+msgid ""
+"Один вход на аккаунт: под одним ID можно сидеть на нескольких ПК сразу."
+msgstr "One login per account: one ID can be used on several PCs at once."
+
+#: templates/core/teacher/access_log.html:19
+msgid "Включить"
+msgstr "Turn on"
+
+#: templates/core/teacher/access_log.html:25
+msgid "Вытеснения другим входом"
+msgstr "Logouts by another login"
+
+#: templates/core/teacher/access_log.html:26
+msgid ""
+"Под этим ID вошли в другом месте, и прежний компьютер выкинуло. Одно-два "
+"вытеснения — обычно студент пересел. Много подряд — двое сидят под одним ID."
+msgstr ""
+"Someone logged in with this ID elsewhere and the previous computer was "
+"logged out. Once or twice usually means the student moved. Many in a row "
+"means two people share one ID."
+
+#: templates/core/teacher/access_log.html:28
+#: templates/core/teacher/access_log.html:68
+#: templates/core/teacher/access_log.html:77
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/results.html:31
+#: templates/core/teacher/submissions.html:21
+#: templates/core/teacher/submissions.html:28
+msgid "Студент"
+msgstr "Student"
+
+#: templates/core/teacher/access_log.html:28
+msgid "Сколько раз"
+msgstr "Times"
+
+#: templates/core/teacher/access_log.html:28
+msgid "Последнее"
+msgstr "Last"
+
+#: templates/core/teacher/access_log.html:28
+msgid "IP выкинутых"
+msgstr "IPs logged out"
+
+#: templates/core/teacher/access_log.html:41
+msgid "Один ID — несколько компьютеров"
+msgstr "One ID — several computers"
+
+#: templates/core/teacher/access_log.html:46
+#: templates/core/teacher/access_log.html:57
+msgid "действ."
+msgstr "actions"
+
+#: templates/core/teacher/access_log.html:49
+#: templates/core/teacher/access_log.html:60
+msgid "Совпадений нет."
+msgstr "No matches."
+
+#: templates/core/teacher/access_log.html:52
+msgid "Один компьютер — несколько студентов"
+msgstr "One computer — several students"
+
+#: templates/core/teacher/access_log.html:63
+msgid ""
+"Совпадение — не всегда нарушение: студент мог пересесть за другой компьютер,"
+" а после пары за тот же компьютер садится следующая группа. Смотрите на "
+"время."
+msgstr ""
+"A match is not always a violation: a student may have moved to another "
+"computer, and after class the next group sits at the same computers. Check "
+"the times."
+
+#: templates/core/teacher/access_log.html:67
+#: templates/core/teacher/access_log.html:70
+#: templates/core/teacher/submissions.html:11
+#: templates/core/teacher/submissions.html:12
+#: templates/core/teacher/submissions.html:13
+#: templates/core/teacher/submissions.html:14
+#: templates/core/teacher/submissions.html:16
+msgid "Все"
+msgstr "All"
+
+#: templates/core/teacher/access_log.html:70
+#: templates/core/teacher/access_log.html:77
+msgid "Действие"
+msgstr "Action"
+
+#: templates/core/teacher/access_log.html:71
+#: templates/core/teacher/submissions.html:22
+msgid "Найти"
+msgstr "Search"
+
+#: templates/core/teacher/access_log.html:71
+#: templates/core/teacher/submissions.html:22
+msgid "Сбросить"
+msgstr "Reset"
+
+#: templates/core/teacher/access_log.html:77
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/submissions.html:28
+msgid "Время"
+msgstr "Time"
+
+#: templates/core/teacher/access_log.html:77
+msgid "Подробности"
+msgstr "Details"
+
+#: templates/core/teacher/access_log.html:90
+msgid "За этот период записей нет."
+msgstr "No records for this period."
+
+#: templates/core/teacher/access_log.html:94
+#: templates/core/teacher/submissions.html:46
+msgid "Назад"
+msgstr "Back"
+
+#: templates/core/teacher/access_log.html:95
+#: templates/core/teacher/submissions.html:47
+#, python-format
+msgid "Страница %(n)s из %(total)s"
+msgstr "Page %(n)s of %(total)s"
+
+#: templates/core/teacher/access_log.html:96
+#: templates/core/teacher/submissions.html:48
+msgid "Дальше"
+msgstr "Next"
+
+#: templates/core/teacher/dashboard.html:6
+#, python-format
+msgid "Здравствуйте, %(name)s"
+msgstr "Hello, %(name)s"
+
+#: templates/core/teacher/dashboard.html:6
+msgid "Отправки за последние 24 часа"
+msgstr "Submissions in the last 24 hours"
+
+#: templates/core/teacher/dashboard.html:8
+#: templates/core/teacher/lesson_form.html:3
+#: templates/core/teacher/lesson_form.html:6
+#: templates/core/teacher/lessons.html:8
+msgid "Новый урок"
+msgstr "New lesson"
+
+#: templates/core/teacher/dashboard.html:9
+#: templates/core/teacher/task_form.html:3
+#: templates/core/teacher/task_form.html:7
+msgid "Новая задача"
+msgstr "New task"
+
+#: templates/core/teacher/dashboard.html:12
+msgid "За последние 3 часа есть совпадения по ID или компьютерам:"
+msgstr "In the last 3 hours there are matches by ID or computer:"
+
+#: templates/core/teacher/dashboard.html:12
+msgid "Открыть журнал"
+msgstr "Open log"
+
+#: templates/core/teacher/dashboard.html:14
+msgid "отправок"
+msgstr "submissions"
+
+#: templates/core/teacher/dashboard.html:15
+msgid "верных"
+msgstr "accepted"
+
+#: templates/core/teacher/dashboard.html:16
+msgid "ждут вашей проверки"
+msgstr "await your review"
+
+#: templates/core/teacher/dashboard.html:20
+msgid "Последние отправки"
+msgstr "Recent submissions"
+
+#: templates/core/teacher/dashboard.html:20
+msgid "Все отправки"
+msgstr "All submissions"
+
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/submission_detail.html:12
+#: templates/core/teacher/submissions.html:14
+#: templates/core/teacher/submissions.html:28
+msgid "Задача"
+msgstr "Task"
+
+#: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/submissions.html:15
+#: templates/core/teacher/submissions.html:28
+msgid "Результат"
+msgstr "Result"
+
+#: templates/core/teacher/dashboard.html:34
+msgid "Пока никто ничего не отправлял."
+msgstr "Nobody has submitted anything yet."
+
+#: templates/core/teacher/dashboard.html:41
+#: templates/core/teacher/group_detail.html:7
+#, python-format
+msgid "%(n)s студ."
+msgstr "%(n)s stud."
+
+#: templates/core/teacher/dashboard.html:42
+msgid "Групп нет."
+msgstr "No groups."
+
+#: templates/core/teacher/dashboard.html:42
+#: templates/core/teacher/groups.html:29
+msgid "Создать группу"
+msgstr "Create a group"
+
+#: templates/core/teacher/dashboard.html:44
+#, python-format
+msgid "Проверить решения (%(n)s)"
+msgstr "Review solutions (%(n)s)"
+
+#: templates/core/teacher/group_detail.html:9
+#: templates/core/teacher/results.html:3 templates/core/teacher/results.html:6
+#: templates/core/teacher/section_detail.html:9
+msgid "Сводная таблица"
+msgstr "Summary table"
+
+#: templates/core/teacher/group_detail.html:11
+msgid "Добавить списком"
+msgstr "Add as a list"
+
+#: templates/core/teacher/group_detail.html:12
+msgid "Добавить студента"
+msgstr "Add student"
+
+#: templates/core/teacher/group_detail.html:18
+msgid "Логины и пароли —"
+msgstr "Logins and passwords —"
+
+#: templates/core/teacher/group_detail.html:19
+msgid ""
+"Пароли показываются только сейчас. Распечатайте или перепишите их; позже "
+"можно выдать новый пароль кнопкой «Новый пароль»."
+msgstr ""
+"Passwords are shown only now. Print or copy them; later you can issue a new "
+"one with the “New password” button."
+
+#: templates/core/teacher/group_detail.html:24
+#: templates/core/teacher/results.html:22
+msgid "Распечатать"
+msgstr "Print"
+
+#: templates/core/teacher/group_detail.html:28
+msgid ""
+"В группе пока нет студентов. Загрузите список из расписания или добавьте ФИО"
+" построчно."
+msgstr ""
+"No students in the group yet. Upload the timetable list or add full names "
+"line by line."
+
+#: templates/core/teacher/group_detail.html:31
+msgid "Настройки группы"
+msgstr "Group settings"
+
+#: templates/core/teacher/group_detail.html:34
+#: templates/core/teacher/section_detail.html:19
+#: templates/core/teacher/settings.html:15
+#: templates/core/teacher/student_form.html:16
+#: templates/core/teacher/task_form.html:72
+msgid "Сохранить"
+msgstr "Save"
+
+#: templates/core/teacher/group_detail.html:36
+#, python-format
+msgid "Удалить группу %(name)s?"
+msgstr "Delete group %(name)s?"
+
+#: templates/core/teacher/group_detail.html:37
+msgid "Удалить группу"
+msgstr "Delete group"
+
+#: templates/core/teacher/groups.html:3 templates/core/teacher/groups.html:5
+#: templates/core/teacher/section_detail.html:5
+msgid "Группы и занятия"
+msgstr "Groups and classes"
+
+#: templates/core/teacher/groups.html:5
+#: templates/core/teacher/students_bulk.html:6
+msgid "Добавить студентов списком"
+msgstr "Add students as a list"
+
+#: templates/core/teacher/groups.html:5
+msgid "Загрузить список из расписания"
+msgstr "Upload list from timetable"
+
+#: templates/core/teacher/groups.html:6
+msgid "Занятия (пары из расписания)"
+msgstr "Classes (sessions from the timetable)"
+
+#: templates/core/teacher/groups.html:7
+msgid ""
+"По занятиям удобно открывать уроки: на одной паре могут сидеть студенты "
+"разных групп. Занятия создаются сами при загрузке списка из расписания — по "
+"строке вида «74469) Программирование на Python ЛЗ»."
+msgstr ""
+"Opening lessons per class is convenient: students from different groups can "
+"attend one session. Classes are created automatically when you upload a "
+"timetable list — from a line like “74469) Программирование на Python ЛЗ”."
+
+#: templates/core/teacher/groups.html:11
+msgid "Код"
+msgstr "Code"
+
+#: templates/core/teacher/groups.html:11 templates/core/teacher/groups.html:21
+msgid "Студентов"
+msgstr "Students"
+
+#: templates/core/teacher/groups.html:14
+msgid ""
+"Занятий пока нет. Загрузите список из расписания вместе с первой строкой-"
+"заголовком."
+msgstr ""
+"No classes yet. Upload the timetable list together with its first header "
+"line."
+
+#: templates/core/teacher/groups.html:24
+msgid "Создайте первую группу, например МИК-241."
+msgstr "Create your first group, e.g. МИК-241."
+
+#: templates/core/teacher/groups.html:27
+msgid "Новая группа"
+msgstr "New group"
+
+#: templates/core/teacher/lesson_form.html:13
+#: templates/core/teacher/student_form.html:13
+msgid "Занятий пока нет."
+msgstr "No classes yet."
+
+#: templates/core/teacher/lesson_form.html:17
+msgid "Групп пока нет."
+msgstr "No groups yet."
+
+#: templates/core/teacher/lesson_form.html:18
+msgid "Студент видит урок, если он открыт для его занятия или его группы."
+msgstr "A student sees a lesson if it is open for their class or their group."
+
+#: templates/core/teacher/lesson_form.html:20
+msgid "Сохранить урок"
+msgstr "Save lesson"
+
+#: templates/core/teacher/lesson_form.html:23
+msgid "Удалить урок вместе со всеми задачами и отправками?"
+msgstr "Delete the lesson with all its tasks and submissions?"
+
+#: templates/core/teacher/lesson_form.html:24
+msgid "Удалить урок"
+msgstr "Delete lesson"
+
+#: templates/core/teacher/lessons.html:7
+msgid ""
+"Нажмите на занятие или группу, чтобы открыть или закрыть урок. Жёлтые — "
+"открыты. Студент видит урок, если он открыт для его занятия или его группы. "
+"Новые уроки — сверху. Уроки и задачи можно перетаскивать за значок ⠿ слева."
+msgstr ""
+"Click a class or group to open or close a lesson. Yellow ones are open. A "
+"student sees a lesson if it is open for their class or their group. New "
+"lessons are on top. Lessons and tasks can be dragged by the ⠿ handle on the "
+"left."
+
+#: templates/core/teacher/lessons.html:8
+#: templates/core/teacher/tasks_import.html:3
+#: templates/core/teacher/tasks_import.html:6
+msgid "Импорт задач"
+msgstr "Import tasks"
+
+#: templates/core/teacher/lessons.html:12
+msgid "Развернуть все"
+msgstr "Expand all"
+
+#: templates/core/teacher/lessons.html:13
+msgid "Свернуть все"
+msgstr "Collapse all"
+
+#: templates/core/teacher/lessons.html:20
+msgid "Перетащите, чтобы поменять порядок уроков"
+msgstr "Drag to reorder lessons"
+
+#: templates/core/teacher/lessons.html:26
+msgid "Задач:"
+msgstr "Tasks:"
+
+#: templates/core/teacher/lessons.html:36
+msgid "закрыть"
+msgstr "close"
+
+#: templates/core/teacher/lessons.html:36
+msgid "открыть"
+msgstr "open"
+
+#: templates/core/teacher/lessons.html:44
+#, python-format
+msgid "Закрыть для %(name)s"
+msgstr "Close for %(name)s"
+
+#: templates/core/teacher/lessons.html:44
+#, python-format
+msgid "Открыть для %(name)s"
+msgstr "Open for %(name)s"
+
+#: templates/core/teacher/lessons.html:46
+msgid "Нет групп"
+msgstr "No groups"
+
+#: templates/core/teacher/lessons.html:50
+msgid "Добавить задачу"
+msgstr "Add task"
+
+#: templates/core/teacher/lessons.html:51
+msgid "Импорт"
+msgstr "Import"
+
+#: templates/core/teacher/lessons.html:52
+msgid "Все задачи урока одним PDF — на случай, если сайт недоступен"
+msgstr "All lesson tasks in one PDF — in case the site is unavailable"
+
+#: templates/core/teacher/lessons.html:59
+msgid "Перетащите, чтобы поменять порядок задач"
+msgstr "Drag to reorder tasks"
+
+#: templates/core/teacher/lessons.html:62
+msgid "Языки условия"
+msgstr "Statement languages"
+
+#: templates/core/teacher/lessons.html:63
+msgid "тесты"
+msgstr "tests"
+
+#: templates/core/teacher/lessons.html:63
+msgid "вручную"
+msgstr "manual"
+
+#: templates/core/teacher/lessons.html:64
+msgid "отправки"
+msgstr "submissions"
+
+#: templates/core/teacher/lessons.html:66
+msgid "Видна ли задача студентам"
+msgstr "Whether students can see the task"
+
+#: templates/core/teacher/lessons.html:66
+msgid "открыта"
+msgstr "open"
+
+#: templates/core/teacher/lessons.html:74
+msgid "Уроков пока нет. Создайте первый урок, затем добавьте в него задачи."
+msgstr "No lessons yet. Create the first lesson, then add tasks to it."
+
+#: templates/core/teacher/results.html:8
+msgid "Кого показать"
+msgstr "Show"
+
+#: templates/core/teacher/results.html:13
+msgid "Все уроки"
+msgstr "All lessons"
+
+#: templates/core/teacher/results.html:18
+#| msgid "Предыдущая задача"
+msgid "Предыдущий"
+msgstr "Previous"
+
+#: templates/core/teacher/results.html:19
+#| msgid "Следующая задача"
+msgid "Следующий"
+msgstr "Next"
+
+#: templates/core/teacher/results.html:24
+msgid "Сначала загрузите список студентов."
+msgstr "Upload a list of students first."
+
+#: templates/core/teacher/results.html:25
+msgid "Задач нет."
+msgstr "No tasks."
+
+#: templates/core/teacher/results.html:28
+msgid ""
+"В ячейке — число попыток. Зелёная — зачтено, красная — есть попытки, но "
+"решение не принято."
+msgstr ""
+"Each cell shows the number of attempts. Green means accepted, red means "
+"attempts without an accepted solution."
+
+#: templates/core/teacher/results.html:28
+#| msgid ""
+#| "Студент видит урок, если он открыт для его занятия или его группы."
+msgid ""
+"По умолчанию показывается последний урок, открытый для выбранного занятия "
+"или группы (● в списке)."
+msgstr ""
+"By default the latest lesson open for the selected class or group is shown "
+"(● in the list)."
+
+#: templates/core/teacher/results.html:40
+msgid "Здесь пока нет студентов."
+msgstr "No students here yet."
+
+#: templates/core/teacher/sandbox.html:5
+msgid ""
+"Проверка того, что код студентов запускается изолированно. Запускайте после "
+"установки и после переезда на сервер."
+msgstr ""
+"Checks that student code runs in isolation. Run it after installation and "
+"after moving to a server."
+
+#: templates/core/teacher/sandbox.html:6
+msgid "Проверить песочницу"
+msgstr "Check the sandbox"
+
+#: templates/core/teacher/sandbox.html:9
+msgid "Режим:"
+msgstr "Mode:"
+
+#: templates/core/teacher/sandbox.html:9
+msgid "без изоляции"
+msgstr "no isolation"
+
+#: templates/core/teacher/sandbox.html:9
+msgid "Запуск от имени:"
+msgstr "Runs as:"
+
+#: templates/core/teacher/sandbox.html:12
+msgid "да"
+msgstr "yes"
+
+#: templates/core/teacher/sandbox.html:12
+msgid "нет"
+msgstr "no"
+
+#: templates/core/teacher/sandbox.html:15
+msgid "Всё в порядке — можно пускать студентов."
+msgstr "All good — students can use it."
+
+#: templates/core/teacher/sandbox.html:16
+msgid ""
+"Сейчас изоляция выключена, поэтому пункты про файлы и каталоги не проходят. "
+"Так можно только на своём компьютере — для пар и онлайна включите "
+"SANDBOX_USE_BWRAP = True в constants.py."
+msgstr ""
+"Isolation is currently off, so the file and directory checks fail. This is "
+"acceptable only on your own computer — for classes and online, set "
+"SANDBOX_USE_BWRAP = True in constants.py."
+
+#: templates/core/teacher/sandbox.html:17
+msgid ""
+"Есть проблемы с изоляцией — студентов пускать рано. Пришлите скриншот этой "
+"страницы."
+msgstr ""
+"There are isolation problems — it is too early to let students in. Send a "
+"screenshot of this page."
+
+#: templates/core/teacher/section_detail.html:7
+#, python-format
+msgid "Занятие из расписания: %(n)s студ. из разных групп"
+msgstr "Timetable class: %(n)s students from different groups"
+
+#: templates/core/teacher/section_detail.html:11
+msgid "Обновить список"
+msgstr "Update list"
+
+#: templates/core/teacher/section_detail.html:14
+msgid "На этом занятии пока нет студентов."
+msgstr "No students in this class yet."
+
+#: templates/core/teacher/section_detail.html:16
+msgid "Настройки занятия"
+msgstr "Class settings"
+
+#: templates/core/teacher/section_detail.html:21
+#, python-format
+msgid ""
+"Удалить занятие %(code)s? Студенты и их отправки останутся, они просто "
+"перестанут относиться к этому занятию."
+msgstr ""
+"Delete class %(code)s? Students and their submissions stay; they will simply"
+" no longer belong to this class."
+
+#: templates/core/teacher/section_detail.html:22
+msgid "Удалить занятие"
+msgstr "Delete class"
+
+#: templates/core/teacher/settings.html:5
+msgid "Изменения действуют сразу, перезапускать сервер не нужно."
+msgstr "Changes take effect immediately, no server restart needed."
+
+#: templates/core/teacher/settings.html:11
+msgid ""
+"Если под тем же ID войти на другом компьютере, прежний компьютер выйдет из "
+"аккаунта с сообщением «Под этим ID вошли на другом компьютере». Каждое такое"
+" вытеснение попадает в журнал. Если двое сидят под одним ID, они будут "
+"выкидывать друг друга, и это сразу видно."
+msgstr ""
+"If someone logs in with the same ID on another computer, the previous "
+"computer is logged out with the message “Someone logged in with this ID on "
+"another computer”. Each such event is logged. If two people share one ID, "
+"they keep logging each other out, which is immediately visible."
+
+#: templates/core/teacher/settings.html:12
+msgid ""
+"Выключите, если студентам нужно работать одновременно с ПК и телефона. На "
+"преподавателя режим не действует."
+msgstr ""
+"Turn this off if students need to work from a PC and a phone at the same "
+"time. It does not apply to the teacher."
+
+#: templates/core/teacher/student_form.html:19
+msgid "Удалить студента вместе со всеми отправками?"
+msgstr "Delete the student with all their submissions?"
+
+#: templates/core/teacher/student_form.html:20
+msgid "Удалить студента"
+msgstr "Delete student"
+
+#: templates/core/teacher/students_bulk.html:3
+msgid "Студенты списком"
+msgstr "Students as a list"
+
+#: templates/core/teacher/students_bulk.html:9
+msgid ""
+"Логин собирается из фамилии и первой буквы имени латиницей: «Сейтқали "
+"Ансаған» → seitqali.a. Совпадения получают цифру в конце."
+msgstr ""
+"The login is built from the last name and the first letter of the first name"
+" in Latin: “Сейтқали Ансаған” → seitqali.a. Duplicates get a number at the "
+"end."
+
+#: templates/core/teacher/students_bulk.html:10
+msgid "Создать аккаунты"
+msgstr "Create accounts"
+
+#: templates/core/teacher/students_roster.html:6
+msgid "Студенты будут входить на сайт по своему ID, без пароля."
+msgstr "Students will log in with their ID, without a password."
+
+#: templates/core/teacher/students_roster.html:12
+#, python-format
+msgid "Проверьте перед сохранением: %(n)s студ."
+msgstr "Check before saving: %(n)s students"
+
+#: templates/core/teacher/students_roster.html:17
+msgid "из формы"
+msgstr "from the form"
+
+#: templates/core/teacher/students_roster.html:18
+msgid "обновится"
+msgstr "will be updated"
+
+#: templates/core/teacher/students_roster.html:18
+msgid "новый"
+msgstr "new"
+
+#: templates/core/teacher/students_roster.html:22
+msgid "Не распознаны и пропущены:"
+msgstr "Not recognized and skipped:"
+
+#: templates/core/teacher/students_roster.html:24
+msgid "Сохранить студентов"
+msgstr "Save students"
+
+#: templates/core/teacher/students_roster.html:25
+msgid "Проверить ещё раз"
+msgstr "Check again"
+
+#: templates/core/teacher/students_roster.html:28
+msgid "Проверить список"
+msgstr "Check the list"
+
+#: templates/core/teacher/students_roster.html:32
+msgid "Не сохранены"
+msgstr "Not saved"
+
+#: templates/core/teacher/submission_detail.html:3
+#, python-format
+msgid "Отправка #%(n)s"
+msgstr "Submission #%(n)s"
+
+#: templates/core/teacher/submission_detail.html:13
+msgid "Перепроверить"
+msgstr "Re-check"
+
+#: templates/core/teacher/submission_detail.html:21
+#, python-format
+msgid "макс. время %(t)s с"
+msgstr "max time %(t)s s"
+
+#: templates/core/teacher/submission_detail.html:27
+#: templates/core/teacher/task_form.html:36
+#: templates/core/teacher/task_form.html:41
+msgid "Тест"
+msgstr "Test"
+
+#: templates/core/teacher/submission_detail.html:27
+msgid "(пример из условия)"
+msgstr "(example from the statement)"
+
+#: templates/core/teacher/submission_detail.html:31
+msgid "Вывод программы"
+msgstr "Program output"
+
+#: templates/core/teacher/submission_detail.html:37
+msgid "Оценка преподавателя"
+msgstr "Teacher's evaluation"
+
+#: templates/core/teacher/submission_detail.html:40
+msgid "Зачесть"
+msgstr "Accept"
+
+#: templates/core/teacher/submission_detail.html:41
+msgid "Не зачесть"
+msgstr "Reject"
+
+#: templates/core/teacher/submission_detail.html:42
+msgid "Только сохранить комментарий"
+msgstr "Save comment only"
+
+#: templates/core/teacher/submission_detail.html:43
+msgid "затем открыть следующее непроверенное"
+msgstr "then open the next unreviewed one"
+
+#: templates/core/teacher/submission_detail.html:48
+msgid "Все попытки по задаче"
+msgstr "All attempts on the task"
+
+#: templates/core/teacher/submission_detail.html:50
+msgid "(эта)"
+msgstr "(this)"
+
+#: templates/core/teacher/submissions.html:8
+msgid "Вернуть зависшие в очередь"
+msgstr "Requeue stuck submissions"
+
+#: templates/core/teacher/submissions.html:17
+msgid "Только верные"
+msgstr "Accepted only"
+
+#: templates/core/teacher/submissions.html:18
+msgid "Только ошибки"
+msgstr "Errors only"
+
+#: templates/core/teacher/submissions.html:28
+#: templates/core/teacher/task_form.html:31
+msgid "Тесты"
+msgstr "Tests"
+
+#: templates/core/teacher/submissions.html:42
+msgid "Отправок с такими условиями нет."
+msgstr "No submissions match these filters."
+
+#: templates/core/teacher/task_form.html:9
+msgid "Как видит студент"
+msgstr "Student view"
+
+#: templates/core/teacher/task_form.html:31
+msgid ""
+"Проверяются по порядку до первой ошибки. Отмеченные «Пример» показываются "
+"студентам в условии. Добавьте крайние случаи: ноль, минимум, максимум, "
+"пустые строки."
+msgstr ""
+"Checked in order until the first failure. Those marked “Example” are shown "
+"to students in the statement. Add edge cases: zero, minimum, maximum, empty "
+"lines."
+
+#: templates/core/teacher/task_form.html:32
+msgid "Добавить тест"
+msgstr "Add test"
+
+#: templates/core/teacher/task_form.html:44
+#: templates/core/teacher/task_form.html:60
+msgid "Удалить"
+msgstr "Delete"
+
+#: templates/core/teacher/task_form.html:57
+msgid "Новый тест"
+msgstr "New test"
+
+#: templates/core/teacher/task_form.html:73
+msgid "Сохранить и к урокам"
+msgstr "Save and go to lessons"
+
+#: templates/core/teacher/task_form.html:79
+msgid "Перепроверить все отправки"
+msgstr "Re-check all submissions"
+
+#: templates/core/teacher/task_form.html:80
+msgid "Удалить задачу"
+msgstr "Delete task"
+
+#: templates/core/teacher/tasks_import.html:6
+msgid ""
+"Задачи из JSON-файла добавятся в конец выбранного урока вместе с тестами."
+msgstr ""
+"Tasks from the JSON file will be added to the end of the selected lesson "
+"along with their tests."
+
+#: templates/core/teacher/tasks_import.html:18
+msgid "Импортировать"
+msgstr "Import"
+
+#: templates/core/teacher/tasks_import.html:19
+msgid "Всё равно импортировать"
+msgstr "Import anyway"
+
+#: templates/core/teacher/tasks_import.html:23
+msgid "Формат файла"
+msgstr "File format"
+
+#: templates/core/teacher/tasks_import.html:41
+msgid ""
+"Ключ solution необязателен: эталон нужен только для проверки тестов при "
+"импорте и в базу не сохраняется."
+msgstr ""
+"The solution key is optional: the reference is used only to check tests "
+"during import and is not saved to the database."
+
+#, fuzzy
+#~ msgid ". Отправлено"
+#~ msgstr "Submitted"

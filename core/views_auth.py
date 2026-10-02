@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model, login
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import gettext as _
 
 from . import netlog
 from .forms import SetupForm
@@ -51,10 +52,10 @@ def login_view(request):
             value = "".join(request.POST.get("sid", "").split())
             user = User.objects.filter(username=value, id_login=True, is_staff=False, is_active=True).first() if value else None
             if not netlog.id_login_allowed_from(ip):
-                error = "Вход по ID разрешён только из учебной аудитории."
+                error = _("Вход по ID разрешён только из учебной аудитории.")
                 netlog.log(request, AccessLog.LOGIN_FAIL, user=user, details=f"ID {value}: не та сеть")
             elif user is None:
-                error = "Студент с таким ID не найден. Проверьте номер или обратитесь к преподавателю."
+                error = _("Студент с таким ID не найден. Проверьте номер или обратитесь к преподавателю.")
                 netlog.log(request, AccessLog.LOGIN_FAIL, details=f"ID {value}"[:200])
             else:
                 login(request, user, backend="django.contrib.auth.backends.ModelBackend")
@@ -65,7 +66,7 @@ def login_view(request):
             value = request.POST.get("username", "").strip()
             user = authenticate(request, username=value, password=request.POST.get("password", ""))
             if user is None:
-                error = "Неверный логин или пароль."
+                error = _("Неверный логин или пароль.")
                 netlog.log(request, AccessLog.LOGIN_FAIL, details=f"логин {value}"[:200])
             else:
                 login(request, user)
@@ -103,3 +104,19 @@ def home(request):
     if request.user.is_teacher:
         return redirect("t_dashboard")
     return redirect("s_lessons")
+
+
+def set_lang(request):
+    """Переключатель языка: запоминаем в cookie и, если вошли, в профиле."""
+    from django.conf import settings
+    from django.http import HttpResponseRedirect
+    lang = request.POST.get("lang") or request.GET.get("lang")
+    nxt = request.POST.get("next") or request.GET.get("next") or "/"
+    if not url_has_allowed_host_and_scheme(nxt, allowed_hosts={request.get_host()}):
+        nxt = "/"
+    response = HttpResponseRedirect(nxt)
+    if lang in dict(settings.LANGUAGES):
+        if request.user.is_authenticated:
+            User.objects.filter(pk=request.user.pk).update(language=lang)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang, max_age=settings.LANGUAGE_COOKIE_AGE, samesite="Lax")
+    return response
