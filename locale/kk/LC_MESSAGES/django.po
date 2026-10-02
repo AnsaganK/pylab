@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-02 11:16+0500\n"
+"POT-Creation-Date: 2026-10-02 11:34+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -875,10 +875,6 @@ msgstr "Python бойынша есептер және шешімдерді те�
 msgid "Ваш ID из расписания"
 msgstr "Кестедегі сіздің ID"
 
-#: templates/core/login.html:17
-msgid "например, 49562"
-msgstr "мысалы, 49562"
-
 #: templates/core/login.html:18
 msgid ""
 "Входите только под своим ID — все входы записываются вместе с адресом "
@@ -1726,12 +1722,10 @@ msgid "Все уроки"
 msgstr "Барлық сабақтар"
 
 #: templates/core/teacher/results.html:18
-#| msgid "Предыдущая задача"
 msgid "Предыдущий"
 msgstr "Алдыңғы"
 
 #: templates/core/teacher/results.html:19
-#| msgid "Следующая задача"
 msgid "Следующий"
 msgstr "Келесі"
 
@@ -1752,8 +1746,6 @@ msgstr ""
 "шешім қабылданбады."
 
 #: templates/core/teacher/results.html:28
-#| msgid ""
-#| "Студент видит урок, если он открыт для его занятия или его группы."
 msgid ""
 "По умолчанию показывается последний урок, открытый для выбранного занятия "
 "или группы (● в списке)."
@@ -2081,6 +2073,9 @@ msgid ""
 msgstr ""
 "solution кілті міндетті емес: эталон тек импорт кезінде тесттерді тексеру "
 "үшін қажет және базаға сақталмайды."
+
+#~ msgid "например, 49562"
+#~ msgstr "мысалы, 49562"
 
 #, fuzzy
 #~ msgid ". Отправлено"

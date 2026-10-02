@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-02 11:16+0500\n"
+"POT-Creation-Date: 2026-10-02 11:34+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -876,10 +876,6 @@ msgstr "Python tasks and solution checking"
 msgid "Ваш ID из расписания"
 msgstr "Your ID from the timetable"
 
-#: templates/core/login.html:17
-msgid "например, 49562"
-msgstr "for example, 49562"
-
 #: templates/core/login.html:18
 msgid ""
 "Входите только под своим ID — все входы записываются вместе с адресом "
@@ -1722,12 +1718,10 @@ msgid "Все уроки"
 msgstr "All lessons"
 
 #: templates/core/teacher/results.html:18
-#| msgid "Предыдущая задача"
 msgid "Предыдущий"
 msgstr "Previous"
 
 #: templates/core/teacher/results.html:19
-#| msgid "Следующая задача"
 msgid "Следующий"
 msgstr "Next"
 
@@ -1748,8 +1742,6 @@ msgstr ""
 "attempts without an accepted solution."
 
 #: templates/core/teacher/results.html:28
-#| msgid ""
-#| "Студент видит урок, если он открыт для его занятия или его группы."
 msgid ""
 "По умолчанию показывается последний урок, открытый для выбранного занятия "
 "или группы (● в списке)."
@@ -2077,6 +2069,9 @@ msgid ""
 msgstr ""
 "The solution key is optional: the reference is used only to check tests "
 "during import and is not saved to the database."
+
+#~ msgid "например, 49562"
+#~ msgstr "for example, 49562"
 
 #, fuzzy
 #~ msgid ". Отправлено"

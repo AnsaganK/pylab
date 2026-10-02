@@ -148,7 +148,7 @@ class RosterForm(forms.Form):
     text = forms.CharField(
         label=_("Список из расписания"),
         widget=forms.Textarea(attrs={"rows": 14, "class": "mono",
-                                     "placeholder": "1) Аханбай Данира Нышанбайқызы (МИК241) 49562\n2) …"}),
+                                     "placeholder": "1) Иванов Иван Иванович (МИК241) 10001\n2) …"}),
         help_text=_("Вставьте список как есть. Строки без ID (например, заголовок дисциплины) пропускаются."),
     )
     group = forms.ModelChoiceField(
