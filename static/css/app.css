@@ -88,7 +88,7 @@ form.inline { display: inline; }
 .field > label { display: block; font-weight: 500; margin-bottom: .3rem; font-size: .93rem; }
 .field .help { font-size: .85rem; color: var(--muted); margin-top: .25rem; }
 .field .err, .errorlist { color: var(--bad); font-size: .87rem; margin: .25rem 0 0; padding: 0; list-style: none; }
-input[type=text], input[type=password], input[type=number], input[type=search], select, textarea {
+input[type=text], input[type=password], input[type=number], input[type=search], input[type=date], input[type=datetime-local], select, textarea {
   width: 100%; font: inherit; color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: .45rem .6rem;
 }
 textarea { resize: vertical; }
@@ -403,3 +403,11 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 .metrics { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: .9rem; margin: -.25rem 0 1rem; }
 .metrics b { font-variant-numeric: tabular-nums; }
 .filters label { display: block; margin-bottom: .2rem; }
+
+/* Поля дат в фильтрах сводной — той же высоты, что и списки рядом */
+.filters .f-date input { width: auto; min-width: 13.5rem; font-variant-numeric: tabular-nums; }
+.filters .f-date input::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
+.filters .f-date input::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+.filters select, .filters input, .filters .btn { height: 2.45rem; }
+.filters .presets .btn { height: auto; }
+.filters input[type=datetime-local] { padding-top: 0; padding-bottom: 0; }
