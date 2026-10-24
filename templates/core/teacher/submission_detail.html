@@ -21,6 +21,12 @@
   {% if sub.max_time is not None %}<span class="muted num">{% blocktranslate with t=sub.max_time|floatformat:3 %}макс. время {{ t }} с{% endblocktranslate %}</span>{% endif %}
 </div>
 
+<div class="metrics muted">
+  {% if spent %}<span>{% translate "С открытия задачи" %}: <b>{{ spent }}</b></span>{% endif %}
+  <span>{% translate "Запусков до отправки" %}: <b>{{ runs }}</b></span>
+  {% if sub.typed_chars is not None %}<span>{% translate "Напечатано" %}: <b>{{ sub.typed_chars }}</b></span><span>{% translate "Вставлено" %}: <b>{{ sub.pasted_chars }}</b></span><span>{% translate "Уходил со страницы" %}: <b>{{ sub.away_count }}</b> ({{ sub.away_seconds }} {% translate "с" %})</span>{% endif %}
+  {% if ai_markers %}<span>{% translate "Приёмы ИИ" %}: <b>{{ ai_markers|join:", " }}</b></span>{% endif %}
+</div>
 <div class="code-box"><textarea class="code-view">{{ sub.code }}</textarea></div>
 
 {% if sub.failed_test %}

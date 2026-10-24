@@ -1,0 +1,29 @@
+{% load i18n %}<div class="head no-print"><h1>{% translate "Сводная" %}</h1></div>
+<nav class="tabs no-print">
+  <a href="{% url 't_results' %}?{{ query }}" class="{% if tab == 'table' %}on{% endif %}">{% translate "Таблица" %}</a>
+  <a href="{% url 't_results_lessons' %}?{{ query }}" class="{% if tab == 'lessons' %}on{% endif %}">{% translate "Прохождение уроков" %}</a>
+  <a href="{% url 't_results_integrity' %}?{{ query }}" class="{% if tab == 'integrity' %}on{% endif %}">{% translate "Проверка на списывание" %}</a>
+</nav>
+<form method="get" class="sheet no-print filters">
+  <div class="f-who"><label class="small muted">{% translate "Кого показать" %}</label><select name="who" onchange="if(this.form.lesson){this.form.lesson.disabled = true;} this.form.submit()">
+    {% if section_opts %}<optgroup label="{% translate "Занятия" %}">{% for v, label in section_opts %}<option value="{{ v }}" {% if v == who %}selected{% endif %}>{{ label }}</option>{% endfor %}</optgroup>{% endif %}
+    {% if group_opts %}<optgroup label="{% translate "Группы" %}">{% for v, label in group_opts %}<option value="{{ v }}" {% if v == who %}selected{% endif %}>{{ label }}</option>{% endfor %}</optgroup>{% endif %}
+  </select></div>
+  {% if tab != 'lessons' %}
+  <div class="f-lesson"><label class="small muted">{% translate "Урок" %}</label><select name="lesson" onchange="this.form.submit()">
+    <option value="all" {% if lesson_id == "all" %}selected{% endif %}>{% translate "Все уроки" %}</option>
+    {% for l in lessons %}<option value="{{ l.pk }}" {% if lesson_id == l.pk|stringformat:"s" %}selected{% endif %}>{% if l.is_open_here %}● {% endif %}{{ l.title }}</option>{% endfor %}
+  </select></div>
+  {% if current %}
+  <div class="lesson-steps">
+    {% if older %}<a class="btn" href="?who={{ who }}&lesson={{ older.pk }}&{{ period_query }}" title="{{ older.title }}">← {% translate "Предыдущий" %}</a>{% endif %}
+    {% if newer %}<a class="btn" href="?who={{ who }}&lesson={{ newer.pk }}&{{ period_query }}" title="{{ newer.title }}">{% translate "Следующий" %} →</a>{% endif %}
+  </div>
+  {% endif %}
+  {% else %}<input type="hidden" name="lesson" value="{{ lesson_id }}">{% endif %}
+  <div class="f-date"><label class="small muted" for="f-from">{% translate "Отправки с" %}</label><input type="datetime-local" id="f-from" name="from" value="{{ date_from }}"></div>
+  <div class="f-date"><label class="small muted" for="f-to">{% translate "по" %}</label><input type="datetime-local" id="f-to" name="to" value="{{ date_to }}"></div>
+  <button class="btn primary" type="submit">{% translate "Показать" %}</button>
+  <div class="presets">{% for label, q, on in preset_links %}<a class="btn sm {% if on %}go{% endif %}" href="?{{ q }}">{{ label }}</a>{% endfor %}</div>
+</form>
+{% if date_from or date_to %}<p class="period-note">{% translate "Учитываются только отправки за выбранный период" %}: {% if date_from %}{% translate "с" %} {{ since|date:"d.m.Y H:i" }}{% endif %} {% if date_to %}{% translate "до" %} {{ until|date:"d.m.Y H:i" }}{% endif %}</p>{% endif %}

@@ -526,7 +526,16 @@ def submission_detail(request, pk):
             return redirect("t_submission", nxt.pk)
         return redirect("t_submission", pk)
     others = Submission.objects.filter(user=sub.user, task=sub.task).only("id", "status", "created_at")
-    return render(request, "core/teacher/submission_detail.html", {"sub": sub, "form": form, "others": others})
+    # Как писался код: когда впервые открыл задачу, сколько запускал до этой отправки
+    from . import integrity
+    logs = AccessLog.objects.filter(user=sub.user, task=sub.task, created_at__lte=sub.created_at)
+    first_open = logs.filter(action=AccessLog.OPEN).order_by("created_at").values_list("created_at", flat=True).first()
+    runs = logs.filter(action=AccessLog.RUN).count()
+    spent = integrity._fmt_dur((sub.created_at - first_open).total_seconds()) if first_open else None
+    return render(request, "core/teacher/submission_detail.html", {
+        "sub": sub, "form": form, "others": others, "spent": spent, "runs": runs,
+        "ai_markers": integrity.ai_markers(sub.code),
+    })
 
 
 @teacher_required
@@ -550,13 +559,26 @@ def requeue_stale(request):
 
 # --- Сводная таблица -------------------------------------------------------------
 
-@teacher_required
-def results(request):
+def _parse_dt(value):
+    """«2026-10-24T14:00» или «2026-10-24» → aware datetime (часовой пояс сайта)."""
+    from datetime import datetime
+    if not value:
+        return None
+    for fmt in ("%Y-%m-%dT%H:%M", "%Y-%m-%d"):
+        try:
+            return timezone.make_aware(datetime.strptime(value, fmt))
+        except ValueError:
+            continue
+    return None
+
+
+def _results_scope(request):
+    """Общие фильтры сводной: кто (занятие/группа), урок, период отправок."""
     groups_qs = StudyGroup.objects.all()
     sections_qs = ClassSection.objects.all()
     # Кого показывать: «s12» — занятие, «g3» — группа. Старые ссылки ?group=3 тоже работают.
     who = request.GET.get("who") or (f"g{request.GET['group']}" if request.GET.get("group") else "")
-    target, students_qs, by_section = None, None, False
+    target, by_section = None, False
     if who.startswith("s") and who[1:].isdigit():
         target = sections_qs.filter(pk=who[1:]).first()
         by_section = True
@@ -565,9 +587,11 @@ def results(request):
     if target is None:
         target = sections_qs.first() or groups_qs.first()
         by_section = isinstance(target, ClassSection)
+    students = []
     if target is not None:
         who = f"{'s' if by_section else 'g'}{target.pk}"
-        students_qs = target.students.select_related("group")
+        qs = target.students.select_related("group")
+        students = list(qs.order_by("group__name", "full_name") if by_section else qs.order_by("full_name", "username"))
 
     # Уроки: новые сверху. Отмечаем открытые для выбранного занятия/группы.
     lessons_list = list(Lesson.objects.order_by("-order", "-id"))
@@ -586,31 +610,132 @@ def results(request):
         current = next((x for x in lessons_list if x.id == int(lesson_param)), None)
     else:
         current = next((x for x in lessons_list if x.is_open_here), None) or (lessons_list[0] if lessons_list else None)
-    lesson_id = "all" if current is None else str(current.id)
     newer = older = None
     if current is not None:
         idx = lessons_list.index(current)
         newer = lessons_list[idx - 1] if idx > 0 else None
         older = lessons_list[idx + 1] if idx + 1 < len(lessons_list) else None
 
-    tasks = Task.objects.select_related("lesson")
-    if current is not None:
-        tasks = tasks.filter(lesson=current)
-    tasks = list(tasks)
-    rows = []
-    if students_qs is not None:
-        students = list(students_qs.order_by("group__name", "full_name") if by_section else students_qs)
-        best, attempts = best_submissions([s.id for s in students], [t.id for t in tasks])
-        for s in students:
-            cells = [(t, best.get((s.id, t.id)), attempts.get((s.id, t.id), 0)) for t in tasks]
-            rows.append((s, cells, sum(1 for _t, b, _n in cells if b and b.is_good)))
-    return render(request, "core/teacher/results.html", {
+    # Период: с / по (по — включительно, если указана только дата)
+    date_from = request.GET.get("from", "")
+    date_to = request.GET.get("to", "")
+    since = _parse_dt(date_from)
+    until = _parse_dt(date_to)
+    if until is not None and "T" not in date_to:
+        until += timezone.timedelta(days=1)
+    today = timezone.localdate()
+    presets = [
+        (_("Всё время"), "", ""),
+        (_("Сегодня"), today.isoformat(), today.isoformat()),
+        (_("Вчера"), (today - timezone.timedelta(days=1)).isoformat(), (today - timezone.timedelta(days=1)).isoformat()),
+        (_("7 дней"), (today - timezone.timedelta(days=6)).isoformat(), today.isoformat()),
+    ]
+    from django.http import QueryDict
+    base = QueryDict(mutable=True)
+    base["who"] = who
+    base["lesson"] = "all" if current is None else str(current.id)
+    preset_links = []
+    for label, f, t_ in presets:
+        q = base.copy()
+        if f:
+            q["from"], q["to"] = f, t_
+        preset_links.append((label, q.urlencode(), f == date_from and t_ == date_to))
+    keep = base.copy()
+    if date_from:
+        keep["from"] = date_from
+    if date_to:
+        keep["to"] = date_to
+    period_q = QueryDict(mutable=True)
+    period_q.update({k: v for k, v in (("from", date_from), ("to", date_to)) if v})
+
+    return {
+        "target": target, "who": who, "by_section": by_section, "students": students,
         "lessons": lessons_list, "current": current, "newer": newer, "older": older,
+        "lesson_id": "all" if current is None else str(current.id),
+        "since": since, "until": until, "date_from": date_from, "date_to": date_to,
+        "preset_links": preset_links, "query": keep.urlencode(), "period_query": period_q.urlencode(),
         "section_opts": [(f"s{x.pk}", str(x)) for x in sections_qs],
         "group_opts": [(f"g{x.pk}", x.name) for x in groups_qs],
-        "target": target, "who": who, "by_section": by_section,
-        "lesson_id": lesson_id, "tasks": tasks, "rows": rows,
-    })
+    }
+
+
+@teacher_required
+def results(request):
+    ctx = _results_scope(request)
+    tasks = Task.objects.select_related("lesson")
+    if ctx["current"] is not None:
+        tasks = tasks.filter(lesson=ctx["current"])
+    tasks = list(tasks)
+    rows = []
+    students = ctx["students"]
+    best, attempts = best_submissions([s.id for s in students], [t.id for t in tasks], ctx["since"], ctx["until"])
+    for s in students:
+        cells = [(t, best.get((s.id, t.id)), attempts.get((s.id, t.id), 0)) for t in tasks]
+        rows.append((s, cells, sum(1 for _t, b, _n in cells if b and b.is_good)))
+    # Сколько студентов решило каждую задачу — строка внизу таблицы
+    solved_by_task = [sum(1 for _s, cells, _n in rows if cells[i][1] and cells[i][1].is_good) for i in range(len(tasks))]
+    ctx.update({"tasks": tasks, "rows": rows, "solved_by_task": solved_by_task, "tab": "table"})
+    return render(request, "core/teacher/results.html", ctx)
+
+
+@teacher_required
+def results_lessons(request):
+    """Прохождение уроков: сколько студентов приступили, решили хотя бы одну и все задачи."""
+    ctx = _results_scope(request)
+    students = ctx["students"]
+    ids = [s.id for s in students]
+    total = len(ids)
+    subs = Submission.objects.filter(user_id__in=ids)
+    if ctx["since"]:
+        subs = subs.filter(created_at__gte=ctx["since"])
+    if ctx["until"]:
+        subs = subs.filter(created_at__lt=ctx["until"])
+    tried, solved = set(), set()
+    for row in subs.values("user_id", "task_id", "status"):
+        tried.add((row["user_id"], row["task_id"]))
+        if row["status"] in Submission.GOOD:
+            solved.add((row["user_id"], row["task_id"]))
+    stats = []
+    for lesson in ctx["lessons"]:
+        tasks = list(lesson.tasks.all())
+        if not tasks:
+            continue
+        tids = [t.id for t in tasks]
+        per_student = {uid: sum(1 for t in tids if (uid, t) in solved) for uid in ids}
+        started = sum(1 for uid in ids if any((uid, t) in tried for t in tids))
+        some = sum(1 for v in per_student.values() if v > 0)
+        full = sum(1 for v in per_student.values() if v == len(tids))
+        done = sum(per_student.values())
+        task_rows = []
+        for t in tasks:
+            n = sum(1 for uid in ids if (uid, t.id) in solved)
+            task_rows.append((t, n, round(100 * n / total) if total else 0))
+        stats.append({
+            "lesson": lesson, "tasks": len(tids), "started": started, "some": some, "full": full,
+            "avg": round(done / total, 1) if total else 0,
+            "pct": round(100 * done / (total * len(tids))) if total else 0,
+            "task_rows": task_rows,
+        })
+    ctx.update({"stats": stats, "total": total, "tab": "lessons"})
+    return render(request, "core/teacher/results_lessons.html", ctx)
+
+
+@teacher_required
+def results_integrity(request):
+    """Проверка на списывание: верные решения с признаками, подозрительные сверху."""
+    from . import integrity
+    ctx = _results_scope(request)
+    tasks = Task.objects.all()
+    if ctx["current"] is not None:
+        tasks = tasks.filter(lesson=ctx["current"])
+    items, per_student = integrity.analyze([s.id for s in ctx["students"]], list(tasks.values_list("id", flat=True)),
+                                           ctx["since"], ctx["until"])
+    show_all = request.GET.get("all") == "1"
+    shown = items if show_all else [r for r in items if r["score"] >= 2]
+    ctx.update({"items": shown, "total_ok": len(items), "hidden": len(items) - len(shown), "show_all": show_all,
+                "per_student": [p for p in per_student if p["flagged"]], "tab": "integrity",
+                "thresholds": integrity})
+    return render(request, "core/teacher/results_integrity.html", ctx)
 
 
 # --- Журнал входов и IP ---

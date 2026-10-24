@@ -51,6 +51,8 @@ def lessons(request):
 @login_required
 def task_page(request, pk):
     task = _visible_task_or_404(request, pk)
+    if not request.user.is_teacher:
+        netlog.log(request, AccessLog.OPEN, details=task.title, task=task)
     my = Submission.objects.filter(user=request.user, task=task)
     last = my.first()
     visible = [t for t in task.lesson.tasks.all() if t.is_visible_to(request.user)]
@@ -129,7 +131,7 @@ def run_code(request, pk):
     if "\x00" in code or "\x00" in stdin or "\x00" in typed_text:
         return JsonResponse({"error": _("В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку вручную.")}, status=400)
     if not request.POST.get("continue"):
-        netlog.log(request, AccessLog.RUN, details=task.title)  # повторы ради консоли в журнал не пишем
+        netlog.log(request, AccessLog.RUN, details=task.title, task=task)  # повторы ради консоли в журнал не пишем
     syntax = queue.check_syntax(code)
     if syntax:
         hint = (_("Проблема с отступами: внутри блока все строки должны начинаться с одинакового отступа.")
@@ -174,9 +176,16 @@ def submit(request, pk):
     if Submission.objects.filter(user=request.user, status__in=Submission.IN_PROGRESS).count() >= 3:
         return JsonResponse({"error": _("Дождитесь проверки предыдущих отправок.")}, status=429)
     status = Submission.PENDING if task.is_io else Submission.REVIEW
+    def metric(name):
+        try:
+            return max(0, min(int(request.POST.get(name, "")), 10_000_000))
+        except ValueError:
+            return None
     sub = Submission.objects.create(user=request.user, task=task, code=code, status=status,
-                                    ip=netlog.client_ip(request))
-    netlog.log(request, AccessLog.SUBMIT, details=task.title)
+                                    ip=netlog.client_ip(request),
+                                    typed_chars=metric("typed"), pasted_chars=metric("pasted"),
+                                    away_count=metric("away_count"), away_seconds=metric("away_seconds"))
+    netlog.log(request, AccessLog.SUBMIT, details=task.title, task=task)
     if task.is_io:
         queue.enqueue(sub.pk)
     return JsonResponse({"ok": True, "id": sub.pk})

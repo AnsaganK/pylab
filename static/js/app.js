@@ -181,6 +181,30 @@
   var savedStdin = load(stdinKey);
   if (savedStdin !== null) stdin.value = savedStdin;
   editor.on("change", function () { store(draftKey, editor.getValue()); });
+
+  // Как набирается код: сколько символов напечатано, сколько вставлено, сколько раз
+  // и как долго страница была скрыта (переход в другую вкладку). Копится до отправки.
+  var statsKey = keyBase + ":stats";
+  var stats = { typed: 0, pasted: 0, away_count: 0, away_seconds: 0 };
+  try { var savedStats = JSON.parse(load(statsKey) || "null"); if (savedStats) stats = savedStats; } catch (e) {}
+  function saveStats() { store(statsKey, JSON.stringify(stats)); }
+  editor.on("change", function (cm, ch) {
+    var n = ch.text.join("\n").length;
+    if (!n) return;
+    if (ch.origin === "paste" || ch.origin === "drop") stats.pasted += n;
+    else if (ch.origin === "+input") stats.typed += n;
+    saveStats();
+  });
+  var hiddenAt = null;
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { hiddenAt = Date.now(); return; }
+    if (hiddenAt) {
+      stats.away_count += 1;
+      stats.away_seconds += Math.round((Date.now() - hiddenAt) / 1000);
+      hiddenAt = null;
+      saveStats();
+    }
+  });
   stdin.addEventListener("input", function () { store(stdinKey, stdin.value); });
   stdin.addEventListener("keydown", function (e) {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run(); }
@@ -433,8 +457,13 @@
   btnSubmit.addEventListener("click", function () {
     if (btnSubmit.disabled) return;
     btnSubmit.disabled = true;
-    post(bench.dataset.submitUrl, { code: editor.getValue() }).then(function (r) {
+    post(bench.dataset.submitUrl, {
+      code: editor.getValue(), typed: stats.typed, pasted: stats.pasted,
+      away_count: stats.away_count, away_seconds: stats.away_seconds,
+    }).then(function (r) {
       if (r.error) { show([{ text: r.error, err: true }]); return; }
+      stats = { typed: 0, pasted: 0, away_count: 0, away_seconds: 0 };
+      saveStats();
       flash(t("sent", "Отправлено"));
       refreshSubs();
       subsBox.scrollIntoView({ behavior: "smooth", block: "nearest" });

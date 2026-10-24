@@ -37,12 +37,12 @@ def id_login_allowed_from(ip):
     return any(addr in ipaddress.ip_network(n, strict=False) for n in ID_LOGIN_ALLOWED_NETS)
 
 
-def log(request, action, user=None, details=""):
+def log(request, action, user=None, details="", task=None):
     user = user if user is not None else (request.user if request.user.is_authenticated else None)
     if user is not None and user.is_staff:
         return  # действия преподавателя не пишем
     AccessLog.objects.create(
-        user=user, ip=client_ip(request), action=action, details=details[:200],
+        user=user, ip=client_ip(request), action=action, details=str(details)[:200], task=task,
         user_agent=request.META.get("HTTP_USER_AGENT", "")[:200],
     )
 

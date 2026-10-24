@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Проверка на списывание" %}{% endblock %}
+{% block page_class %}wide{% endblock %}
+{% block content %}
+{% include "core/teacher/_results_filter.html" %}
+<div class="sheet integrity-help">
+  <p style="margin:0">{% translate "Это не доказательство, а подсказка, на кого посмотреть. Надёжнее всего — попросить студента объяснить решение или изменить его при вас." %}</p>
+  <details style="margin-top:.5rem"><summary class="small" style="cursor:pointer">{% translate "Какие признаки учитываются" %}</summary>
+    <ul class="small" style="margin:.5rem 0 0">
+      <li><span class="flag paste">{% translate "вставка" %}</span> {% translate "код в основном вставлен, а не напечатан" %}</li>
+      <li><span class="flag similar">{% translate "похожий код" %}</span> {% translate "решение почти совпадает с решением другого студента (переименование переменных не помогает)" %}</li>
+      <li><span class="flag similar_src">{% translate "у него списали?" %}</span> {% translate "с этим решением совпадает решение, сданное позже другим студентом" %}</li>
+      <li><span class="flag fast">{% translate "быстро" %}</span> {% blocktranslate with s=thresholds.FAST_SECONDS %}верное решение меньше чем через {{ s }} с после открытия задачи{% endblocktranslate %}</li>
+      <li><span class="flag away">{% translate "уходил" %}</span> {% translate "во время решения переключался в другую вкладку или окно" %}</li>
+      <li><span class="flag burst">{% translate "серия" %}</span> {% blocktranslate with n=thresholds.BURST_COUNT %}{{ n }} и больше верных задач за 15 минут{% endblocktranslate %}</li>
+      <li><span class="flag ai">{% translate "приёмы ИИ" %}</span> {% translate "docstring, def main(), if __name__, аннотации типов, try/except, много комментариев — редко у начинающих" %}</li>
+      <li><span class="flag first_try">{% translate "сразу" %}</span> {% translate "верно с первой отправки без единого запуска" %}</li>
+    </ul>
+    <p class="small muted" style="margin:.5rem 0 0">{% translate "Вставка, переходы между вкладками и время открытия задачи записываются с этого обновления; у старых отправок проверяются только похожесть, серии и приёмы ИИ." %}</p>
+  </details>
+</div>
+
+{% if per_student %}
+<h2>{% translate "Студенты с подозрительными решениями" %}</h2>
+<div class="table-wrap" style="margin-bottom:1.5rem"><table class="t">
+  <tr><th>{% translate "Студент" %}</th><th class="c">{% translate "Подозрительных" %}</th><th class="c">{% translate "Верных решений" %}</th></tr>
+  {% for p in per_student %}<tr><td><a href="{% url 't_submissions' %}?student={{ p.user.username|urlencode }}">{{ p.user.display_name }}</a> <span class="muted small">{{ p.user.username }}</span></td><td class="c num"><b>{{ p.flagged }}</b></td><td class="c num">{{ p.solved }}</td></tr>{% endfor %}
+</table></div>
+{% endif %}
+
+<h2>{% translate "Верные решения" %}</h2>
+<p class="muted small">{% blocktranslate with n=total_ok %}Всего верных решений: {{ n }}.{% endblocktranslate %} {% if hidden %}{% blocktranslate with n=hidden %}Без признаков скрыто: {{ n }}.{% endblocktranslate %} <a href="?{{ query }}&all=1">{% translate "Показать все" %}</a>{% elif show_all %}<a href="?{{ query }}">{% translate "Только подозрительные" %}</a>{% endif %}</p>
+<div class="table-wrap">
+  {% if items %}
+  <table class="t">
+    <tr><th>{% translate "Балл" %}</th><th>{% translate "Студент" %}</th><th>{% translate "Задача" %}</th><th>{% translate "Когда" %}</th><th>{% translate "Признаки" %}</th><th></th></tr>
+    {% for r in items %}
+    <tr>
+      <td class="num"><span class="score s{% if r.score >= 5 %}3{% elif r.score >= 3 %}2{% elif r.score >= 1 %}1{% else %}0{% endif %}">{{ r.score }}</span></td>
+      <td style="white-space:nowrap">{{ r.sub.user.display_name }}</td>
+      <td>{{ r.sub.task.title }}<div class="muted small">{{ r.sub.task.lesson.title|truncatechars:30 }}</div></td>
+      <td class="num muted small" style="white-space:nowrap">{{ r.sub.created_at|date:"d.m H:i" }}{% if r.sub.ip %}<br>{{ r.sub.ip }}{% endif %}</td>
+      <td>{% for kind, text in r.flags %}<div class="flag-line"><span class="flag {{ kind }}">{% if kind == 'paste' %}{% translate "вставка" %}{% elif kind == 'similar' %}{% translate "похожий код" %}{% elif kind == 'similar_src' %}{% translate "у него списали?" %}{% elif kind == 'fast' %}{% translate "быстро" %}{% elif kind == 'away' %}{% translate "уходил" %}{% elif kind == 'burst' %}{% translate "серия" %}{% elif kind == 'ai' %}{% translate "приёмы ИИ" %}{% else %}{% translate "сразу" %}{% endif %}</span> <span class="small">{{ text }}</span></div>{% empty %}<span class="muted small">—</span>{% endfor %}</td>
+      <td><a class="btn sm" href="{% url 't_submission' r.sub.pk %}">{% translate "код" %}</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<div class="empty">{% if total_ok %}{% translate "Подозрительных решений не найдено." %}{% else %}{% translate "За этот период верных решений нет." %}{% endif %}</div>{% endif %}
+</div>
+{% endblock %}

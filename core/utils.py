@@ -1,11 +1,13 @@
 from .models import Submission
 
 
-def best_submissions(user_ids, task_ids):
+def best_submissions(user_ids, task_ids, since=None, until=None):
     """{(user_id, task_id): Submission} — зачтённая, иначе последняя, плюс число попыток."""
     result, attempts = {}, {}
     qs = (Submission.objects
           .filter(user_id__in=user_ids, task_id__in=task_ids)
+          .filter(**({"created_at__gte": since} if since else {}))
+          .filter(**({"created_at__lt": until} if until else {}))
           .only("id", "user_id", "task_id", "status", "created_at", "tests_passed", "tests_total", "failed_test")
           .order_by("created_at"))
     for s in qs:

@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Прохождение уроков" %}{% endblock %}
+{% block page_class %}wide{% endblock %}
+{% block content %}
+{% include "core/teacher/_results_filter.html" %}
+{% if not target %}<div class="sheet empty">{% translate "Сначала загрузите список студентов." %}</div>
+{% elif not stats %}<div class="sheet empty">{% translate "Задач нет." %}</div>
+{% else %}
+<p class="muted small">{% blocktranslate with n=total %}Студентов: {{ n }}. Нажмите на урок, чтобы увидеть каждую задачу.{% endblocktranslate %}</p>
+<div class="table-wrap">
+<table class="t lesson-stats">
+  <tr>
+    <th>{% translate "Урок" %}</th><th class="c">{% translate "Задач" %}</th>
+    <th class="c">{% translate "Приступили" %}</th><th class="c">{% translate "Решили хоть одну" %}</th>
+    <th class="c">{% translate "Решили все" %}</th><th class="c">{% translate "В среднем решено" %}</th><th>{% translate "Выполнение" %}</th>
+  </tr>
+  {% for s in stats %}
+  <tbody class="ls">
+  <tr class="link ls-row" tabindex="0" aria-expanded="false">
+    <td><span class="chev-s" aria-hidden="true"></span>{% if s.lesson.is_open_here %}● {% endif %}{{ s.lesson.title }}</td>
+    <td class="c num">{{ s.tasks }}</td>
+    <td class="c num">{{ s.started }}</td>
+    <td class="c num">{{ s.some }}</td>
+    <td class="c num"><b>{{ s.full }}</b></td>
+    <td class="c num">{{ s.avg }} / {{ s.tasks }}</td>
+    <td><span class="bar" title="{{ s.pct }}%"><i style="width:{{ s.pct }}%"></i></span> <span class="num small">{{ s.pct }}%</span></td>
+  </tr>
+  {% for t, n, pct in s.task_rows %}
+  <tr class="ls-task" hidden>
+    <td class="small" style="padding-left:2rem">{{ forloop.counter }}. <a href="{% url 't_results' %}?who={{ who }}&lesson={{ s.lesson.pk }}&{{ period_query }}">{{ t.title }}</a></td>
+    <td></td><td></td><td></td>
+    <td class="c num small">{{ n }} / {{ total }}</td><td></td>
+    <td><span class="bar thin"><i style="width:{{ pct }}%"></i></span> <span class="num small">{{ pct }}%</span></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+  {% endfor %}
+</table>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll(".ls-row").forEach(function (row) {
+  function toggle() {
+    var open = row.getAttribute("aria-expanded") !== "true";
+    row.setAttribute("aria-expanded", String(open));
+    row.parentNode.querySelectorAll(".ls-task").forEach(function (tr) { tr.hidden = !open; });
+  }
+  row.addEventListener("click", toggle);
+  row.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+});
+</script>
+{% endblock %}

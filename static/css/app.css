@@ -374,3 +374,32 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 .lang-badges span.on { color: var(--good); border: 1px solid #9FD3B6; background: var(--good-bg); }
 .lang-note { font-size: .85rem; color: var(--muted); background: var(--wait-bg); border-radius: 4px; padding: .3rem .6rem; margin: -.25rem 0 .9rem; display: inline-block; }
 .lesson-steps { display: flex; gap: .4rem; }
+
+/* ---------- Сводная: вкладки, фильтры, прохождение, проверка ---------- */
+.tabs { display: flex; gap: .3rem; border-bottom: 1px solid var(--rule); margin-bottom: 1rem; flex-wrap: wrap; }
+.tabs a { text-decoration: none; padding: .45rem .9rem; border: 1px solid transparent; border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; color: var(--muted); font-weight: 500; margin-bottom: -1px; }
+.tabs a.on { background: var(--sheet); border-color: var(--rule); color: var(--ink); }
+.filters { display: flex; gap: .75rem; align-items: end; flex-wrap: wrap; margin-bottom: 1rem; }
+.filters .f-who, .filters .f-lesson { min-width: 240px; }
+.filters .f-date input { width: auto; }
+.filters .presets { display: flex; gap: .3rem; flex-wrap: wrap; margin-left: auto; }
+.period-note { background: var(--marker-soft); border-left: 3px solid var(--marker); padding: .4rem .7rem; border-radius: 0 var(--radius) var(--radius) 0; font-size: .9rem; margin: -.25rem 0 1rem; }
+.matrix tr.totals td { background: #FAFBFC; font-size: .85rem; color: var(--muted); border-top: 1px solid var(--rule); }
+.bar { display: inline-block; width: 140px; height: 10px; background: var(--rule-soft); border-radius: 5px; overflow: hidden; vertical-align: middle; }
+.bar.thin { height: 6px; }
+.bar i { display: block; height: 100%; background: var(--good); }
+.ls-row { cursor: pointer; }
+.chev-s { display: inline-block; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); margin-right: .55rem; vertical-align: 1px; transition: transform .15s; }
+.ls-row[aria-expanded="true"] .chev-s { transform: rotate(45deg); }
+.integrity-help { margin-bottom: 1rem; }
+.flag { display: inline-block; font-size: .75rem; font-weight: 600; padding: .05rem .4rem; border-radius: 3px; white-space: nowrap; background: var(--wait-bg); color: var(--muted); }
+.flag.paste, .flag.similar { background: var(--bad-bg); color: var(--bad); }
+.flag.fast, .flag.away, .flag.burst, .flag.ai { background: var(--limit-bg); color: var(--limit); }
+.flag-line + .flag-line { margin-top: .2rem; }
+.score { display: inline-flex; min-width: 1.8rem; justify-content: center; font-weight: 700; border-radius: 4px; padding: .1rem .3rem; background: var(--wait-bg); color: var(--muted); }
+.score.s1 { background: var(--marker-soft); color: var(--ink); }
+.score.s2 { background: var(--limit-bg); color: var(--limit); }
+.score.s3 { background: var(--bad-bg); color: var(--bad); }
+.metrics { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: .9rem; margin: -.25rem 0 1rem; }
+.metrics b { font-variant-numeric: tabular-nums; }
+.filters label { display: block; margin-bottom: .2rem; }

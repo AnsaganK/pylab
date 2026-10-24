@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-02 11:34+0500\n"
+"POT-Creation-Date: 2026-10-24 19:17+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,6 +61,8 @@ msgid "ждёт ввод…"
 msgstr "waiting for input…"
 
 #: core/context_processors.py:25 core/judge/sandbox.py:284
+#: templates/core/teacher/_results_filter.html:29
+#: templates/core/teacher/submission_detail.html:27
 #: templates/core/teacher/submissions.html:37
 msgid "с"
 msgstr "s"
@@ -120,7 +122,7 @@ msgstr "Login / ID"
 #: templates/core/teacher/access_log.html:67
 #: templates/core/teacher/access_log.html:77
 #: templates/core/teacher/groups.html:21
-#: templates/core/teacher/results.html:31
+#: templates/core/teacher/results.html:14
 #: templates/core/teacher/students_roster.html:15
 #: templates/core/teacher/submissions.html:11
 #: templates/core/teacher/submissions.html:28
@@ -153,7 +155,9 @@ msgstr "Fill in the title in at least one language."
 msgid "Комментарий"
 msgstr "Comment"
 
-#: core/forms.py:119 core/models.py:145 templates/core/teacher/results.html:12
+#: core/forms.py:119 core/models.py:145
+#: templates/core/teacher/_results_filter.html:13
+#: templates/core/teacher/results_lessons.html:14
 #: templates/core/teacher/submissions.html:13
 msgid "Урок"
 msgstr "Lesson"
@@ -266,6 +270,67 @@ msgstr ""
 "“%(title)s”, test %(n)s: the reference printed “%(got)s”, the test expects "
 "“%(expected)s”."
 
+#: core/integrity.py:72
+#, python-format
+#| msgid "Комментарий"
+msgid "комментарии (%(n)s)"
+msgstr "comments (%(n)s)"
+
+#: core/integrity.py:79
+#, python-format
+#| msgid "%(n)s студ."
+msgid "%(s)s с"
+msgstr "%(s)s s"
+
+#: core/integrity.py:80
+#, python-format
+msgid "%(m)s мин %(s)s с"
+msgstr "%(m)s min %(s)s s"
+
+#: core/integrity.py:177
+#, python-format
+msgid "вставлено %(p)s из %(n)s символов, напечатано %(t)s"
+msgstr "%(p)s of %(n)s characters pasted, %(t)s typed"
+
+#: core/integrity.py:184
+#, python-format
+msgid ""
+"код на %(r)s%% совпадает с решением %(name)s, сданным раньше (%(when)s)"
+msgstr ""
+"code matches %(r)s%% with %(name)s's solution submitted earlier (%(when)s)"
+
+#: core/integrity.py:186
+#, python-format
+msgid ""
+"с этим кодом на %(r)s%% совпадает решение %(name)s, сданное позже (%(when)s)"
+msgstr ""
+"%(name)s's solution submitted later matches this code %(r)s%% (%(when)s)"
+
+#: core/integrity.py:191
+#, python-format
+#| msgid "Сразу открыть задачи"
+msgid "решено через %(d)s после открытия задачи"
+msgstr "solved %(d)s after opening the task"
+
+#: core/integrity.py:193
+#, python-format
+msgid "уходил со страницы %(n)s раз, всего %(d)s"
+msgstr "left the page %(n)s times, %(d)s in total"
+
+#: core/integrity.py:197
+#, python-format
+msgid "серия: %(n)s верных задач за %(m)s мин"
+msgstr "streak: %(n)s accepted tasks in %(m)s min"
+
+#: core/integrity.py:200
+#, python-format
+msgid "приёмы, нетипичные для начинающих: %(list)s"
+msgstr "techniques unusual for beginners: %(list)s"
+
+#: core/integrity.py:202
+msgid "с первой попытки, без единого запуска"
+msgstr "first attempt, without a single run"
+
 #: core/judge/queue.py:76
 #, python-format
 msgid "Строка %(n)s"
@@ -333,11 +398,11 @@ msgid "Описание"
 msgstr "Description"
 
 #: core/models.py:18 templates/core/base.html:22
+#: templates/core/teacher/_results_filter.html:10
 #: templates/core/teacher/dashboard.html:38
 #: templates/core/teacher/group_detail.html:5
 #: templates/core/teacher/groups.html:16
 #: templates/core/teacher/lessons.html:41
-#: templates/core/teacher/results.html:10
 #: templates/core/teacher/student_form.html:5
 #: templates/core/teacher/students_bulk.html:5
 #: templates/core/teacher/students_roster.html:5
@@ -355,9 +420,9 @@ msgid "Занятие"
 msgstr "Class"
 
 #: core/models.py:34 core/models.py:48
+#: templates/core/teacher/_results_filter.html:9
 #: templates/core/teacher/_students_table.html:4
 #: templates/core/teacher/lessons.html:33
-#: templates/core/teacher/results.html:9
 #: templates/core/teacher/student_form.html:12
 msgid "Занятия"
 msgstr "Classes"
@@ -473,23 +538,23 @@ msgstr "Accepted"
 msgid "Неверный ответ"
 msgstr "Wrong answer"
 
-#: core/models.py:241 core/views_student.py:99
+#: core/models.py:241 core/views_student.py:101
 msgid "Превышено время"
 msgstr "Time limit exceeded"
 
-#: core/models.py:242 core/views_student.py:100
+#: core/models.py:242 core/views_student.py:102
 msgid "Превышена память"
 msgstr "Memory limit exceeded"
 
-#: core/models.py:243 core/views_student.py:101
+#: core/models.py:243 core/views_student.py:103
 msgid "Ошибка выполнения"
 msgstr "Runtime error"
 
-#: core/models.py:244 core/views_student.py:139
+#: core/models.py:244 core/views_student.py:141
 msgid "Синтаксическая ошибка"
 msgstr "Syntax error"
 
-#: core/models.py:245 core/views_student.py:102
+#: core/models.py:245 core/views_student.py:104
 msgid "Слишком большой вывод"
 msgstr "Output too large"
 
@@ -513,38 +578,43 @@ msgstr "Rejected by teacher"
 msgid "Комментарий преподавателя"
 msgstr "Teacher's comment"
 
-#: core/models.py:316 templates/core/login.html:3
+#: core/models.py:323
+#| msgid "Открыт для занятий"
+msgid "Открыл задачу"
+msgstr "Opened task"
+
+#: core/models.py:324 templates/core/login.html:3
 msgid "Вход"
 msgstr "Log in"
 
-#: core/models.py:317
+#: core/models.py:325
 msgid "Неудачный вход"
 msgstr "Failed login"
 
-#: core/models.py:318
+#: core/models.py:326
 msgid "Вытеснен другим входом"
 msgstr "Logged out by another login"
 
-#: core/models.py:319
+#: core/models.py:327
 msgid "Запуск"
 msgstr "Run"
 
-#: core/models.py:320 templates/core/student/submission.html:3
+#: core/models.py:328 templates/core/student/submission.html:3
 msgid "Отправка"
 msgstr "Submission"
 
-#: core/models.py:339 templates/core/teacher/settings.html:10
+#: core/models.py:349 templates/core/teacher/settings.html:10
 msgid "Один вход на аккаунт студента"
 msgstr "One login per student account"
 
-#: core/models.py:340
+#: core/models.py:350
 msgid ""
 "При входе под ID на другом компьютере прежний компьютер выходит из аккаунта."
 msgstr ""
 "When someone logs in with the ID on another computer, the previous computer "
 "is logged out."
 
-#: core/models.py:345
+#: core/models.py:355
 msgid "Настройки сайта"
 msgstr "Site settings"
 
@@ -579,39 +649,39 @@ msgstr ""
 msgid "Неверный логин или пароль."
 msgstr "Incorrect login or password."
 
-#: core/views_student.py:65
+#: core/views_student.py:67
 msgid "русский"
 msgstr "Russian"
 
-#: core/views_student.py:65
+#: core/views_student.py:67
 msgid "казахский"
 msgstr "Kazakh"
 
-#: core/views_student.py:65
+#: core/views_student.py:67
 msgid "английский"
 msgstr "English"
 
-#: core/views_student.py:97
+#: core/views_student.py:99
 msgid "Ждёт ввод"
 msgstr "Waiting for input"
 
-#: core/views_student.py:98
+#: core/views_student.py:100
 msgid "Программа завершилась"
 msgstr "Program finished"
 
-#: core/views_student.py:103
+#: core/views_student.py:105
 msgid "Ошибка песочницы"
 msgstr "Sandbox error"
 
-#: core/views_student.py:125
+#: core/views_student.py:127
 msgid "Неверный формат ввода."
 msgstr "Invalid input format."
 
-#: core/views_student.py:128
+#: core/views_student.py:130
 msgid "Слишком большой код или ввод."
 msgstr "The code or input is too large."
 
-#: core/views_student.py:130
+#: core/views_student.py:132
 msgid ""
 "В коде или вводе есть недопустимый символ (NUL). Перепечатайте строку "
 "вручную."
@@ -619,7 +689,7 @@ msgstr ""
 "The code or input contains an invalid character (NUL). Retype the line "
 "manually."
 
-#: core/views_student.py:135 core/views_student.py:155
+#: core/views_student.py:137 core/views_student.py:157
 msgid ""
 "Проблема с отступами: внутри блока все строки должны начинаться с "
 "одинакового отступа."
@@ -627,7 +697,7 @@ msgstr ""
 "Indentation problem: all lines inside a block must start with the same "
 "indentation."
 
-#: core/views_student.py:137
+#: core/views_student.py:139
 msgid ""
 "Проверьте указанную строку и строку перед ней: часто там не закрыта скобка "
 "или кавычка, либо забыто двоеточие после if/for/while/def."
@@ -635,11 +705,11 @@ msgstr ""
 "Check the indicated line and the line before it: often a bracket or quote is"
 " not closed, or a colon after if/for/while/def is missing."
 
-#: core/views_student.py:147
+#: core/views_student.py:149
 msgid "Сервер сейчас занят — попробуйте через несколько секунд."
 msgstr "The server is busy right now — try again in a few seconds."
 
-#: core/views_student.py:151
+#: core/views_student.py:153
 msgid ""
 "Программа читает ввод через sys.stdin, а он закончился. Впишите данные в "
 "поле «Ввод заранее»."
@@ -647,7 +717,7 @@ msgstr ""
 "The program reads input via sys.stdin, and it has run out. Enter the data in"
 " the “Input in advance” field."
 
-#: core/views_student.py:153
+#: core/views_student.py:155
 msgid ""
 "Опечатка в имени переменной или функции, либо переменная используется "
 "раньше, чем создана."
@@ -655,20 +725,20 @@ msgstr ""
 "A typo in a variable or function name, or the variable is used before it is "
 "created."
 
-#: core/views_student.py:168
+#: core/views_student.py:170
 msgid "Код пустой."
 msgstr "The code is empty."
 
-#: core/views_student.py:170
+#: core/views_student.py:172
 msgid "Слишком большой код."
 msgstr "The code is too large."
 
-#: core/views_student.py:173
+#: core/views_student.py:175
 msgid "В коде есть недопустимый символ (NUL). Перепечатайте строку вручную."
 msgstr ""
 "The code contains an invalid character (NUL). Retype the line manually."
 
-#: core/views_student.py:175
+#: core/views_student.py:177
 msgid "Дождитесь проверки предыдущих отправок."
 msgstr "Wait until your previous submissions are checked."
 
@@ -778,36 +848,53 @@ msgstr "Tasks added: %(tasks)s, tests: %(tests)s."
 msgid "Решение отмечено."
 msgstr "Solution marked."
 
-#: core/views_teacher.py:539
+#: core/views_teacher.py:548
 msgid "Отправка поставлена на перепроверку."
 msgstr "Submission queued for re-checking."
 
-#: core/views_teacher.py:547
+#: core/views_teacher.py:556
 #, python-format
 msgid "Возвращено в очередь: %(n)s."
 msgstr "Returned to the queue: %(n)s."
 
-#: core/views_teacher.py:618
+#: core/views_teacher.py:628
+#| msgid "Время"
+msgid "Всё время"
+msgstr "All time"
+
+#: core/views_teacher.py:629
+msgid "Сегодня"
+msgstr "Today"
+
+#: core/views_teacher.py:630
+msgid "Вчера"
+msgstr "Yesterday"
+
+#: core/views_teacher.py:631
+msgid "7 дней"
+msgstr "7 days"
+
+#: core/views_teacher.py:743
 msgid "3 часа"
 msgstr "3 hours"
 
-#: core/views_teacher.py:618
+#: core/views_teacher.py:743
 msgid "сутки"
 msgstr "day"
 
-#: core/views_teacher.py:618
+#: core/views_teacher.py:743
 msgid "неделя"
 msgstr "week"
 
-#: core/views_teacher.py:660
+#: core/views_teacher.py:785
 msgid "Настройки сохранены. "
 msgstr "Settings saved. "
 
-#: core/views_teacher.py:661
+#: core/views_teacher.py:786
 msgid "Один вход на аккаунт — включено."
 msgstr "One login per account — on."
 
-#: core/views_teacher.py:661
+#: core/views_teacher.py:786
 msgid "Один вход на аккаунт — выключено."
 msgstr "One login per account — off."
 
@@ -840,7 +927,7 @@ msgstr "Lessons & tasks"
 msgid "Отправки"
 msgstr "Submissions"
 
-#: templates/core/base.html:24
+#: templates/core/base.html:24 templates/core/teacher/_results_filter.html:1
 msgid "Сводная"
 msgstr "Summary"
 
@@ -949,7 +1036,7 @@ msgstr "Examples"
 
 #: templates/core/pdf/lesson.html:78 templates/core/student/submission.html:17
 #: templates/core/student/task.html:38
-#: templates/core/teacher/submission_detail.html:29
+#: templates/core/teacher/submission_detail.html:35
 #: templates/core/teacher/task_form.html:48
 #: templates/core/teacher/task_form.html:64
 msgid "Ввод"
@@ -975,7 +1062,7 @@ msgstr "Create account"
 
 #: templates/core/student/_state.html:1
 #: templates/core/teacher/_students_table.html:4
-#: templates/core/teacher/results.html:31
+#: templates/core/teacher/results.html:14
 msgid "Решено"
 msgstr "Solved"
 
@@ -989,6 +1076,7 @@ msgid "Не решалась"
 msgstr "Not attempted"
 
 #: templates/core/student/_subs.html:10
+#: templates/core/teacher/results_integrity.html:45
 msgid "код"
 msgstr "code"
 
@@ -1041,7 +1129,7 @@ msgid "Пример %(n)s"
 msgstr "Example %(n)s"
 
 #: templates/core/student/submission.html:18
-#: templates/core/teacher/submission_detail.html:30
+#: templates/core/teacher/submission_detail.html:36
 msgid "Ожидалось"
 msgstr "Expected"
 
@@ -1059,7 +1147,7 @@ msgstr ""
 "large values, empty input."
 
 #: templates/core/student/submission.html:24
-#: templates/core/teacher/submission_detail.html:34
+#: templates/core/teacher/submission_detail.html:40
 msgid "Сообщение об ошибке"
 msgstr "Error message"
 
@@ -1208,6 +1296,63 @@ msgstr ""
 "Fill in at least one language — students see it if there is no translation "
 "into theirs."
 
+#: templates/core/teacher/_results_filter.html:3
+#| msgid "Сводная таблица"
+msgid "Таблица"
+msgstr "Table"
+
+#: templates/core/teacher/_results_filter.html:4
+#: templates/core/teacher/results_lessons.html:3
+#| msgid "Название урока"
+msgid "Прохождение уроков"
+msgstr "Lesson progress"
+
+#: templates/core/teacher/_results_filter.html:5
+#: templates/core/teacher/results_integrity.html:3
+#| msgid "Автопроверка на тестах"
+msgid "Проверка на списывание"
+msgstr "Cheating check"
+
+#: templates/core/teacher/_results_filter.html:8
+msgid "Кого показать"
+msgstr "Show"
+
+#: templates/core/teacher/_results_filter.html:14
+msgid "Все уроки"
+msgstr "All lessons"
+
+#: templates/core/teacher/_results_filter.html:19
+msgid "Предыдущий"
+msgstr "Previous"
+
+#: templates/core/teacher/_results_filter.html:20
+msgid "Следующий"
+msgstr "Next"
+
+#: templates/core/teacher/_results_filter.html:24
+#| msgid "Отправки"
+msgid "Отправки с"
+msgstr "Submissions from"
+
+#: templates/core/teacher/_results_filter.html:25
+#| msgid "по ID"
+msgid "по"
+msgstr "to"
+
+#: templates/core/teacher/_results_filter.html:26
+#| msgid "Кого показать"
+msgid "Показать"
+msgstr "Show"
+
+#: templates/core/teacher/_results_filter.html:29
+msgid "Учитываются только отправки за выбранный период"
+msgstr "Only submissions in the selected period are counted"
+
+#: templates/core/teacher/_results_filter.html:29
+#| msgid "да"
+msgid "до"
+msgstr "until"
+
 #: templates/core/teacher/_students_table.html:4
 msgid "ID / логин"
 msgstr "ID / login"
@@ -1285,7 +1430,9 @@ msgstr ""
 #: templates/core/teacher/access_log.html:68
 #: templates/core/teacher/access_log.html:77
 #: templates/core/teacher/dashboard.html:24
-#: templates/core/teacher/results.html:31
+#: templates/core/teacher/results.html:14
+#: templates/core/teacher/results_integrity.html:27
+#: templates/core/teacher/results_integrity.html:37
 #: templates/core/teacher/submissions.html:21
 #: templates/core/teacher/submissions.html:28
 msgid "Студент"
@@ -1437,6 +1584,7 @@ msgid "Все отправки"
 msgstr "All submissions"
 
 #: templates/core/teacher/dashboard.html:24
+#: templates/core/teacher/results_integrity.html:37
 #: templates/core/teacher/submission_detail.html:12
 #: templates/core/teacher/submissions.html:14
 #: templates/core/teacher/submissions.html:28
@@ -1474,7 +1622,7 @@ msgid "Проверить решения (%(n)s)"
 msgstr "Review solutions (%(n)s)"
 
 #: templates/core/teacher/group_detail.html:9
-#: templates/core/teacher/results.html:3 templates/core/teacher/results.html:6
+#: templates/core/teacher/results.html:3
 #: templates/core/teacher/section_detail.html:9
 msgid "Сводная таблица"
 msgstr "Summary table"
@@ -1500,7 +1648,6 @@ msgstr ""
 "one with the “New password” button."
 
 #: templates/core/teacher/group_detail.html:24
-#: templates/core/teacher/results.html:22
 msgid "Распечатать"
 msgstr "Print"
 
@@ -1709,31 +1856,17 @@ msgstr "open"
 msgid "Уроков пока нет. Создайте первый урок, затем добавьте в него задачи."
 msgstr "No lessons yet. Create the first lesson, then add tasks to it."
 
-#: templates/core/teacher/results.html:8
-msgid "Кого показать"
-msgstr "Show"
-
-#: templates/core/teacher/results.html:13
-msgid "Все уроки"
-msgstr "All lessons"
-
-#: templates/core/teacher/results.html:18
-msgid "Предыдущий"
-msgstr "Previous"
-
-#: templates/core/teacher/results.html:19
-msgid "Следующий"
-msgstr "Next"
-
-#: templates/core/teacher/results.html:24
+#: templates/core/teacher/results.html:7
+#: templates/core/teacher/results_lessons.html:7
 msgid "Сначала загрузите список студентов."
 msgstr "Upload a list of students first."
 
-#: templates/core/teacher/results.html:25
+#: templates/core/teacher/results.html:8
+#: templates/core/teacher/results_lessons.html:8
 msgid "Задач нет."
 msgstr "No tasks."
 
-#: templates/core/teacher/results.html:28
+#: templates/core/teacher/results.html:11
 msgid ""
 "В ячейке — число попыток. Зелёная — зачтено, красная — есть попытки, но "
 "решение не принято."
@@ -1741,7 +1874,7 @@ msgstr ""
 "Each cell shows the number of attempts. Green means accepted, red means "
 "attempts without an accepted solution."
 
-#: templates/core/teacher/results.html:28
+#: templates/core/teacher/results.html:11
 msgid ""
 "По умолчанию показывается последний урок, открытый для выбранного занятия "
 "или группы (● в списке)."
@@ -1749,9 +1882,216 @@ msgstr ""
 "By default the latest lesson open for the selected class or group is shown "
 "(● in the list)."
 
-#: templates/core/teacher/results.html:40
+#: templates/core/teacher/results.html:23
 msgid "Здесь пока нет студентов."
 msgstr "No students here yet."
+
+#: templates/core/teacher/results.html:25
+msgid "Решили"
+msgstr "Solved"
+
+#: templates/core/teacher/results_integrity.html:8
+msgid ""
+"Это не доказательство, а подсказка, на кого посмотреть. Надёжнее всего — "
+"попросить студента объяснить решение или изменить его при вас."
+msgstr ""
+"This is not proof, only a hint of whom to look at. The most reliable check "
+"is to ask the student to explain the solution or change it in front of you."
+
+#: templates/core/teacher/results_integrity.html:9
+msgid "Какие признаки учитываются"
+msgstr "Which signals are used"
+
+#: templates/core/teacher/results_integrity.html:11
+#: templates/core/teacher/results_integrity.html:44
+#| msgid "Отправка"
+msgid "вставка"
+msgstr "paste"
+
+#: templates/core/teacher/results_integrity.html:11
+msgid "код в основном вставлен, а не напечатан"
+msgstr "the code was mostly pasted, not typed"
+
+#: templates/core/teacher/results_integrity.html:12
+#: templates/core/teacher/results_integrity.html:44
+#| msgid "Начальный код"
+msgid "похожий код"
+msgstr "similar code"
+
+#: templates/core/teacher/results_integrity.html:12
+msgid ""
+"решение почти совпадает с решением другого студента (переименование "
+"переменных не помогает)"
+msgstr ""
+"the solution nearly matches another student's (renaming variables does not "
+"help)"
+
+#: templates/core/teacher/results_integrity.html:13
+#: templates/core/teacher/results_integrity.html:44
+#| msgid "Тема / описание"
+msgid "у него списали?"
+msgstr "copied from them?"
+
+#: templates/core/teacher/results_integrity.html:13
+msgid "с этим решением совпадает решение, сданное позже другим студентом"
+msgstr "another student's later solution matches this one"
+
+#: templates/core/teacher/results_integrity.html:14
+#: templates/core/teacher/results_integrity.html:44
+#| msgid "Настройки"
+msgid "быстро"
+msgstr "fast"
+
+#: templates/core/teacher/results_integrity.html:14
+#, python-format
+msgid "верное решение меньше чем через %(s)s с после открытия задачи"
+msgstr "accepted less than %(s)s s after opening the task"
+
+#: templates/core/teacher/results_integrity.html:15
+#: templates/core/teacher/results_integrity.html:44
+#| msgid "не входил"
+msgid "уходил"
+msgstr "left page"
+
+#: templates/core/teacher/results_integrity.html:15
+msgid "во время решения переключался в другую вкладку или окно"
+msgstr "switched to another tab or window while solving"
+
+#: templates/core/teacher/results_integrity.html:16
+#: templates/core/teacher/results_integrity.html:44
+msgid "серия"
+msgstr "streak"
+
+#: templates/core/teacher/results_integrity.html:16
+#, python-format
+msgid "%(n)s и больше верных задач за 15 минут"
+msgstr "%(n)s or more accepted tasks in 15 minutes"
+
+#: templates/core/teacher/results_integrity.html:17
+#: templates/core/teacher/results_integrity.html:44
+msgid "приёмы ИИ"
+msgstr "AI patterns"
+
+#: templates/core/teacher/results_integrity.html:17
+msgid ""
+"docstring, def main(), if __name__, аннотации типов, try/except, много "
+"комментариев — редко у начинающих"
+msgstr ""
+"docstring, def main(), if __name__, type hints, try/except, many comments — "
+"rare among beginners"
+
+#: templates/core/teacher/results_integrity.html:18
+#: templates/core/teacher/results_integrity.html:44
+msgid "сразу"
+msgstr "first try"
+
+#: templates/core/teacher/results_integrity.html:18
+msgid "верно с первой отправки без единого запуска"
+msgstr "accepted on the first submission without a single run"
+
+#: templates/core/teacher/results_integrity.html:20
+msgid ""
+"Вставка, переходы между вкладками и время открытия задачи записываются с "
+"этого обновления; у старых отправок проверяются только похожесть, серии и "
+"приёмы ИИ."
+msgstr ""
+"Pasting, tab switches and task-open times are recorded from this update on; "
+"for older submissions only similarity, streaks and AI patterns are checked."
+
+#: templates/core/teacher/results_integrity.html:25
+#| msgid "Вы ещё не отправляли решения."
+msgid "Студенты с подозрительными решениями"
+msgstr "Students with suspicious solutions"
+
+#: templates/core/teacher/results_integrity.html:27
+#| msgid "необязательно"
+msgid "Подозрительных"
+msgstr "Suspicious"
+
+#: templates/core/teacher/results_integrity.html:27
+#| msgid "Проверить решения (%(n)s)"
+msgid "Верных решений"
+msgstr "Accepted solutions"
+
+#: templates/core/teacher/results_integrity.html:32
+#| msgid "Проверить решения (%(n)s)"
+msgid "Верные решения"
+msgstr "Accepted solutions"
+
+#: templates/core/teacher/results_integrity.html:33
+#, python-format
+#| msgid "Проверить решения (%(n)s)"
+msgid "Всего верных решений: %(n)s."
+msgstr "Accepted solutions in total: %(n)s."
+
+#: templates/core/teacher/results_integrity.html:33
+#, python-format
+#| msgid "Возвращено в очередь: %(n)s."
+msgid "Без признаков скрыто: %(n)s."
+msgstr "Hidden without signals: %(n)s."
+
+#: templates/core/teacher/results_integrity.html:33
+#| msgid "Развернуть все"
+msgid "Показать все"
+msgstr "Show all"
+
+#: templates/core/teacher/results_integrity.html:33
+#| msgid "Только верные"
+msgid "Только подозрительные"
+msgstr "Suspicious only"
+
+#: templates/core/teacher/results_integrity.html:37
+msgid "Балл"
+msgstr "Score"
+
+#: templates/core/teacher/results_integrity.html:37
+msgid "Когда"
+msgstr "When"
+
+#: templates/core/teacher/results_integrity.html:37
+msgid "Признаки"
+msgstr "Signals"
+
+#: templates/core/teacher/results_integrity.html:49
+msgid "Подозрительных решений не найдено."
+msgstr "No suspicious solutions found."
+
+#: templates/core/teacher/results_integrity.html:49
+#| msgid "За этот период записей нет."
+msgid "За этот период верных решений нет."
+msgstr "No accepted solutions in this period."
+
+#: templates/core/teacher/results_lessons.html:10
+#, python-format
+msgid "Студентов: %(n)s. Нажмите на урок, чтобы увидеть каждую задачу."
+msgstr "Students: %(n)s. Click a lesson to see each task."
+
+#: templates/core/teacher/results_lessons.html:14
+#| msgid "Задач:"
+msgid "Задач"
+msgstr "Tasks"
+
+#: templates/core/teacher/results_lessons.html:15
+msgid "Приступили"
+msgstr "Started"
+
+#: templates/core/teacher/results_lessons.html:15
+msgid "Решили хоть одну"
+msgstr "Solved at least one"
+
+#: templates/core/teacher/results_lessons.html:16
+msgid "Решили все"
+msgstr "Solved all"
+
+#: templates/core/teacher/results_lessons.html:16
+#| msgid "Решение отмечено."
+msgid "В среднем решено"
+msgstr "Solved on average"
+
+#: templates/core/teacher/results_lessons.html:16
+#| msgid "Ошибка выполнения"
+msgid "Выполнение"
+msgstr "Completion"
 
 #: templates/core/teacher/sandbox.html:5
 msgid ""
@@ -1941,45 +2281,74 @@ msgstr "Re-check"
 msgid "макс. время %(t)s с"
 msgstr "max time %(t)s s"
 
+#: templates/core/teacher/submission_detail.html:25
+#| msgid "Сразу открыть задачи"
+msgid "С открытия задачи"
+msgstr "Since task opened"
+
+#: templates/core/teacher/submission_detail.html:26
+#| msgid "Последние отправки"
+msgid "Запусков до отправки"
+msgstr "Runs before submitting"
+
 #: templates/core/teacher/submission_detail.html:27
+#| msgid "Распечатать"
+msgid "Напечатано"
+msgstr "Typed"
+
+#: templates/core/teacher/submission_detail.html:27
+#| msgid "Отправлено"
+msgid "Вставлено"
+msgstr "Pasted"
+
+#: templates/core/teacher/submission_detail.html:27
+#| msgid "Ошибка песочницы"
+msgid "Уходил со страницы"
+msgstr "Left the page"
+
+#: templates/core/teacher/submission_detail.html:28
+msgid "Приёмы ИИ"
+msgstr "AI patterns"
+
+#: templates/core/teacher/submission_detail.html:33
 #: templates/core/teacher/task_form.html:36
 #: templates/core/teacher/task_form.html:41
 msgid "Тест"
 msgstr "Test"
 
-#: templates/core/teacher/submission_detail.html:27
+#: templates/core/teacher/submission_detail.html:33
 msgid "(пример из условия)"
 msgstr "(example from the statement)"
 
-#: templates/core/teacher/submission_detail.html:31
+#: templates/core/teacher/submission_detail.html:37
 msgid "Вывод программы"
 msgstr "Program output"
 
-#: templates/core/teacher/submission_detail.html:37
+#: templates/core/teacher/submission_detail.html:43
 msgid "Оценка преподавателя"
 msgstr "Teacher's evaluation"
 
-#: templates/core/teacher/submission_detail.html:40
+#: templates/core/teacher/submission_detail.html:46
 msgid "Зачесть"
 msgstr "Accept"
 
-#: templates/core/teacher/submission_detail.html:41
+#: templates/core/teacher/submission_detail.html:47
 msgid "Не зачесть"
 msgstr "Reject"
 
-#: templates/core/teacher/submission_detail.html:42
+#: templates/core/teacher/submission_detail.html:48
 msgid "Только сохранить комментарий"
 msgstr "Save comment only"
 
-#: templates/core/teacher/submission_detail.html:43
+#: templates/core/teacher/submission_detail.html:49
 msgid "затем открыть следующее непроверенное"
 msgstr "then open the next unreviewed one"
 
-#: templates/core/teacher/submission_detail.html:48
+#: templates/core/teacher/submission_detail.html:54
 msgid "Все попытки по задаче"
 msgstr "All attempts on the task"
 
-#: templates/core/teacher/submission_detail.html:50
+#: templates/core/teacher/submission_detail.html:56
 msgid "(эта)"
 msgstr "(this)"
 

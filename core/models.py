@@ -267,6 +267,12 @@ class Submission(models.Model):
     failed_output = models.TextField(blank=True)
     teacher_comment = models.TextField(_("Комментарий преподавателя"), blank=True)
     ip = models.GenericIPAddressField("IP", null=True, blank=True)
+    # Как набирался код (считает страница задачи с момента последней отправки).
+    # Нужны для поиска списывания; у старых отправок пусто.
+    typed_chars = models.PositiveIntegerField(null=True, blank=True)
+    pasted_chars = models.PositiveIntegerField(null=True, blank=True)
+    away_count = models.PositiveIntegerField(null=True, blank=True)
+    away_seconds = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     checked_at = models.DateTimeField(null=True, blank=True)
 
@@ -312,7 +318,9 @@ class AccessLog(models.Model):
     RUN = "run"
     SUBMIT = "submit"
     KICKED = "kicked"
+    OPEN = "open"
     ACTION_CHOICES = [
+        (OPEN, _("Открыл задачу")),
         (LOGIN, _("Вход")),
         (LOGIN_FAIL, _("Неудачный вход")),
         (KICKED, _("Вытеснен другим входом")),
@@ -325,6 +333,8 @@ class AccessLog(models.Model):
     ip = models.GenericIPAddressField(null=True, blank=True)
     action = models.CharField(max_length=12, choices=ACTION_CHOICES)
     details = models.CharField(max_length=200, blank=True)
+    # задача, к которой относится действие (открытие, запуск, отправка)
+    task = models.ForeignKey("Task", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
     user_agent = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
