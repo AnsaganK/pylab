@@ -411,3 +411,16 @@ kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule)
 .filters select, .filters input, .filters .btn { height: 2.45rem; }
 .filters .presets .btn { height: auto; }
 .filters input[type=datetime-local] { padding-top: 0; padding-bottom: 0; }
+
+/* ---------- Оценка ИИ ---------- */
+.ai-panel, .ai-detail { margin-bottom: 1rem; }
+.ai-row { display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.ai-cell { min-width: 260px; max-width: 420px; }
+.ai-reason { margin-top: .3rem; color: var(--ink); line-height: 1.4; }
+.ai-detail .ai-reason { max-width: 80ch; }
+.manual-review { margin-top: .75rem; }
+.ai-panel > .manual-review:first-child { margin-top: 0; }
+.manual-review summary { cursor: pointer; }
+.manual-review .steps { margin: .75rem 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .6rem; }
+.import-form { display: grid; gap: .3rem; max-width: 640px; margin-top: .3rem; }
+.import-form .btn { justify-self: start; margin-top: .3rem; }

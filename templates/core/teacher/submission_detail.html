@@ -21,6 +21,12 @@
   {% if sub.max_time is not None %}<span class="muted num">{% blocktranslate with t=sub.max_time|floatformat:3 %}макс. время {{ t }} с{% endblocktranslate %}</span>{% endif %}
 </div>
 
+<div class="sheet ai-detail">
+  <div class="ai-row">
+    <div><b>{% translate "Оценка ИИ" %}</b> {% include "core/teacher/_ai_review.html" %}</div>
+    {% if ai_ready %}<form method="post" action="{% url 't_submission_ai' sub.pk %}" class="inline">{% csrf_token %}<button class="btn sm" type="submit">{% if review %}{% translate "Оценить заново" %}{% else %}{% translate "Оценить с помощью ИИ" %}{% endif %}</button></form>{% endif %}
+  </div>
+</div>
 <div class="metrics muted">
   {% if spent %}<span>{% translate "С открытия задачи" %}: <b>{{ spent }}</b></span>{% endif %}
   <span>{% translate "Запусков до отправки" %}: <b>{{ runs }}</b></span>

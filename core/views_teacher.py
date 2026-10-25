@@ -532,10 +532,30 @@ def submission_detail(request, pk):
     first_open = logs.filter(action=AccessLog.OPEN).order_by("created_at").values_list("created_at", flat=True).first()
     runs = logs.filter(action=AccessLog.RUN).count()
     spent = integrity._fmt_dur((sub.created_at - first_open).total_seconds()) if first_open else None
+    from . import ai_review
+    from .models import AIReview
     return render(request, "core/teacher/submission_detail.html", {
         "sub": sub, "form": form, "others": others, "spent": spent, "runs": runs,
         "ai_markers": integrity.ai_markers(sub.code),
+        "review": AIReview.objects.filter(submission=sub).first(), "ai_ready": ai_review.is_configured(),
     })
+
+
+@teacher_required
+@require_POST
+def submission_ai_review(request, pk):
+    """Оценить одно решение с помощью ИИ (со страницы отправки)."""
+    from django.utils.translation import get_language
+    from . import ai_review, integrity
+    sub = get_object_or_404(Submission, pk=pk)
+    if not ai_review.is_configured():
+        messages.error(request, _("ИИ не настроен: добавьте AI_API_KEY в constants.py."))
+        return redirect("t_submission", pk)
+    items, _students = integrity.analyze([sub.user_id], [sub.task_id])
+    item = next((r for r in items if r["sub"].pk == sub.pk), None) or {"sub": sub, "flags": [], "similar_other": None}
+    ai_review.enqueue([item], (get_language() or "ru")[:2], force=True)
+    messages.success(request, _("Решение отправлено на оценку ИИ. Обновите страницу через несколько секунд."))
+    return redirect("t_submission", pk)
 
 
 @teacher_required
@@ -730,11 +750,77 @@ def results_integrity(request):
         tasks = tasks.filter(lesson=ctx["current"])
     items, per_student = integrity.analyze([s.id for s in ctx["students"]], list(tasks.values_list("id", flat=True)),
                                            ctx["since"], ctx["until"])
+    from . import ai_review
+    from .models import AIReview
+    reviews = {r.submission_id: r for r in AIReview.objects.filter(submission__in=[x["sub"] for x in items])}
+    for r in items:
+        r["review"] = reviews.get(r["sub"].pk)
+
+    from django.utils.translation import get_language
+    lang = (get_language() or "ru")[:2]
+
+    # Выгрузка подозрительных решений в файл — для проверки вне сайта (например, в чате с Claude)
+    if request.GET.get("export") == "1":
+        import json
+        from django.http import HttpResponse
+        force = request.GET.get("force") == "1"
+        chosen = [r for r in items if r["score"] >= ai_review.MIN_SCORE and ai_review.needs_review(r, force)]
+        payload = ai_review.export_payload(chosen, lang)
+        response = HttpResponse(json.dumps(payload, ensure_ascii=False, indent=1), content_type="application/json; charset=utf-8")
+        stamp = timezone.localtime().strftime("%Y%m%d-%H%M")
+        response["Content-Disposition"] = f'attachment; filename="pylab-review-{stamp}.json"'
+        return response
+
+    # Загрузка готовых оценок (файл или вставленный текст)
+    if request.method == "POST" and request.POST.get("action") == "import":
+        upload = request.FILES.get("file")
+        raw = upload.read().decode("utf-8-sig", errors="replace") if upload else request.POST.get("text", "")
+        try:
+            saved, skipped = ai_review.import_reviews(raw, lang, label=request.POST.get("label") or "manual")
+        except ValueError as e:   # сюда же попадает ошибка разбора JSON
+            messages.error(request, _("Не удалось прочитать оценки: %(e)s") % {"e": e})
+        else:
+            messages.success(request, _("Загружено оценок: %(n)s.") % {"n": saved}
+                             + (" " + _("Пропущено (нет такого решения): %(n)s.") % {"n": skipped} if skipped else ""))
+        return redirect(request.get_full_path())
+
+    # Кнопка «Оценить с помощью ИИ»
+    if request.method == "POST":
+        if not ai_review.is_configured():
+            messages.error(request, _("ИИ не настроен: добавьте AI_API_KEY в constants.py."))
+        else:
+            candidates = [r for r in items if r["score"] >= ai_review.MIN_SCORE]
+            n = ai_review.enqueue(candidates, lang, force=request.POST.get("force") == "1")
+            if n:
+                messages.success(request, _("Отправлено на оценку ИИ: %(n)s. Результаты появятся в таблице через минуту.") % {"n": n})
+            else:
+                messages.info(request, _("Новых решений для оценки нет — все подозрительные уже оценены."))
+        return redirect(request.get_full_path())
+
     show_all = request.GET.get("all") == "1"
-    shown = items if show_all else [r for r in items if r["score"] >= 2]
+    ai_filter = request.GET.get("ai", "")
+    shown = items if show_all else [r for r in items if r["score"] >= 2 or (r["review"] and r["review"].verdict in AIReview.BAD)]
+    if ai_filter == "bad":
+        shown = [r for r in shown if r["review"] and r["review"].verdict in AIReview.BAD]
+    # Сначала то, что ИИ счёл нечестным, затем по баллу
+    severity = {AIReview.COPIED: 0, AIReview.AI: 0, AIReview.UNSURE: 1, AIReview.HONEST: 3}
+    shown.sort(key=lambda r: (severity.get(r["review"].verdict, 2) if r["review"] and r["review"].status == "done" else 2,
+                              -r["score"], r["sub"].created_at))
+    ai_bad = {}
+    for r in items:
+        if r["review"] and r["review"].verdict in AIReview.BAD:
+            ai_bad[r["sub"].user_id] = ai_bad.get(r["sub"].user_id, 0) + 1
+    for p in per_student:
+        p["ai_bad"] = ai_bad.get(p["user"].pk, 0)
+    pending = sum(1 for r in items if r["review"] and r["review"].status == AIReview.PENDING)
+    to_review = sum(1 for r in items if r["score"] >= ai_review.MIN_SCORE and not (
+        r["review"] and r["review"].status in (AIReview.DONE, AIReview.PENDING)
+        and r["review"].code_hash == ai_review.code_hash(r["sub"].code)))
     ctx.update({"items": shown, "total_ok": len(items), "hidden": len(items) - len(shown), "show_all": show_all,
-                "per_student": [p for p in per_student if p["flagged"]], "tab": "integrity",
-                "thresholds": integrity})
+                "per_student": [p for p in per_student if p["flagged"] or p["ai_bad"]], "tab": "integrity",
+                "thresholds": integrity, "ai_ready": ai_review.is_configured(), "ai_pending": pending,
+                "ai_to_review": min(to_review, ai_review.MAX_PER_RUN), "ai_to_review_total": to_review,
+                "ai_filter": ai_filter, "ai_model": ai_review.MODEL})
     return render(request, "core/teacher/results_integrity.html", ctx)
 
 

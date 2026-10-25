@@ -201,8 +201,11 @@ def analyze(user_ids, task_ids, since=None, until=None):
         if attempts_before[key] == 0 and runs_before[key] == 0 and code_len >= MIN_CODE_LEN and key in first_open:
             flags.append(("first_try", _("с первой попытки, без единого запуска")))
         score = sum(WEIGHTS[k] for k, _text in flags)
+        opened = first_open.get(key)
         results.append({"sub": sub, "flags": flags, "score": score,
-                        "attempts": attempts_before[key] + 1, "runs": runs_before[key]})
+                        "attempts": attempts_before[key] + 1, "runs": runs_before[key],
+                        "similar_other": similar[sub.pk][1] if sub.pk in similar else None,
+                        "spent": (sub.created_at - opened).total_seconds() if opened else None})
 
     results.sort(key=lambda r: (-r["score"], r["sub"].created_at))
     per_student = defaultdict(lambda: {"user": None, "solved": 0, "flagged": 0, "score": 0})

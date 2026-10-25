@@ -2,6 +2,7 @@
 {% load i18n %}
 {% block title %}{% translate "Проверка на списывание" %}{% endblock %}
 {% block page_class %}wide{% endblock %}
+{% block head %}{% if ai_pending %}<meta http-equiv="refresh" content="6">{% endif %}{% endblock %}
 {% block content %}
 {% include "core/teacher/_results_filter.html" %}
 <div class="sheet integrity-help">
@@ -21,20 +22,59 @@
   </details>
 </div>
 
+<div class="sheet ai-panel">
+  {% if ai_ready %}
+  <div class="ai-row">
+    <div>
+      <b>{% translate "Оценка с помощью ИИ" %}</b>
+      <div class="muted small">{% blocktranslate with m=ai_model %}Модель {{ m }} смотрит код, прошлые попытки, другие решения студента и признаки и выносит вердикт с объяснением. ФИО, ID и IP не отправляются.{% endblocktranslate %}</div>
+    </div>
+    <form method="post" class="inline">{% csrf_token %}
+      {% if ai_pending %}<span class="st wait">{% blocktranslate with n=ai_pending %}Оценивается: {{ n }}…{% endblocktranslate %}</span>
+      {% elif ai_to_review %}<button class="btn go" type="submit">{% blocktranslate with n=ai_to_review %}Оценить с помощью ИИ ({{ n }}){% endblocktranslate %}</button>
+      {% else %}<span class="muted small">{% translate "Все подозрительные решения уже оценены." %}</span> <button class="btn sm" type="submit" name="force" value="1" onclick="return confirm('{% filter escapejs %}{% translate "Оценить заново все подозрительные решения? Это снова потратит токены." %}{% endfilter %}')">{% translate "Оценить заново" %}</button>{% endif %}
+    </form>
+  </div>
+  {% if ai_to_review_total > ai_to_review %}<p class="muted small" style="margin:.4rem 0 0">{% blocktranslate with n=ai_to_review_total %}Всего ждут оценки: {{ n }}; за одно нажатие оценивается не больше лимита — нажмите ещё раз после завершения.{% endblocktranslate %}</p>{% endif %}
+  {% endif %}
+
+  <details class="manual-review" {% if not ai_ready %}open{% endif %}>
+    <summary><b>{% translate "Проверка вручную через файл" %}</b> <span class="muted small">— {% translate "без API: выгрузите файл, отправьте его в чат с Claude и загрузите его ответ обратно" %}</span></summary>
+    <ol class="steps small">
+      <li>
+        {% if ai_to_review_total %}<a class="btn sm go" href="?{{ query }}&export=1">{% blocktranslate with n=ai_to_review_total %}Выгрузить для проверки ({{ n }}){% endblocktranslate %}</a>
+        {% else %}<span class="muted">{% translate "Новых подозрительных решений нет." %}</span> <a class="btn sm" href="?{{ query }}&export=1&force=1">{% translate "Выгрузить все подозрительные заново" %}</a>{% endif %}
+        <span class="muted">{% translate "Учитываются фильтры выше: занятие, урок и период. ФИО, ID и IP в файл не попадают." %}</span>
+      </li>
+      <li>{% translate "Отправьте файл в чат с Claude и попросите: «Оцени решения из файла и верни JSON с оценками»." %}</li>
+      <li>
+        <form method="post" enctype="multipart/form-data" class="import-form">{% csrf_token %}
+          <input type="hidden" name="action" value="import">
+          <input type="hidden" name="label" value="Claude ({% translate "вручную" %})">
+          <label class="small muted">{% translate "Файл с ответом" %}</label><input type="file" name="file" accept=".json,.txt,application/json">
+          <label class="small muted">{% translate "…или вставьте ответ текстом" %}</label><textarea name="text" rows="3" class="mono" placeholder='{"reviews": [{"id": 123, "verdict": "ai", "confidence": 80, "reason": "…"}]}'></textarea>
+          <button class="btn primary sm" type="submit">{% translate "Загрузить оценки" %}</button>
+        </form>
+      </li>
+    </ol>
+  </details>
+</div>
+
 {% if per_student %}
 <h2>{% translate "Студенты с подозрительными решениями" %}</h2>
 <div class="table-wrap" style="margin-bottom:1.5rem"><table class="t">
-  <tr><th>{% translate "Студент" %}</th><th class="c">{% translate "Подозрительных" %}</th><th class="c">{% translate "Верных решений" %}</th></tr>
-  {% for p in per_student %}<tr><td><a href="{% url 't_submissions' %}?student={{ p.user.username|urlencode }}">{{ p.user.display_name }}</a> <span class="muted small">{{ p.user.username }}</span></td><td class="c num"><b>{{ p.flagged }}</b></td><td class="c num">{{ p.solved }}</td></tr>{% endfor %}
+  <tr><th>{% translate "Студент" %}</th><th class="c">{% translate "ИИ: нечестно" %}</th><th class="c">{% translate "Подозрительных" %}</th><th class="c">{% translate "Верных решений" %}</th></tr>
+  {% for p in per_student %}<tr><td><a href="{% url 't_submissions' %}?student={{ p.user.username|urlencode }}">{{ p.user.display_name }}</a> <span class="muted small">{{ p.user.username }}</span></td><td class="c num">{% if p.ai_bad %}<span class="st bad">{{ p.ai_bad }}</span>{% else %}<span class="muted">0</span>{% endif %}</td><td class="c num"><b>{{ p.flagged }}</b></td><td class="c num">{{ p.solved }}</td></tr>{% endfor %}
 </table></div>
 {% endif %}
 
 <h2>{% translate "Верные решения" %}</h2>
-<p class="muted small">{% blocktranslate with n=total_ok %}Всего верных решений: {{ n }}.{% endblocktranslate %} {% if hidden %}{% blocktranslate with n=hidden %}Без признаков скрыто: {{ n }}.{% endblocktranslate %} <a href="?{{ query }}&all=1">{% translate "Показать все" %}</a>{% elif show_all %}<a href="?{{ query }}">{% translate "Только подозрительные" %}</a>{% endif %}</p>
+<p class="muted small">{% blocktranslate with n=total_ok %}Всего верных решений: {{ n }}.{% endblocktranslate %} {% if hidden %}{% blocktranslate with n=hidden %}Без признаков скрыто: {{ n }}.{% endblocktranslate %} <a href="?{{ query }}&all=1">{% translate "Показать все" %}</a>{% elif show_all %}<a href="?{{ query }}">{% translate "Только подозрительные" %}</a>{% endif %}
+  · {% if ai_filter == "bad" %}<a href="?{{ query }}">{% translate "Все вердикты ИИ" %}</a>{% else %}<a href="?{{ query }}&ai=bad">{% translate "Только то, что ИИ счёл нечестным" %}</a>{% endif %}</p>
 <div class="table-wrap">
   {% if items %}
   <table class="t">
-    <tr><th>{% translate "Балл" %}</th><th>{% translate "Студент" %}</th><th>{% translate "Задача" %}</th><th>{% translate "Когда" %}</th><th>{% translate "Признаки" %}</th><th></th></tr>
+    <tr><th>{% translate "Балл" %}</th><th>{% translate "Студент" %}</th><th>{% translate "Задача" %}</th><th>{% translate "Когда" %}</th><th>{% translate "Признаки" %}</th><th>{% translate "Оценка ИИ" %}</th><th></th></tr>
     {% for r in items %}
     <tr>
       <td class="num"><span class="score s{% if r.score >= 5 %}3{% elif r.score >= 3 %}2{% elif r.score >= 1 %}1{% else %}0{% endif %}">{{ r.score }}</span></td>
@@ -42,6 +82,7 @@
       <td>{{ r.sub.task.title }}<div class="muted small">{{ r.sub.task.lesson.title|truncatechars:30 }}</div></td>
       <td class="num muted small" style="white-space:nowrap">{{ r.sub.created_at|date:"d.m H:i" }}{% if r.sub.ip %}<br>{{ r.sub.ip }}{% endif %}</td>
       <td>{% for kind, text in r.flags %}<div class="flag-line"><span class="flag {{ kind }}">{% if kind == 'paste' %}{% translate "вставка" %}{% elif kind == 'similar' %}{% translate "похожий код" %}{% elif kind == 'similar_src' %}{% translate "у него списали?" %}{% elif kind == 'fast' %}{% translate "быстро" %}{% elif kind == 'away' %}{% translate "уходил" %}{% elif kind == 'burst' %}{% translate "серия" %}{% elif kind == 'ai' %}{% translate "приёмы ИИ" %}{% else %}{% translate "сразу" %}{% endif %}</span> <span class="small">{{ text }}</span></div>{% empty %}<span class="muted small">—</span>{% endfor %}</td>
+      <td class="ai-cell">{% include "core/teacher/_ai_review.html" with review=r.review %}</td>
       <td><a class="btn sm" href="{% url 't_submission' r.sub.pk %}">{% translate "код" %}</a></td>
     </tr>
     {% endfor %}

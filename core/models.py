@@ -343,6 +343,36 @@ class AccessLog(models.Model):
         indexes = [models.Index(fields=["ip", "created_at"]), models.Index(fields=["user", "created_at"])]
 
 
+class AIReview(models.Model):
+    """Оценка решения языковой моделью: похоже ли на ИИ или списывание."""
+    PENDING, DONE, ERROR = "pending", "done", "error"
+    HONEST, UNSURE, AI, COPIED = "honest", "unsure", "ai", "copied"
+    VERDICT_CHOICES = [
+        (HONEST, _("Скорее сам")),
+        (UNSURE, _("Неясно")),
+        (AI, _("Вероятно ИИ")),
+        (COPIED, _("Вероятно списано")),
+    ]
+    BAD = {AI, COPIED}
+
+    submission = models.OneToOneField("Submission", on_delete=models.CASCADE, related_name="ai_review")
+    status = models.CharField(max_length=10, default=PENDING)
+    verdict = models.CharField(max_length=10, choices=VERDICT_CHOICES, blank=True)
+    confidence = models.PositiveSmallIntegerField(null=True, blank=True)
+    reason = models.TextField(blank=True)
+    signals = models.JSONField(default=list, blank=True)   # признаки на момент отправки на оценку
+    lang = models.CharField(max_length=5, default="ru")
+    model = models.CharField(max_length=60, blank=True)
+    code_hash = models.CharField(max_length=40, blank=True)
+    error = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def tone(self):
+        return {self.HONEST: "good", self.UNSURE: "wait", self.AI: "bad", self.COPIED: "bad"}.get(self.verdict, "wait")
+
+
 class SiteSettings(models.Model):
     """Настройки, которые преподаватель меняет прямо на сайте. Всегда одна запись (pk=1)."""
     single_session = models.BooleanField(

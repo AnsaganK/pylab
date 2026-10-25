@@ -52,6 +52,7 @@ urlpatterns = [
     path("t/submissions/", t.submissions, name="t_submissions"),
     path("t/submissions/<int:pk>/", t.submission_detail, name="t_submission"),
     path("t/submissions/<int:pk>/rejudge/", t.submission_rejudge, name="t_submission_rejudge"),
+    path("t/submissions/<int:pk>/ai-review/", t.submission_ai_review, name="t_submission_ai"),
     path("t/submissions/requeue/", t.requeue_stale, name="t_requeue"),
     path("t/results/", t.results, name="t_results"),
     path("t/results/lessons/", t.results_lessons, name="t_results_lessons"),
