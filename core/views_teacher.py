@@ -532,9 +532,10 @@ def submission_detail(request, pk):
     first_open = logs.filter(action=AccessLog.OPEN).order_by("created_at").values_list("created_at", flat=True).first()
     runs = logs.filter(action=AccessLog.RUN).count()
     spent = integrity._fmt_dur((sub.created_at - first_open).total_seconds()) if first_open else None
-    from . import ai_review
+    from . import ai_review, schedule
     from .models import AIReview
     return render(request, "core/teacher/submission_detail.html", {
+        "place": schedule.place(sub.created_at, schedule.slots_for_users([sub.user_id]).get(sub.user_id)),
         "sub": sub, "form": form, "others": others, "spent": spent, "runs": runs,
         "ai_markers": integrity.ai_markers(sub.code),
         "review": AIReview.objects.filter(submission=sub).first(), "ai_ready": ai_review.is_configured(),
@@ -688,13 +689,31 @@ def results(request):
     tasks = list(tasks)
     rows = []
     students = ctx["students"]
-    best, attempts = best_submissions([s.id for s in students], [t.id for t in tasks], ctx["since"], ctx["until"])
+    from . import schedule
+    from .models import AIReview
+    ids = [s.id for s in students]
+    best, attempts = best_submissions(ids, [t.id for t in tasks], ctx["since"], ctx["until"])
+    # Оценки ИИ (в том числе загруженные из файла) — по последней оценке на задачу
+    reviews = {}
+    for rv in (AIReview.objects.filter(submission__user_id__in=ids, submission__task_id__in=[t.id for t in tasks],
+                                       status=AIReview.DONE)
+               .select_related("submission").order_by("updated_at")):
+        reviews[(rv.submission.user_id, rv.submission.task_id)] = rv
+    slots = schedule.slots_for_users(ids)
+    any_review = bool(reviews)
     for s in students:
-        cells = [(t, best.get((s.id, t.id)), attempts.get((s.id, t.id), 0)) for t in tasks]
-        rows.append((s, cells, sum(1 for _t, b, _n in cells if b and b.is_good)))
+        cells, bad = [], 0
+        for t in tasks:
+            b = best.get((s.id, t.id))
+            rv = reviews.get((s.id, t.id))
+            where = schedule.place(b.created_at, slots.get(s.id)) if b and b.is_good else None
+            bad += 1 if rv and rv.is_bad else 0
+            cells.append((t, b, attempts.get((s.id, t.id), 0), rv, where))
+        rows.append((s, cells, sum(1 for c in cells if c[1] and c[1].is_good), bad))
     # Сколько студентов решило каждую задачу — строка внизу таблицы
-    solved_by_task = [sum(1 for _s, cells, _n in rows if cells[i][1] and cells[i][1].is_good) for i in range(len(tasks))]
-    ctx.update({"tasks": tasks, "rows": rows, "solved_by_task": solved_by_task, "tab": "table"})
+    solved_by_task = [sum(1 for row in rows if row[1][i][1] and row[1][i][1].is_good) for i in range(len(tasks))]
+    ctx.update({"tasks": tasks, "rows": rows, "solved_by_task": solved_by_task, "tab": "table",
+                "any_review": any_review, "has_schedule": bool(slots)})
     return render(request, "core/teacher/results.html", ctx)
 
 
@@ -782,6 +801,10 @@ def results_integrity(request):
         else:
             messages.success(request, _("Загружено оценок: %(n)s.") % {"n": saved}
                              + (" " + _("Пропущено (нет такого решения): %(n)s.") % {"n": skipped} if skipped else ""))
+            if saved:   # сразу показываем оценённые решения
+                q = request.GET.copy()
+                q["ai"] = "done"
+                return redirect(f"{request.path}?{q.urlencode()}")
         return redirect(request.get_full_path())
 
     # Кнопка «Оценить с помощью ИИ»
@@ -799,9 +822,25 @@ def results_integrity(request):
 
     show_all = request.GET.get("all") == "1"
     ai_filter = request.GET.get("ai", "")
+
+    def done(r):
+        return r["review"] is not None and r["review"].status == AIReview.DONE
+
+    # Итог оценок: сколько каких вердиктов — плашки сверху, по ним же фильтр
+    verdict_counts = {v: 0 for v in (AIReview.AI, AIReview.COPIED, AIReview.UNSURE, AIReview.HONEST)}
+    for r in items:
+        if done(r):
+            verdict_counts[r["review"].shown_verdict] = verdict_counts.get(r["review"].shown_verdict, 0) + 1
+    reviewed = sum(verdict_counts.values())
+    if ai_filter:
+        show_all = True    # фильтр по вердикту показывает и решения без признаков
     shown = items if show_all else [r for r in items if r["score"] >= 2 or (r["review"] and r["review"].is_bad)]
     if ai_filter == "bad":
         shown = [r for r in shown if r["review"] and r["review"].is_bad]
+    elif ai_filter in (AIReview.UNSURE, AIReview.HONEST):
+        shown = [r for r in shown if done(r) and r["review"].shown_verdict == ai_filter]
+    elif ai_filter == "done":
+        shown = [r for r in shown if done(r)]
     # Сначала то, что ИИ счёл нечестным, затем по баллу
     severity = {AIReview.COPIED: 0, AIReview.AI: 0, AIReview.UNSURE: 1, AIReview.HONEST: 3}
     shown.sort(key=lambda r: (severity.get(r["review"].shown_verdict, 2) if r["review"] and r["review"].status == "done" else 2,
@@ -810,8 +849,13 @@ def results_integrity(request):
     for r in items:
         if r["review"] and r["review"].is_bad:
             ai_bad[r["sub"].user_id] = ai_bad.get(r["sub"].user_id, 0) + 1
+    ai_honest = {}
+    for r in items:
+        if done(r) and r["review"].shown_verdict == AIReview.HONEST:
+            ai_honest[r["sub"].user_id] = ai_honest.get(r["sub"].user_id, 0) + 1
     for p in per_student:
         p["ai_bad"] = ai_bad.get(p["user"].pk, 0)
+        p["ai_honest"] = ai_honest.get(p["user"].pk, 0)
     pending = sum(1 for r in items if r["review"] and r["review"].status == AIReview.PENDING)
     to_review = sum(1 for r in items if r["score"] >= ai_review.MIN_SCORE and not (
         r["review"] and r["review"].status in (AIReview.DONE, AIReview.PENDING)
@@ -820,7 +864,9 @@ def results_integrity(request):
                 "per_student": [p for p in per_student if p["flagged"] or p["ai_bad"]], "tab": "integrity",
                 "thresholds": integrity, "ai_ready": ai_review.is_configured(), "ai_pending": pending,
                 "ai_to_review": min(to_review, ai_review.MAX_PER_RUN), "ai_to_review_total": to_review,
-                "ai_filter": ai_filter, "ai_model": ai_review.MODEL, "ai_min_conf": ai_review.MIN_CONFIDENCE})
+                "ai_filter": ai_filter, "ai_model": ai_review.MODEL, "ai_min_conf": ai_review.MIN_CONFIDENCE,
+                "verdict_counts": verdict_counts, "reviewed": reviewed,
+                "has_schedule": any(r["place"] for r in items)})
     return render(request, "core/teacher/results_integrity.html", ctx)
 
 

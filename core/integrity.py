@@ -16,6 +16,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from . import schedule
 from .models import AccessLog, Submission
 
 # Пороги — можно подстроить под свою группу
@@ -26,8 +27,13 @@ BURST_WINDOW = timedelta(minutes=15)
 BURST_COUNT = 5            # столько верных задач за окно — «серия»
 SIMILARITY = 0.9           # похожесть кода с другим студентом после нормализации
 AWAY_SECONDS = 20          # суммарно столько секунд страница была скрыта
+# Работа на паре (нужно расписание занятия): по задачам того же урока
+CLASS_WEAK = 1             # на паре решено не больше стольких задач урока…
+HOME_STRONG = 3            # …а дома — не меньше стольких: «дома сильнее, чем на паре»
+CLASS_GOOD = 3             # на паре решено столько задач урока и больше — домашним решениям доверия больше
 
-WEIGHTS = {"paste": 3, "similar": 3, "similar_src": 1, "fast": 2, "away": 2, "burst": 2, "ai": 2, "first_try": 1}
+WEIGHTS = {"paste": 3, "similar": 3, "similar_src": 1, "fast": 2, "away": 2, "burst": 2, "ai": 2, "first_try": 1,
+           "home_strong": 2, "class_good": -2}
 
 BUILTINS = set(dir(builtins))
 
@@ -168,10 +174,16 @@ def analyze(user_ids, task_ids, since=None, until=None):
                     if len(window) > burst.get(s.pk, (0, 0))[0]:
                         burst[s.pk] = (len(window), minutes)
 
+    # На паре или дома — по расписанию занятий студента
+    slots = schedule.slots_for_users(list({s.user_id for s in subs}))
+    activity = schedule.lesson_activity(list({s.user_id for s in subs}), list({s.task.lesson_id for s in subs}))
+
     results = []
     for sub in subs:
         key = (sub.user_id, sub.task_id)
         flags = []
+        where = schedule.place(sub.created_at, slots.get(sub.user_id))
+        act = activity.get((sub.user_id, sub.task.lesson_id))
         code_len = len(sub.code)
         if sub.pasted_chars is not None and code_len >= MIN_CODE_LEN and sub.pasted_chars >= PASTE_SHARE * code_len:
             flags.append(("paste", _("вставлено %(p)s из %(n)s символов, напечатано %(t)s") % {
@@ -200,19 +212,29 @@ def analyze(user_ids, task_ids, since=None, until=None):
             flags.append(("ai", _("приёмы, нетипичные для начинающих: %(list)s") % {"list": ", ".join(markers)}))
         if attempts_before[key] == 0 and runs_before[key] == 0 and code_len >= MIN_CODE_LEN and key in first_open:
             flags.append(("first_try", _("с первой попытки, без единого запуска")))
-        score = sum(WEIGHTS[k] for k, _text in flags)
+        if where == "home" and act:
+            params = {"c": act["class"], "h": act["home"], "n": act["tasks"]}
+            if act["class"] <= CLASS_WEAK and act["home"] >= HOME_STRONG:
+                flags.append(("home_strong", _("решено дома; по этому уроку на паре решено %(c)s из %(n)s, дома — %(h)s") % params))
+            elif act["class"] >= CLASS_GOOD:
+                flags.append(("class_good", _("решено дома, но на паре по этому уроку сам решил %(c)s из %(n)s — доверия больше") % params))
+        score = max(0, sum(WEIGHTS[k] for k, _text in flags))
         opened = first_open.get(key)
-        results.append({"sub": sub, "flags": flags, "score": score,
+        results.append({"sub": sub, "flags": flags, "score": score, "place": where, "activity": act,
                         "attempts": attempts_before[key] + 1, "runs": runs_before[key],
                         "similar_other": similar[sub.pk][1] if sub.pk in similar else None,
                         "spent": (sub.created_at - opened).total_seconds() if opened else None})
 
     results.sort(key=lambda r: (-r["score"], r["sub"].created_at))
-    per_student = defaultdict(lambda: {"user": None, "solved": 0, "flagged": 0, "score": 0})
+    per_student = defaultdict(lambda: {"user": None, "solved": 0, "flagged": 0, "score": 0, "in_class": 0, "at_home": 0})
     for r in results:
         item = per_student[r["sub"].user_id]
         item["user"] = r["sub"].user
         item["solved"] += 1
+        if r["place"] == "class":
+            item["in_class"] += 1
+        elif r["place"] == "home":
+            item["at_home"] += 1
         if r["score"] >= 3:
             item["flagged"] += 1
         item["score"] += r["score"]

@@ -70,6 +70,10 @@ SYSTEM_PROMPT = """Ты помогаешь преподавателю вуза �
   темы и курса (def main(), if __name__ == "__main__", аннотации типов, docstring, try/except, sys.stdin,
   f-строки с форматированием, много аккуратных комментариев на английском); резкий скачок стиля по сравнению
   с его другими решениями; верно с первой попытки за десятки секунд; серия задач подряд за минуты.
+- Работа на парах (если есть расписание): студент, который на парах сам решает задачи урока, заслуживает
+  больше доверия — его домашние решения того же уровня скорее честные. И наоборот: на паре почти ничего,
+  а дома много и быстро, да ещё в другом стиле — сильный повод подозревать ИИ или списывание. Решения на паре
+  тоже бывают нечестными (вставка, уходы со страницы), но там преподаватель рядом.
 - Признаки списывания: почти тот же код, что у другого студента, сданный позже него, особенно с той же
   структурой и теми же необычными приёмами, но с переименованными переменными.
 - Отдельный признак сам по себе ничего не доказывает: короткие задачи часто решаются одинаково, а сильный студент
@@ -108,7 +112,11 @@ def build_prompt(sub, signals, lang):
     else:
         parts.append("## Предыдущие попытки студента по этой задаче\nНет — верно с первой отправки.")
 
-    parts.append(f"## Проверяемое решение ({timezone.localtime(sub.created_at):%d.%m %H:%M})\n```python\n{_shorten(sub.code)}\n```")
+    where = _place_text(sub)
+    parts.append(f"## Проверяемое решение ({timezone.localtime(sub.created_at):%d.%m %H:%M}{where})\n```python\n{_shorten(sub.code)}\n```")
+    class_part = _class_activity_text(sub)
+    if class_part:
+        parts.append(class_part)
 
     metrics = []
     if sub.typed_chars is not None:
@@ -139,6 +147,35 @@ def build_prompt(sub, signals, lang):
 
     parts.append(f"Напиши поле reason на {LANG_NAMES.get(lang, 'русском')} языке.")
     return "\n\n".join(parts)
+
+
+def _place_text(sub):
+    from . import schedule
+    slots = schedule.slots_for_users([sub.user_id]).get(sub.user_id)
+    where = schedule.place(sub.created_at, slots)
+    return {"class": ", на паре", "home": ", вне пары — дома"}.get(where, "")
+
+
+def _class_activity_text(sub):
+    """Сколько студент решил на парах и дома: по этому уроку и по всем урокам."""
+    from . import schedule
+    from .models import Lesson
+    slots = schedule.slots_for_users([sub.user_id]).get(sub.user_id)
+    if not slots:
+        return ""
+    lesson_ids = list(Lesson.objects.filter(tasks__submissions__user=sub.user).values_list("id", flat=True).distinct())
+    if sub.task.lesson_id not in lesson_ids:
+        lesson_ids.append(sub.task.lesson_id)
+    act = schedule.lesson_activity([sub.user_id], lesson_ids)
+    cur = act[(sub.user_id, sub.task.lesson_id)]
+    total_class = sum(v["class"] for v in act.values())
+    total_home = sum(v["home"] for v in act.values())
+    lines = [f"Пары занятия студента: {schedule.fmt(slots)}.",
+             f"По этому уроку (всего задач {cur['tasks']}): на паре решено {cur['class']}"
+             + (f" ({', '.join(cur['class_titles'][:8])})" if cur["class_titles"] else "")
+             + f", дома — {cur['home']}" + (f" ({', '.join(cur['home_titles'][:8])})" if cur["home_titles"] else "") + ".",
+             f"По всем урокам: на парах {total_class}, дома {total_home}."]
+    return "## Работа на парах\n" + "\n".join(f"- {x}" for x in lines)
 
 
 def _post(url, headers, body):

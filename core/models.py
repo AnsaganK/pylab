@@ -26,6 +26,11 @@ class ClassSection(models.Model):
     Студенты разных групп (МИК, ФИК) могут сидеть на одном занятии."""
     code = models.CharField(_("Код занятия"), max_length=20, unique=True)
     title = models.CharField(_("Название"), max_length=200, blank=True)
+    schedule = models.CharField(
+        _("Расписание пар"), max_length=200, blank=True,
+        help_text=_("Например: Вт 15:40-17:40. Несколько пар — через «;». "
+                    "Решения в это время считаются сделанными на паре, в остальное — дома."),
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -35,6 +40,16 @@ class ClassSection(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.title}".strip()
+
+    @property
+    def slots(self):
+        from .schedule import safe_parse
+        return safe_parse(self.schedule)
+
+    @property
+    def schedule_display(self):
+        from .schedule import fmt
+        return fmt(self.slots)
 
 
 class User(AbstractUser):

@@ -160,4 +160,9 @@ class RosterForm(forms.Form):
 class SectionForm(forms.ModelForm):
     class Meta:
         model = ClassSection
-        fields = ["code", "title"]
+        fields = ["code", "title", "schedule"]
+
+    def clean_schedule(self):
+        from .schedule import fmt, parse
+        value = self.cleaned_data.get("schedule", "")
+        return fmt(parse(value))

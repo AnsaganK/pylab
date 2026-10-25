@@ -17,7 +17,10 @@
       <li><span class="flag burst">{% translate "серия" %}</span> {% blocktranslate with n=thresholds.BURST_COUNT %}{{ n }} и больше верных задач за 15 минут{% endblocktranslate %}</li>
       <li><span class="flag ai">{% translate "приёмы ИИ" %}</span> {% translate "docstring, def main(), if __name__, аннотации типов, try/except, много комментариев — редко у начинающих" %}</li>
       <li><span class="flag first_try">{% translate "сразу" %}</span> {% translate "верно с первой отправки без единого запуска" %}</li>
+      <li><span class="flag home_strong">{% translate "дома сильнее" %}</span> {% blocktranslate with c=thresholds.CLASS_WEAK h=thresholds.HOME_STRONG %}решено дома, а на паре по этому уроку решено не больше {{ c }} задач при {{ h }}+ дома{% endblocktranslate %}</li>
+      <li><span class="flag class_good">{% translate "работал на паре" %}</span> {% blocktranslate with c=thresholds.CLASS_GOOD %}решено дома, но на паре по этому уроку сам решил {{ c }}+ задач — балл снижается{% endblocktranslate %}</li>
     </ul>
+    <p class="small muted" style="margin:.5rem 0 0">{% translate "«На паре» и «дома» определяются по расписанию пар занятия (настройки занятия в «Группы и занятия»)." %}</p>
     <p class="small muted" style="margin:.5rem 0 0">{% translate "Вставка, переходы между вкладками и время открытия задачи записываются с этого обновления; у старых отправок проверяются только похожесть, серии и приёмы ИИ." %}</p>
   </details>
 </div>
@@ -61,11 +64,23 @@
   </details>
 </div>
 
+{% if reviewed %}
+<div class="sheet ai-summary">
+  <div class="ai-summary-head"><b>{% blocktranslate with n=reviewed %}Итог проверки ИИ: оценено {{ n }}{% endblocktranslate %}</b>{% if ai_filter %} · <a href="?{{ query }}">{% translate "сбросить фильтр" %}</a>{% endif %}</div>
+  <div class="ai-chips">
+    <a class="ai-chip bad{% if ai_filter == 'bad' %} on{% endif %}" href="?{{ query }}&ai=bad"><span class="n">{{ verdict_counts.ai|add:verdict_counts.copied }}</span>{% translate "нечестно" %}<small>{% blocktranslate with a=verdict_counts.ai c=verdict_counts.copied %}ИИ {{ a }} · списано {{ c }}{% endblocktranslate %}</small></a>
+    <a class="ai-chip wait{% if ai_filter == 'unsure' %} on{% endif %}" href="?{{ query }}&ai=unsure"><span class="n">{{ verdict_counts.unsure }}</span>{% translate "неясно" %}<small>{% translate "спросить студента" %}</small></a>
+    <a class="ai-chip good{% if ai_filter == 'honest' %} on{% endif %}" href="?{{ query }}&ai=honest"><span class="n">{{ verdict_counts.honest }}</span>{% translate "скорее сам" %}<small>&nbsp;</small></a>
+    <a class="ai-chip{% if ai_filter == 'done' %} on{% endif %}" href="?{{ query }}&ai=done"><span class="n">{{ reviewed }}</span>{% translate "все оценённые" %}<small>&nbsp;</small></a>
+  </div>
+</div>
+{% endif %}
+
 {% if per_student %}
 <h2>{% translate "Студенты с подозрительными решениями" %}</h2>
 <div class="table-wrap" style="margin-bottom:1.5rem"><table class="t">
-  <tr><th>{% translate "Студент" %}</th><th class="c">{% translate "ИИ: нечестно" %}</th><th class="c">{% translate "Подозрительных" %}</th><th class="c">{% translate "Верных решений" %}</th></tr>
-  {% for p in per_student %}<tr><td><a href="{% url 't_submissions' %}?student={{ p.user.username|urlencode }}">{{ p.user.display_name }}</a> <span class="muted small">{{ p.user.username }}</span></td><td class="c num">{% if p.ai_bad %}<span class="st bad">{{ p.ai_bad }}</span>{% else %}<span class="muted">0</span>{% endif %}</td><td class="c num"><b>{{ p.flagged }}</b></td><td class="c num">{{ p.solved }}</td></tr>{% endfor %}
+  <tr><th>{% translate "Студент" %}</th><th class="c">{% translate "ИИ: нечестно" %}</th><th class="c">{% translate "ИИ: сам" %}</th><th class="c">{% translate "Подозрительных" %}</th><th class="c">{% translate "Верных решений" %}</th>{% if has_schedule %}<th class="c">{% translate "На паре / дома" %}</th>{% endif %}</tr>
+  {% for p in per_student %}<tr{% if p.ai_bad %} class="row-bad"{% endif %}><td><a href="{% url 't_submissions' %}?student={{ p.user.username|urlencode }}">{{ p.user.display_name }}</a> <span class="muted small">{{ p.user.username }}</span></td><td class="c num">{% if p.ai_bad %}<span class="st bad big">{{ p.ai_bad }}</span>{% else %}<span class="muted">0</span>{% endif %}</td><td class="c num">{% if p.ai_honest %}<span class="st good">{{ p.ai_honest }}</span>{% else %}<span class="muted">0</span>{% endif %}</td><td class="c num"><b>{{ p.flagged }}</b></td><td class="c num">{{ p.solved }}</td>{% if has_schedule %}<td class="c num">{{ p.in_class }} / {{ p.at_home }}</td>{% endif %}</tr>{% endfor %}
 </table></div>
 {% endif %}
 
@@ -77,12 +92,12 @@
   <table class="t">
     <tr><th>{% translate "Балл" %}</th><th>{% translate "Студент" %}</th><th>{% translate "Задача" %}</th><th>{% translate "Когда" %}</th><th>{% translate "Признаки" %}</th><th>{% translate "Оценка ИИ" %}</th><th></th></tr>
     {% for r in items %}
-    <tr>
+    <tr{% if r.review and r.review.status == "done" %} class="row-{{ r.review.tone }}"{% endif %}>
       <td class="num"><span class="score s{% if r.score >= 5 %}3{% elif r.score >= 3 %}2{% elif r.score >= 1 %}1{% else %}0{% endif %}">{{ r.score }}</span></td>
       <td style="white-space:nowrap">{{ r.sub.user.display_name }}</td>
       <td>{{ r.sub.task.title }}<div class="muted small">{{ r.sub.task.lesson.title|truncatechars:30 }}</div></td>
-      <td class="num muted small" style="white-space:nowrap">{{ r.sub.created_at|date:"d.m H:i" }}{% if r.sub.ip %}<br>{{ r.sub.ip }}{% endif %}</td>
-      <td>{% for kind, text in r.flags %}<div class="flag-line"><span class="flag {{ kind }}">{% if kind == 'paste' %}{% translate "вставка" %}{% elif kind == 'similar' %}{% translate "похожий код" %}{% elif kind == 'similar_src' %}{% translate "у него списали?" %}{% elif kind == 'fast' %}{% translate "быстро" %}{% elif kind == 'away' %}{% translate "уходил" %}{% elif kind == 'burst' %}{% translate "серия" %}{% elif kind == 'ai' %}{% translate "приёмы ИИ" %}{% else %}{% translate "сразу" %}{% endif %}</span> <span class="small">{{ text }}</span></div>{% empty %}<span class="muted small">—</span>{% endfor %}</td>
+      <td class="num muted small" style="white-space:nowrap">{{ r.sub.created_at|date:"d.m H:i" }}{% if r.place == "class" %}<br><span class="place class">{% translate "на паре" %}</span>{% elif r.place == "home" %}<br><span class="place home">🏠 {% translate "дома" %}</span>{% endif %}{% if r.sub.ip %}<br>{{ r.sub.ip }}{% endif %}</td>
+      <td>{% for kind, text in r.flags %}<div class="flag-line"><span class="flag {{ kind }}">{% if kind == 'paste' %}{% translate "вставка" %}{% elif kind == 'similar' %}{% translate "похожий код" %}{% elif kind == 'similar_src' %}{% translate "у него списали?" %}{% elif kind == 'fast' %}{% translate "быстро" %}{% elif kind == 'away' %}{% translate "уходил" %}{% elif kind == 'burst' %}{% translate "серия" %}{% elif kind == 'ai' %}{% translate "приёмы ИИ" %}{% elif kind == 'home_strong' %}{% translate "дома сильнее" %}{% elif kind == 'class_good' %}{% translate "работал на паре" %}{% else %}{% translate "сразу" %}{% endif %}</span> <span class="small">{{ text }}</span></div>{% empty %}<span class="muted small">—</span>{% endfor %}</td>
       <td class="ai-cell">{% include "core/teacher/_ai_review.html" with review=r.review %}</td>
       <td><a class="btn sm" href="{% url 't_submission' r.sub.pk %}">{% translate "код" %}</a></td>
     </tr>

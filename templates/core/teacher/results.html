@@ -9,20 +9,21 @@
 {% else %}
 {% if current %}<h2 style="margin:0 0 .35rem">{{ current.title }}</h2>{% endif %}
 <p class="muted small no-print">{% translate "В ячейке — число попыток. Зелёная — зачтено, красная — есть попытки, но решение не принято." %} {% translate "По умолчанию показывается последний урок, открытый для выбранного занятия или группы (● в списке)." %}</p>
+{% if any_review or has_schedule %}<p class="small legend no-print">{% if has_schedule %}<span><span class="home-mark">🏠</span> {% translate "решено дома, вне пары" %}</span>{% endif %}{% if any_review %}<span><span class="ai-mark bad">ИИ</span> {% translate "оценка ИИ: вероятно ИИ или списано" %}</span><span><span class="ai-mark wait">?</span> {% translate "неясно" %}</span><span><span class="ai-mark good">✓</span> {% translate "скорее сам" %}</span>{% endif %}</p>{% endif %}
 <div class="table-wrap">
 <table class="t matrix">
-  <tr><th>{% translate "Студент" %}</th>{% if by_section %}<th>{% translate "Группа" %}</th>{% endif %}{% for t in tasks %}<th class="c" title="{{ t.lesson.title }}: {{ t.title }}">{{ forloop.counter }}. {{ t.title|truncatechars:14 }}</th>{% endfor %}<th class="c">{% translate "Решено" %}</th></tr>
-  {% for student, cells, solved in rows %}
-  <tr>
+  <tr><th>{% translate "Студент" %}</th>{% if by_section %}<th>{% translate "Группа" %}</th>{% endif %}{% for t in tasks %}<th class="c" title="{{ t.lesson.title }}: {{ t.title }}">{{ forloop.counter }}. {{ t.title|truncatechars:14 }}</th>{% endfor %}<th class="c">{% translate "Решено" %}</th>{% if any_review %}<th class="c">{% translate "ИИ: нечестно" %}</th>{% endif %}</tr>
+  {% for student, cells, solved, bad in rows %}
+  <tr{% if bad %} class="row-bad"{% endif %}>
     <td style="white-space:nowrap">{{ student.display_name }}</td>{% if by_section %}<td class="muted small">{{ student.group|default:"" }}</td>{% endif %}
-    {% for t, b, n in cells %}
-      <td class="c">{% if b %}<a class="cell {{ b.tone }}" href="{% url 't_submission' b.pk %}" title="{{ b.get_status_display }}, {{ b.created_at|date:'d.m H:i' }}">{% if b.is_good %}+{% if n > 1 %}{{ n }}{% endif %}{% else %}−{{ n }}{% endif %}</a>{% endif %}</td>
+    {% for t, b, n, rv, where in cells %}
+      <td class="c">{% if b %}<a class="cell {{ b.tone }}{% if rv %} ai-{{ rv.tone }}{% endif %}" href="{% url 't_submission' b.pk %}" title="{{ b.get_status_display }}, {{ b.created_at|date:'d.m H:i' }}{% if where == 'home' %} · {% translate 'дома' %}{% elif where == 'class' %} · {% translate 'на паре' %}{% endif %}{% if rv %} · {% translate 'ИИ' %}: {{ rv.get_shown_verdict_display }}{% if rv.confidence is not None %} {{ rv.confidence }}%{% endif %}{% endif %}">{% if b.is_good %}+{% if n > 1 %}{{ n }}{% endif %}{% else %}−{{ n }}{% endif %}{% if where == 'home' %}<span class="home-mark">🏠</span>{% endif %}{% if rv %}<span class="ai-mark {{ rv.tone }}">{% if rv.is_bad %}{% if rv.confidence is not None %}{{ rv.confidence }}{% else %}ИИ{% endif %}{% elif rv.tone == 'good' %}✓{% else %}?{% endif %}</span>{% endif %}</a>{% endif %}</td>
     {% endfor %}
-    <td class="c num"><b>{{ solved }}</b></td>
+    <td class="c num"><b>{{ solved }}</b></td>{% if any_review %}<td class="c num">{% if bad %}<a class="st bad" href="{% url 't_results_integrity' %}?{{ query }}&ai=bad">{{ bad }}</a>{% else %}<span class="muted">0</span>{% endif %}</td>{% endif %}
   </tr>
   {% empty %}<tr><td colspan="99" class="empty">{% translate "Здесь пока нет студентов." %}</td></tr>{% endfor %}
   {% if rows %}
-  <tr class="totals"><td>{% translate "Решили" %}</td>{% if by_section %}<td></td>{% endif %}{% for n in solved_by_task %}<td class="c num">{{ n }}/{{ rows|length }}</td>{% endfor %}<td></td></tr>
+  <tr class="totals"><td>{% translate "Решили" %}</td>{% if by_section %}<td></td>{% endif %}{% for n in solved_by_task %}<td class="c num">{{ n }}/{{ rows|length }}</td>{% endfor %}<td></td>{% if any_review %}<td></td>{% endif %}</tr>
   {% endif %}
 </table>
 </div>

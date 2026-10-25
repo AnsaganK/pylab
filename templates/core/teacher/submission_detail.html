@@ -28,6 +28,7 @@
   </div>
 </div>
 <div class="metrics muted">
+  {% if place == "class" %}<span class="place class">{% translate "на паре" %}</span>{% elif place == "home" %}<span class="place home">🏠 {% translate "дома, вне пары" %}</span>{% endif %}
   {% if spent %}<span>{% translate "С открытия задачи" %}: <b>{{ spent }}</b></span>{% endif %}
   <span>{% translate "Запусков до отправки" %}: <b>{{ runs }}</b></span>
   {% if sub.typed_chars is not None %}<span>{% translate "Напечатано" %}: <b>{{ sub.typed_chars }}</b></span><span>{% translate "Вставлено" %}: <b>{{ sub.pasted_chars }}</b></span><span>{% translate "Уходил со страницы" %}: <b>{{ sub.away_count }}</b> ({{ sub.away_seconds }} {% translate "с" %})</span>{% endif %}

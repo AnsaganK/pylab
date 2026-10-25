@@ -8,8 +8,8 @@
 <div class="table-wrap" style="margin-bottom:2rem">
   {% if sections %}
   <table class="t">
-    <tr><th>{% translate "Код" %}</th><th>{% translate "Название" %}</th><th>{% translate "Студентов" %}</th></tr>
-    {% for s in sections %}<tr class="link"><td class="mono"><a href="{% url 't_section' s.pk %}"><b>{{ s.code }}</b></a></td><td>{{ s.title }}</td><td class="num">{{ s.n }}</td></tr>{% endfor %}
+    <tr><th>{% translate "Код" %}</th><th>{% translate "Название" %}</th><th>{% translate "Расписание пар" %}</th><th>{% translate "Студентов" %}</th></tr>
+    {% for s in sections %}<tr class="link"><td class="mono"><a href="{% url 't_section' s.pk %}"><b>{{ s.code }}</b></a></td><td>{{ s.title }}</td><td class="small">{% if s.schedule %}{{ s.schedule }}{% else %}<a class="muted" href="{% url 't_section' s.pk %}">{% translate "не задано" %}</a>{% endif %}</td><td class="num">{{ s.n }}</td></tr>{% endfor %}
   </table>
   {% else %}<div class="empty">{% translate "Занятий пока нет. Загрузите список из расписания вместе с первой строкой-заголовком." %}</div>{% endif %}
 </div>
