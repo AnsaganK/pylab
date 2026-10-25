@@ -27,7 +27,7 @@
   <div class="ai-row">
     <div>
       <b>{% translate "Оценка с помощью ИИ" %}</b>
-      <div class="muted small">{% blocktranslate with m=ai_model %}Модель {{ m }} смотрит код, прошлые попытки, другие решения студента и признаки и выносит вердикт с объяснением. ФИО, ID и IP не отправляются.{% endblocktranslate %}</div>
+      <div class="muted small">{% blocktranslate with m=ai_model %}Модель {{ m }} смотрит код, прошлые попытки, другие решения студента и признаки и выносит вердикт с объяснением.{% endblocktranslate %}</div>
     </div>
     <form method="post" class="inline">{% csrf_token %}
       {% if ai_pending %}<span class="st wait">{% blocktranslate with n=ai_pending %}Оценивается: {{ n }}…{% endblocktranslate %}</span>
@@ -38,13 +38,14 @@
   {% if ai_to_review_total > ai_to_review %}<p class="muted small" style="margin:.4rem 0 0">{% blocktranslate with n=ai_to_review_total %}Всего ждут оценки: {{ n }}; за одно нажатие оценивается не больше лимита — нажмите ещё раз после завершения.{% endblocktranslate %}</p>{% endif %}
   {% endif %}
 
+  <p class="muted small" style="margin:.5rem 0 0">{% blocktranslate with c=ai_min_conf %}«Вероятно ИИ» и «Вероятно списано» засчитываются только при уверенности от {{ c }}%; ниже — показываются как «Неясно».{% endblocktranslate %}</p>
   <details class="manual-review" {% if not ai_ready %}open{% endif %}>
     <summary><b>{% translate "Проверка вручную через файл" %}</b> <span class="muted small">— {% translate "без API: выгрузите файл, отправьте его в чат с Claude и загрузите его ответ обратно" %}</span></summary>
     <ol class="steps small">
       <li>
         {% if ai_to_review_total %}<a class="btn sm go" href="?{{ query }}&export=1">{% blocktranslate with n=ai_to_review_total %}Выгрузить для проверки ({{ n }}){% endblocktranslate %}</a>
         {% else %}<span class="muted">{% translate "Новых подозрительных решений нет." %}</span> <a class="btn sm" href="?{{ query }}&export=1&force=1">{% translate "Выгрузить все подозрительные заново" %}</a>{% endif %}
-        <span class="muted">{% translate "Учитываются фильтры выше: занятие, урок и период. ФИО, ID и IP в файл не попадают." %}</span>
+        <span class="muted">{% translate "Учитываются фильтры выше: занятие, урок и период." %}</span>
       </li>
       <li>{% translate "Отправьте файл в чат с Claude и попросите: «Оцени решения из файла и верни JSON с оценками»." %}</li>
       <li>

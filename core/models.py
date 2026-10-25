@@ -369,8 +369,21 @@ class AIReview(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
+    def is_bad(self):
+        """«ИИ»/«списано» с уверенностью не ниже порога (constants.AI_MIN_CONFIDENCE, по умолчанию 70)."""
+        threshold = getattr(constants, "AI_MIN_CONFIDENCE", 70)
+        return self.status == self.DONE and self.verdict in self.BAD and (self.confidence or 0) >= threshold
+
+    @property
+    def shown_verdict(self):
+        return self.verdict if (self.verdict not in self.BAD or self.is_bad) else self.UNSURE
+
+    def get_shown_verdict_display(self):
+        return dict(self.VERDICT_CHOICES).get(self.shown_verdict, "")
+
+    @property
     def tone(self):
-        return {self.HONEST: "good", self.UNSURE: "wait", self.AI: "bad", self.COPIED: "bad"}.get(self.verdict, "wait")
+        return {self.HONEST: "good", self.UNSURE: "wait", self.AI: "bad", self.COPIED: "bad"}.get(self.shown_verdict, "wait")
 
 
 class SiteSettings(models.Model):

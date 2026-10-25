@@ -9,8 +9,9 @@
 
 Модели отправляются: условие задачи, код студента, его прошлые попытки по задаче,
 два его других решения (для сравнения стиля), похожий код другого студента и
-признаки (вставка, время, уходы со страницы). ФИО, ID и IP не отправляются —
-вместо имён «Студент A» / «Студент B».
+признаки (вставка, время, уходы со страницы), ФИО и ID студентов. IP не отправляется.
+    AI_ANONYMIZE = False                 # True — вместо ФИО и ID «S1», «Студент B»
+    AI_MIN_CONFIDENCE = 70               # «ИИ»/«списано» ниже этой уверенности считаются «Неясно»
 """
 import hashlib
 import json
@@ -32,6 +33,8 @@ API_KEY = getattr(constants, "AI_API_KEY", "")
 MODEL = getattr(constants, "AI_MODEL", "claude-haiku-5-5" if PROVIDER == "anthropic" else "")
 MAX_PER_RUN = getattr(constants, "AI_MAX_PER_RUN", 40)
 MIN_SCORE = getattr(constants, "AI_MIN_SCORE", 2)
+ANONYMIZE = getattr(constants, "AI_ANONYMIZE", False)
+MIN_CONFIDENCE = getattr(constants, "AI_MIN_CONFIDENCE", 70)
 TIMEOUT = getattr(constants, "AI_TIMEOUT", 90)
 
 _executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="ai-review")
@@ -71,9 +74,10 @@ SYSTEM_PROMPT = """Ты помогаешь преподавателю вуза �
   структурой и теми же необычными приёмами, но с переименованными переменными.
 - Отдельный признак сам по себе ничего не доказывает: короткие задачи часто решаются одинаково, а сильный студент
   может решать быстро. Обвинение — серьёзная вещь: при сомнениях выбирай "unsure", а не "ai" или "copied".
+- Ставь "ai" или "copied" только при уверенности не ниже __MINCONF__%. Если уверенность ниже — verdict "unsure".
 
 Ответь ТОЛЬКО JSON-объектом без пояснений вокруг:
-{"verdict": "honest|ai|copied|unsure", "confidence": 0-100, "reason": "2–4 предложения: на чём основан вывод, со ссылкой на конкретные строки или признаки"}"""
+{"verdict": "honest|ai|copied|unsure", "confidence": 0-100, "reason": "2–4 предложения: на чём основан вывод, со ссылкой на конкретные строки или признаки"}""".replace("__MINCONF__", str(MIN_CONFIDENCE))
 
 
 def _shorten(code, limit=2500):
@@ -87,7 +91,9 @@ def build_prompt(sub, signals, lang):
         title = task.title
         lesson = task.lesson.title
         topic = task.lesson.topic or ""
-    parts = [f"## Урок\n{lesson}" + (f" — {topic}" if topic else ""),
+    who = "" if ANONYMIZE else (f"## Студент\n{sub.user.display_name()} (ID {sub.user.username}"
+                                + (f", группа {sub.user.group}" if sub.user.group_id else "") + ")")
+    parts = ([who] if who else []) + [f"## Урок\n{lesson}" + (f" — {topic}" if topic else ""),
              f"## Задача «{title}»\n{_shorten(statement, 2000)}"]
 
     # Прошлые попытки по этой задаче
@@ -128,7 +134,8 @@ def build_prompt(sub, signals, lang):
     other = getattr(sub, "_similar_other", None)
     if other is not None:
         when = "раньше" if other.created_at < sub.created_at else "позже"
-        parts.append(f"## Похожее решение другого студента (Студент B, сдано {when})\n```python\n{_shorten(other.code, 1500)}\n```")
+        name = "Студент B" if ANONYMIZE else f"{other.user.display_name()}, ID {other.user.username}"
+        parts.append(f"## Похожее решение другого студента ({name}, сдано {when})\n```python\n{_shorten(other.code, 1500)}\n```")
 
     parts.append(f"Напиши поле reason на {LANG_NAMES.get(lang, 'русском')} языке.")
     return "\n\n".join(parts)
@@ -172,6 +179,9 @@ def parse_answer(text):
         confidence = max(0, min(100, int(data.get("confidence", 0))))
     except (TypeError, ValueError):
         confidence = None
+    # «ИИ» и «списано» с низкой уверенностью не считаем обвинением
+    if verdict in AIReview.BAD and (confidence is None or confidence < MIN_CONFIDENCE):
+        verdict = AIReview.UNSURE
     return verdict, confidence, str(data.get("reason", "")).strip()[:2000]
 
 
@@ -196,12 +206,12 @@ def _review(review_id, similar_other_id=None):
 
 
 def anonymized_signals(r):
-    """Признаки без имён: имя другого студента заменяется на «Студент B»."""
+    """Признаки; при AI_ANONYMIZE имя другого студента заменяется на «Студент B»."""
     other = r.get("similar_other")
     signals = []
     for k, t in r["flags"]:
         text = str(t)
-        if other is not None:
+        if ANONYMIZE and other is not None:
             text = text.replace(other.user.display_name(), "Студент B")
         signals.append([k, text])
     return signals
@@ -222,7 +232,8 @@ EXPORT_INSTRUCTIONS = (
     "Оцени каждое решение из items по правилам из system_prompt. "
     "Ответь JSON-объектом {\"reviews\": [{\"id\": <id из items>, \"verdict\": \"honest|ai|copied|unsure\", "
     "\"confidence\": 0-100, \"reason\": \"2–4 предложения\"}]} — по одному элементу на каждый id. "
-    "Поле student — псевдоним студента в пределах этого файла (одинаковый у всех его решений)."
+    "Поле student — студент (одинаковый у всех его решений в файле). "
+    "Ставь ai или copied только при уверенности не ниже порога из min_confidence, иначе unsure."
 )
 
 
@@ -232,7 +243,8 @@ def export_payload(items, lang):
     out = []
     for r in items:
         sub = r["sub"]
-        alias = pseudo.setdefault(sub.user_id, f"S{len(pseudo) + 1}")
+        alias = (pseudo.setdefault(sub.user_id, f"S{len(pseudo) + 1}") if ANONYMIZE
+                 else f"{sub.user.display_name()} (ID {sub.user.username})")
         other = r.get("similar_other")
         if other is not None:
             sub._similar_other = other
@@ -248,6 +260,7 @@ def export_payload(items, lang):
         "exported_at": timezone.localtime().isoformat(timespec="minutes"),
         "lang": lang,
         "instructions": EXPORT_INSTRUCTIONS,
+        "min_confidence": MIN_CONFIDENCE,
         "system_prompt": SYSTEM_PROMPT,
         "items": out,
     }

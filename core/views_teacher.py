@@ -799,16 +799,16 @@ def results_integrity(request):
 
     show_all = request.GET.get("all") == "1"
     ai_filter = request.GET.get("ai", "")
-    shown = items if show_all else [r for r in items if r["score"] >= 2 or (r["review"] and r["review"].verdict in AIReview.BAD)]
+    shown = items if show_all else [r for r in items if r["score"] >= 2 or (r["review"] and r["review"].is_bad)]
     if ai_filter == "bad":
-        shown = [r for r in shown if r["review"] and r["review"].verdict in AIReview.BAD]
+        shown = [r for r in shown if r["review"] and r["review"].is_bad]
     # Сначала то, что ИИ счёл нечестным, затем по баллу
     severity = {AIReview.COPIED: 0, AIReview.AI: 0, AIReview.UNSURE: 1, AIReview.HONEST: 3}
-    shown.sort(key=lambda r: (severity.get(r["review"].verdict, 2) if r["review"] and r["review"].status == "done" else 2,
+    shown.sort(key=lambda r: (severity.get(r["review"].shown_verdict, 2) if r["review"] and r["review"].status == "done" else 2,
                               -r["score"], r["sub"].created_at))
     ai_bad = {}
     for r in items:
-        if r["review"] and r["review"].verdict in AIReview.BAD:
+        if r["review"] and r["review"].is_bad:
             ai_bad[r["sub"].user_id] = ai_bad.get(r["sub"].user_id, 0) + 1
     for p in per_student:
         p["ai_bad"] = ai_bad.get(p["user"].pk, 0)
@@ -820,7 +820,7 @@ def results_integrity(request):
                 "per_student": [p for p in per_student if p["flagged"] or p["ai_bad"]], "tab": "integrity",
                 "thresholds": integrity, "ai_ready": ai_review.is_configured(), "ai_pending": pending,
                 "ai_to_review": min(to_review, ai_review.MAX_PER_RUN), "ai_to_review_total": to_review,
-                "ai_filter": ai_filter, "ai_model": ai_review.MODEL})
+                "ai_filter": ai_filter, "ai_model": ai_review.MODEL, "ai_min_conf": ai_review.MIN_CONFIDENCE})
     return render(request, "core/teacher/results_integrity.html", ctx)
 
 
